@@ -15,6 +15,11 @@ from face.exceptions import CustomError
 from rest_framework.authtoken.models import Token
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from .models import BlackListedToken 
+import boto3
+from django.conf import settings
+import concurrent.futures
+import os
+from rest_framework.exceptions import ValidationError
 
 
 User = get_user_model()
@@ -54,19 +59,24 @@ class GenerateOTP(APIView):
                                     "refresh": str(refresh),
                                     "access": str(refresh.access_token),
                                 },
+                                "status": True,
                                 "email": user.email,
+                                "otp_status":user.otp_status_email
                             }
                         }, status=status.HTTP_200_OK)
                     else:
                         # Resend email OTP
                         send_otp.delay(email)
                         return Response({
-                            "message": f"OTP sent to {email} for verification."
+                            "status": True,
+                            "message": f"OTP sent to {email} for verification.",
+                            "data":None
                         }, status=status.HTTP_200_OK)
                 else:
                     # New user: Send email OTP
                     send_otp.delay(email)
                     return Response({
+                        "status": True,
                         "message": f"OTP sent to {email}."
                     }, status=status.HTTP_200_OK)
 
@@ -84,20 +94,26 @@ class GenerateOTP(APIView):
                                     "refresh": str(refresh),
                                     "access": str(refresh.access_token),
                                 },
+                                "status": True,
                                 "phone": user.phone_no,
+                                "otp_status":user.otp_status
                             }
                         }, status=status.HTTP_200_OK)
                     else:
                         # Resend phone OTP
                         user_otp.delay(phone)
                         return Response({
-                            "message": f"OTP sent to {phone} for verification."
+                            "status": True,
+                            "message": f"OTP sent to {phone} for verification.",
+                            "data":None
                         }, status=status.HTTP_200_OK)
                 else:
                     # New user: Send phone OTP
                     user_otp.delay(phone)
                     return Response({
-                        "message": f"User not found. OTP sent to {phone}."
+                        "status": True,
+                        "message": f"OTP sent to {phone}.",
+                        "data":None
                     }, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -130,6 +146,7 @@ class VerifyOTP(APIView):
                             'email': user.email,
                             'otp_status': user.otp_status_email,
                             'phone_otp_status': user.otp_status,
+                            'user_id':user.id
                         }
                     }, status=status.HTTP_200_OK)
                 return Response({"message": "Email verified. Please verify your phone number as well."}, status=status.HTTP_200_OK)
@@ -201,10 +218,112 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated]
     
+    # Initialize AWS Rekognition client
+    rekognition_client = boto3.client(
+        'rekognition',
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key= settings.AWS_SECRET_ACCESS_KEY,
+        region_name='ap-south-1'  # Replace with your preferred AWS region
+    )
+
+    # Define paths
+    # reference_image_path = 'C:/Users/DELL/Downloads/highcrop.jpg'  # Replace with your reference image path
+    local_folder_path = 'media/photos/20126010@gmail.com'  # Replace with your local folder path
+    # user_email = request.user.email
+    #     if not user_email:
+    #         return Response({"error": "User email not found."}, status=400)
+    # local_folder_path = self.get_user_folder_path(user_email)
     def get_queryset(self):
         return super().get_queryset()
-
     
+    def get_user_folder_path(self, user_email):
+        """
+        Dynamically generates the folder path based on the user's email.
+        """
+        return os.path.join('media', 'photos', user_email)
+    
+    def analyze_face(self, request, *args, **kwargs):
+        """Compare faces in a reference image with images in the event folder."""
+        if 'image' not in request.data:
+            return Response({"error": "No image uploaded."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if len(request.FILES) > settings.DATA_UPLOAD_MAX_NUMBER_FILES:
+            raise ValidationError(f"Cannot upload more than {settings.DATA_UPLOAD_MAX_NUMBER_FILES} files at once.")
+       
+        uploaded_file = request.data['image']
+        reference_image_data = uploaded_file.read()
+
+        try:
+           
+            response = self.rekognition_client.detect_faces(
+                Image={'Bytes': reference_image_data},
+                Attributes=['DEFAULT']
+            )
+
+            reference_faces = response['FaceDetails']
+            if not reference_faces:
+                return Response({"status": False, "message": "No faces detected in the reference image."}, status=status.HTTP_400_BAD_REQUEST)
+
+            
+            event_image_paths = [os.path.join(self.local_folder_path, img) for img in os.listdir(self.local_folder_path) if img.lower().endswith(('png', 'jpg', 'jpeg'))]
+
+          
+            max_threads = 16
+            with concurrent.futures.ThreadPoolExecutor(max_workers=max_threads) as executor:
+                matching_images = list(executor.map(lambda path: self.compare_faces_in_image(reference_image_data, path), event_image_paths))
+
+            # Filter out None values (no match found)
+            matching_images = [img for img in matching_images if img is not None]
+            if matching_images:
+                return Response({ "status": True, "message": "Photos retrieved successfully.","data": matching_images}, status=status.HTTP_200_OK)
+            else:
+                return Response({"status": False, "message": "No matching faces found in the event images."}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as e:
+            return Response({"error": f"Error processing the image: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def compare_faces_in_image(self, reference_image_data, event_image_path):
+        """Helper method to compare faces in reference image with an event image."""
+        try:
+            with open(event_image_path, 'rb') as image_file:
+                event_image_data = image_file.read()
+
+            compare_response = self.rekognition_client.compare_faces(
+                SourceImage={'Bytes': reference_image_data},
+                TargetImage={'Bytes': event_image_data},
+                SimilarityThreshold=60
+            )
+
+            for match in compare_response['FaceMatches']:
+                if match['Similarity'] >= 60:
+                    return event_image_path
+        except Exception as e:
+            print(f"Error processing {event_image_path}: {e}")
+            return None
+
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        try:
+            if not queryset.exists():
+                return Response({
+                    "status": False,
+                    "message": "No photos found!",
+                    'data': []
+                }, status=status.HTTP_204_NO_CONTENT)
+                
+            serializer = self.serializer_class(queryset, many=True)
+            return Response({
+                "status": True,
+                "message": "Photos retrieved successfully.",
+                'data': {"photos": serializer.data}
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                'status': False,
+                'message': "Something went wrong!",
+                'error': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
     
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

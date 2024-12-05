@@ -33,6 +33,9 @@ DEBUG = os.getenv("DEBUG")
 ALLOWED_HOSTS = ['192.168.1.72','localhost','127.0.0.1']
 # ALLOWED_HOSTS = []
 
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_REGION = os.getenv("AWS_REGION")
 
 # Application definition
 
@@ -136,8 +139,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-FILE_UPLOAD_MAX_MEMORY_SIZE = 1 * 1073741824
-
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1073741824
+DATA_UPLOAD_MAX_NUMBER_FILES = 200
+# DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600 
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
