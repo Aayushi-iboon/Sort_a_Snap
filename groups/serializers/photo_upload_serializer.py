@@ -39,17 +39,17 @@ class PhotoGroupSerializer(serializers.ModelSerializer):
 
     
     def update(self, instance, validated_data):
-        # Update photo group fields
+        
         instance.photo_name = validated_data.get('photo_name', instance.photo_name)
         instance.save()
 
-        # Update images
+        
         images_data = self.context['request'].data.getlist('images')
         if images_data:
-            # Delete old images
+            
             PhotoGroupImage.objects.filter(photo_group=instance).delete()
             
-            # Add new images
+            
             for image_file in images_data:
                 if isinstance(image_file, (str, bytes)):
                     raise ValueError("Invalid file data received.")
@@ -68,7 +68,7 @@ class PhotoGroupSerializer(serializers.ModelSerializer):
         images_data = [
             {
                 "id": image.id,
-                "image2": image.image2.url if image.image2 else None  # Check if image2 exists
+                "image_url": image.image2.url if image.image2 else None  # Check if image2 exists
             }
             for image in images
         ]

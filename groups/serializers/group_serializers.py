@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from imagesense.serializers import UserProfileSerializer
 import base64
 from rest_framework import serializers
-from groups.model.group import CustomGroup, GroupMember,photo_group
+from groups.model.group import CustomGroup, GroupMember,photo_group,PhotoGroupImage
 from datetime import datetime
 User = get_user_model()
 
@@ -220,8 +220,25 @@ class CustomGroupSerializer(serializers.ModelSerializer):
             }
             return group_data
         
-        
+
+class PhotoGroupImage_serializer(serializers.ModelSerializer):
+    class Meta:
+        model = PhotoGroupImage
+        fields = ['id','image2','photo_group']
+    
+    def to_representation(self, instance):
+        # Default representation from the parent class
+        representation = super().to_representation(instance)
+
+        # Custom representation
+        return {
+            "id": instance.id,
+            "image_url": instance.image2.url if instance.image2 else None,  
+            "photo_user_name": instance.photo_group.user.email if instance.photo_group else None, 
+        }     
+   
 class photo_serializer(serializers.ModelSerializer):
+    images = PhotoGroupImage_serializer(many=True) 
     class Meta:
         model = photo_group
         fields = '__all__'
@@ -255,6 +272,41 @@ class photo_serializer(serializers.ModelSerializer):
         instance.save()
         return instance
     
+    def to_representation(self, instance):
+        request = self.context.get('request')
+        from_method = self.context.get('from_method', 'unknown')
+        representation = super().to_representation(instance)
+        if request and request.method == 'GET':
+            # If specific group details are requested
+            group_data = {
+                "id": instance.id,
+                "user":instance.user.email,
+                "group": instance.group.name,
+                "temp_name": instance.photo_name,
+                "images": representation.get("images", [])
+            }
+            return group_data
+
+        elif from_method == 'photo_image':
+            # If listing all groups with a simplified structure
+            group_data = {
+                "id": instance.id,
+                "user":instance.user.email,
+                "group": instance.group.name,
+                "temp_name": instance.photo_name,
+                "images": representation.get("images", [])
+            }
+            return group_data
+        else:
+            # Default case: Provide basic group details
+            group_data = {
+                "id": instance.id,
+                "user":instance.user.email,
+                "group": instance.group.name,
+                "temp_name": instance.photo_name,
+                "images": representation.get("images", [])
+            }
+            return group_data
     
     # def update(self, instance, validated_data):
     #     request = self.context.get('request')

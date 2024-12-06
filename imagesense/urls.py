@@ -16,7 +16,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view({'post':'logout'}), name='logout'),
 
     path("edit-profile-image/", UserProfileViewSet.as_view({'get':'list'}), name="list_user_profile_image"),
-    path("analyze-face-image/<int:pk>/", UserProfileViewSet.as_view({'post':'analyze_face'}), name="analyze_face_image"),
+    path("analyze-face-image/", UserProfileViewSet.as_view({'post':'analyze_face'}), name="analyze_face_image"),
     path("edit-profile/<int:pk>/", UserProfileViewSet.as_view({'patch':'update'}), name="edit_profile"),
     path("delete-profile/<int:pk>/", UserProfileViewSet.as_view({'delete':'destroy'}), name="delete_profile"),
     path("get-profile/<int:pk>/", UserProfileViewSet.as_view({'get':'retrieve'}), name="get_profile"),

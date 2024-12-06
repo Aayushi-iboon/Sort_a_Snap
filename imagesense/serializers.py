@@ -28,21 +28,22 @@ class UserProfileSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ['email', 'profile_image','first_name','last_name','slug','date_joined','phone_no']
+        fields = ['email', 'profile_image','first_name','last_name','slug','date_joined','phone_no','edit_profile']
         # fields = "__all__"
 
 
     def update(self, instance, validated_data):
         profile_image = validated_data.pop('profile_image', None) 
-        # password = validated_data.pop('password', None)  
         user = User(**validated_data)
-            
+        # user.edit_profile=True
+        # user.save()
         if profile_image:
             instance.save_image(profile_image) 
             
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
-        
+            
+        instance.edit_profile=True
         instance.save()
         return instance
 
@@ -64,6 +65,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         user_instance = User.objects.create(**validated_data)
         
         if profile_image:
+            user_instance.edit_profile=True
             user_instance.save_image(profile_image)  # Save the image using custom method
         
         return user_instance

@@ -18,7 +18,7 @@ class UserAdmin(BaseUserAdmin):
         (None, {'fields': ('email', 'slug', 'password')}),
         ('Personal Info', {'fields': ('phone_no', 'profile_image')}),
         ('Permissions', {
-            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'otp_status','otp_status_email'),
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'otp_status','otp_status_email','edit_profile'),
         }),
         ('Important Dates', {'fields': ('last_login', 'created_at', 'updated_at')}),
     )

@@ -3,6 +3,7 @@ from django.conf import settings
 from .view.group_views import CustomGroupViewSet,JoinGroupView
 from .view.photouplaod_view import PhotoGroupViewSet
 from .view.upload_photo_view import PhotoGroupView
+# from .view.sub_group_view import SubGroupViewSet
 
 
 
@@ -33,6 +34,8 @@ urlpatterns = [
     path("upload-group-photo-delete/<int:pk>/", PhotoGroupView.as_view({'delete':'destroy'}), name="delete_group_photo"),
     path("upload-group-photo/retrieve/<int:pk>/", PhotoGroupView.as_view({'get':'retrieve'}), name="group_retrive_photo"),
     
+    # path("get-subgroup-viewset/list/", SubGroupViewSet.as_view({'get':'list'}), name="get_subgroup_list"),
+    # path("get-subgroup-viewset/", SubGroupViewSet.as_view({'get':'list'}), name="get_subgroup_list"),
     
     
     path("create-customgroupmember-viewset/", JoinGroupView.as_view({'post':'join'}), name="create_customgroupmember_viewset"),

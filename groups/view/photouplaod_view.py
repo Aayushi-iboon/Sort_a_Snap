@@ -68,7 +68,7 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
                     'data': []
                 }, status=status.HTTP_204_NO_CONTENT)
                 
-            serializer = self.serializer_class(queryset, many=True)
+            serializer = self.serializer_class(queryset, many=True, context={'request': request,'from_method':'photo_image'})
             return Response({
                 "status": True,
                 "message": "Groups retrieved successfully.",
@@ -125,7 +125,7 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(photos, many=True)
             return Response({ "status": True,  
                              "message": "group and user wise Data retrieved successfully.",
-                             "data":serializer.data}, status=status.HTTP_200_OK)
+                             "data":{"group_data":serializer.data}}, status=status.HTTP_200_OK)
         
         except user.DoesNotExist:
             return Response(
@@ -139,8 +139,6 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
             error_message = check_required_fields(required_fields, request.data)
             if error_message:
                 return Response({"status": False, "message": error_message},status=status.HTTP_400_BAD_REQUEST)
-            # import ipdb;ipdb.set_trace()
-            # image_file = request.FILES['image']
             image_file=request.FILES.getlist('image')
             if not image_file:
                 return Response({"status": False, "message": "Uploaded 'image' file is invalid"},

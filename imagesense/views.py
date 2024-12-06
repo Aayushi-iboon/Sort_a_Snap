@@ -20,8 +20,9 @@ from django.conf import settings
 import concurrent.futures
 import os
 from rest_framework.exceptions import ValidationError
-
-
+from face.function_call import flatten_errors
+import multiprocessing
+from .aws_services import AWSRekognitionService
 User = get_user_model()
 
 class GenerateOTP(APIView):
@@ -53,15 +54,15 @@ class GenerateOTP(APIView):
                         # User is verified by email
                         refresh = RefreshToken.for_user(user)
                         return Response({
+                            "status": True,
                             "message": "User already exists and is email-verified!",
                             "data": {
                                 "token": {
                                     "refresh": str(refresh),
                                     "access": str(refresh.access_token),
                                 },
-                                "status": True,
                                 "email": user.email,
-                                "otp_status":user.otp_status_email
+                                "edit_profile":user.edit_profile
                             }
                         }, status=status.HTTP_200_OK)
                     else:
@@ -88,15 +89,15 @@ class GenerateOTP(APIView):
                         # User is verified by phone
                         refresh = RefreshToken.for_user(user)
                         return Response({
+                            "status": True,
                             "message": "User already exists and is phone-verified!",
                             "data": {
                                 "token": {
                                     "refresh": str(refresh),
                                     "access": str(refresh.access_token),
                                 },
-                                "status": True,
                                 "phone": user.phone_no,
-                                "otp_status":user.otp_status
+                                "edit_profile":user.edit_profile
                             }
                         }, status=status.HTTP_200_OK)
                     else:
@@ -125,7 +126,7 @@ class VerifyOTP(APIView):
         otp = request.data.get("otp")
         # import ipdb;ipdb.set_trace()
         if not otp:
-            return Response({"message": "OTP is required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'status': True,"message": "OTP is required."}, status=status.HTTP_400_BAD_REQUEST)
         
         # Check email OTP
         if email:
@@ -146,10 +147,11 @@ class VerifyOTP(APIView):
                             'email': user.email,
                             'otp_status': user.otp_status_email,
                             'phone_otp_status': user.otp_status,
-                            'user_id':user.id
+                            'user_id':user.id,
+                            "edit_profile":user.edit_profile
                         }
                     }, status=status.HTTP_200_OK)
-                return Response({"message": "Email verified. Please verify your phone number as well."}, status=status.HTTP_200_OK)
+                return Response({'status': True,"message": "Email verified. Please verify your phone number as well."}, status=status.HTTP_200_OK)
         
         # Check phone OTP
         if phone:
@@ -171,11 +173,12 @@ class VerifyOTP(APIView):
                             'phone': user.phone_no,
                             'otp_status': user.otp_status_email,
                             'phone_otp_status': user.otp_status,
+                            "edit_profile":user.edit_profile
                         }
                     }, status=status.HTTP_200_OK)
-                return Response({"message": "Phone number verified. Please verify your email as well."}, status=status.HTTP_200_OK)
+                return Response({'status': True,"message": "Phone number verified. Please verify your email as well."}, status=status.HTTP_200_OK)
         
-        return Response({"message": "Invalid OTP or missing email/phone."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'status': True,"message": "Invalid OTP or missing email/phone."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LogoutView(viewsets.ModelViewSet):
@@ -228,7 +231,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
     # Define paths
     # reference_image_path = 'C:/Users/DELL/Downloads/highcrop.jpg'  # Replace with your reference image path
-    local_folder_path = 'media/photos/20126010@gmail.com'  # Replace with your local folder path
     # user_email = request.user.email
     #     if not user_email:
     #         return Response({"error": "User email not found."}, status=400)
@@ -244,6 +246,12 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     
     def analyze_face(self, request, *args, **kwargs):
         """Compare faces in a reference image with images in the event folder."""
+        # import ipdb;ipdb.set_trace()
+        try:
+            local_folder_path = f'media/photos/{request.user}'  # Replace with your local folder path
+        except Exception as e:
+                return Response({ "status": True, "message": "You are not a authorized user.","data": matching_images}, status=status.HTTP_400_BAD_REQUEST)
+            
         if 'image' not in request.data:
             return Response({"error": "No image uploaded."}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -265,12 +273,15 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                 return Response({"status": False, "message": "No faces detected in the reference image."}, status=status.HTTP_400_BAD_REQUEST)
 
             
-            event_image_paths = [os.path.join(self.local_folder_path, img) for img in os.listdir(self.local_folder_path) if img.lower().endswith(('png', 'jpg', 'jpeg'))]
+            event_image_paths = [os.path.join(local_folder_path, img) 
+                                 for img in os.listdir(local_folder_path) 
+                                 if img.lower().endswith(('png', 'jpg', 'jpeg'))]
 
           
-            max_threads = 16
+            max_threads = min(16, multiprocessing.cpu_count())
             with concurrent.futures.ThreadPoolExecutor(max_workers=max_threads) as executor:
-                matching_images = list(executor.map(lambda path: self.compare_faces_in_image(reference_image_data, path), event_image_paths))
+                matching_images = list(executor.map(lambda path: self.compare_faces_in_image(reference_image_data, path), 
+                                                    event_image_paths))
 
             # Filter out None values (no match found)
             matching_images = [img for img in matching_images if img is not None]
@@ -280,7 +291,10 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                 return Response({"status": False, "message": "No matching faces found in the event images."}, status=status.HTTP_404_NOT_FOUND)
 
         except Exception as e:
-            return Response({"error": f"Error processing the image: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'status':False,
+                                'message':"something went wrong!",
+                                'error':str(e)},
+                              status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def compare_faces_in_image(self, reference_image_data, event_image_path):
         """Helper method to compare faces in reference image with an event image."""
@@ -330,7 +344,10 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data, 
+            status=status.HTTP_201_CREATED, 
+            headers=headers)
 
 
 
@@ -344,13 +361,13 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(instance, data=request.data, partial=partial)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
-                return Response({'status': True, 'message': 'User updated successfully', 'data': {'user':serializer.data}}, status=status.HTTP_200_OK)
-        except CustomError as e:
-             return Response({
-            'status': False,
-            'message': e.message,
-            'code': e.code
-        }, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'status': True, 
+                                 'message': 'User updated successfully', 
+                                 'data': {'user':serializer.data}}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'status':False,
+                    'message':"something went wrong!",
+                    'error':str(e)},status=status.HTTP_400_BAD_REQUEST)
     
     
             

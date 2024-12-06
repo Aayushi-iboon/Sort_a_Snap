@@ -49,6 +49,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=50,null=True,blank=True)
     last_name = models.CharField(max_length=50,null=True,blank=True)
+    edit_profile = models.BooleanField(default=False)
     profile_image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
     otp_status = models.BooleanField(default=False)  # phone verify
     otp_status_email = models.BooleanField(default=False)  # email verify
