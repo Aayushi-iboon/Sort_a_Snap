@@ -2,9 +2,7 @@ from django.urls import path
 from django.conf import settings
 from .view.group_views import CustomGroupViewSet,JoinGroupView
 from .view.photouplaod_view import PhotoGroupViewSet
-from .view.upload_photo_view import PhotoGroupView
-# from .view.sub_group_view import SubGroupViewSet
-
+from .view.upload_photo_view import PhotoGroupView,PhotoGroupImageView
 
 
 
@@ -41,6 +39,13 @@ urlpatterns = [
     path("create-customgroupmember-viewset/", JoinGroupView.as_view({'post':'join'}), name="create_customgroupmember_viewset"),
     path("generate-OTP-viewset/", JoinGroupView.as_view({'post':'user_verify'}), name="generate_OTP_viewset"),
     path("confirm-OTP-viewset/", JoinGroupView.as_view({'post':'user_confirm'}), name="confirm_OTP_viewset"),
+
+
+    path("photo-group-image-viewset-list/", PhotoGroupImageView.as_view({'get':'list'}), name="photo_image_viewset_list"),
+    path("upload-group-image-photo/", PhotoGroupImageView.as_view({'post':'create'}), name="group_image_upload_photo"),
+    path("upload-group-image-photo/update/<int:pk>/", PhotoGroupImageView.as_view({'patch':'update'}), name="update_group_image__upload_photo"),
+    path("upload-group-image-photo-delete/<int:pk>/", PhotoGroupImageView.as_view({'delete':'destroy'}), name="delete_group_image_photo"),
+    path("upload-group-image-photo/retrieve/<int:pk>/", PhotoGroupImageView.as_view({'get':'retrieve'}), name="group_retrive_image_photo"),
     
 
     # path("get-customgroupmember-viewset/", GroupMemberViewSet.as_view({'get':'list'}), name="get_customgroupmember_viewset"),
