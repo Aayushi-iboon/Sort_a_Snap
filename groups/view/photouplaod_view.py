@@ -93,7 +93,9 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
             user = get_user_model().objects.get(id=user) 
             photos = photo_group.objects.filter(user=user)
             serializer = self.get_serializer(photos, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({ "status": True,  
+                             "message": "get_ list Data retrieved successfully.",
+                             "data":{"user_data":serializer.data}}, status=status.HTTP_200_OK)
         
         except user.DoesNotExist:
             return Response(
@@ -125,7 +127,7 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(photos, many=True)
             return Response({ "status": True,  
                              "message": "group and user wise Data retrieved successfully.",
-                             "data":serializer.data}, status=status.HTTP_200_OK)
+                             "data":{"user_data":serializer.data}}, status=status.HTTP_200_OK)
         
         except user.DoesNotExist:
             return Response(

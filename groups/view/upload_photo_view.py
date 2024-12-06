@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from groups.model.group import photo_group
+from groups.model.group import photo_group,PhotoGroupImage
 from groups.serializers.photo_upload_serializer import PhotoGroupSerializer,PhotoGroupImageSerializer
 from rest_framework.permissions import IsAuthenticated  
 from rest_framework.response import Response
@@ -17,9 +17,6 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.conf import settings
 User = get_user_model()
-
-
-
 
 # class CustomGroupViewSet(viewsets.ModelViewSet):
 #     queryset = photo_group.objects.all()
@@ -170,6 +167,10 @@ class PhotoGroupView(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         # import ipdb;ipdb.set_trace()
+        required_fields = ["user","group"]
+        upload_photo_error_message = check_required_fields(required_fields, request.data)
+        if upload_photo_error_message:
+            return Response({"status": False, "message": upload_photo_error_message},status=status.HTTP_400_BAD_REQUEST)
         serializer = self.serializer_class(data=request.data, context={'request': request})
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -224,3 +225,122 @@ class PhotoGroupView(viewsets.ModelViewSet):
             return Response({'status': False, 'message': 'Data not found.'},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'status': False, 'message': Global_error_message, 'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+
+class PhotoGroupImageView(viewsets.ModelViewSet):
+  
+    queryset = PhotoGroupImage.objects.all()
+    serializer_class = PhotoGroupImageSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    filterset_fields = ['photo_group']  
+    search_fields = ['photo_group__name'] 
+
+    def get_queryset(self):
+        return super().get_queryset().filter(photo_group__user=self.request.user)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        try:
+            if not queryset.exists():
+                return Response(
+                    {"status": False, "message": "No images found!", 'data': []},
+                    status=status.HTTP_204_NO_CONTENT
+                )
+            serializer = self.serializer_class(queryset, many=True, context={'request': request})
+            return Response(
+                {"status": True, "message": "Images retrieved successfully.", 'data': {"images": serializer.data}},
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response(
+                {"status": False, "message": "Something went wrong!", "error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def create(self, request, *args, **kwargs):
+        required_fields = ["photo_group", "image2"]
+        missing_fields_message = check_required_fields(required_fields, request.data)
+        if missing_fields_message:
+            return Response(
+                {"status": False, "message": missing_fields_message},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(
+                {"status": True, "message": "Image uploaded successfully.", "data": serializer.data},
+                status=status.HTTP_201_CREATED
+            )
+        return Response(
+            {"status": False, "message": "Invalid data provided."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        required_fields = ["photo_group"]
+        missing_fields_message = check_required_fields(required_fields, request.data)
+        if missing_fields_message:
+            return Response(
+                {"status": False, "message": missing_fields_message},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        serializer = self.serializer_class(
+            instance,
+            data=request.data,
+            context={'request': request},
+            partial=partial
+        )
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(
+                {"status": True, "message": "Image updated successfully.", "data": serializer.data},
+                status=status.HTTP_200_OK
+            )
+        return Response(
+            {"status": False, "message": "Invalid data provided."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            if instance:
+                instance.delete()
+            return Response(
+                {'status': True, 'message': 'Image deleted successfully'},
+                status=status.HTTP_200_OK
+            )
+        except Http404:
+            return Response(
+                {'status': False, 'message': "Image not found!"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {'status': False, 'message': "Something went wrong!", 'error': str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.serializer_class(instance, context={'request': request})
+            return Response(
+                {'status': True, 'message': 'Image retrieved successfully.', 'data': serializer.data},
+                status=status.HTTP_200_OK
+            )
+        except Http404:
+            return Response(
+                {'status': False, 'message': 'Image not found.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {'status': False, 'message': "Something went wrong!", 'error': str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
