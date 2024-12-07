@@ -18,11 +18,11 @@ from .models import BlackListedToken
 import boto3
 from django.conf import settings
 import concurrent.futures
+import multiprocessing
 import os
 from rest_framework.exceptions import ValidationError
-from face.function_call import flatten_errors
-import multiprocessing
-from .aws_services import AWSRekognitionService
+# from face.function_call import check_required_fields,validate_unique_email
+
 User = get_user_model()
 
 class GenerateOTP(APIView):

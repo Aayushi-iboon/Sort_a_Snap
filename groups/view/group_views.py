@@ -17,7 +17,7 @@ from rest_framework import status, permissions
 import random
 from rest_framework.decorators import permission_classes
 import logging
-
+from face.function_call import check_required_fields
 User = get_user_model()
 logging.getLogger(__name__)
 
@@ -55,6 +55,12 @@ class CustomGroupViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         try:
+            required_fields = ["name"]
+           
+            group_error_message = check_required_fields(required_fields, request.data)
+            if group_error_message:
+                return Response({"status": False, "message": group_error_message},status=status.HTTP_400_BAD_REQUEST)
+            
             serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
                 group_name = serializer.validated_data.get('name')

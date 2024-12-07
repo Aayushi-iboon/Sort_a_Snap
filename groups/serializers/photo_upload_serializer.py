@@ -10,11 +10,18 @@ User = get_user_model()
 class PhotoGroupImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = PhotoGroupImage
-        fields = '__all__'
+        fields = ['id','image2','photo_group']
 
-    def get_images_data(self, obj):
-        images = obj.images.all()  # Get all related PhotoGroupImage instances
-        return [{'id': image.id, 'image2': image.image2.url if image.image2 else None} for image in images]
+    def to_representation(self, instance):
+        # Default representation from the parent class
+        representation = super().to_representation(instance)
+
+        # Custom representation
+        return {
+            "id": instance.id,
+            "image_url": instance.image2.url if instance.image2 else None,  
+            "photo_user_name": instance.photo_group.user.email if instance.photo_group else None, 
+        }     
 
 class PhotoGroupSerializer(serializers.ModelSerializer):
     # images = PhotoGroupImageSerializer(many=True, required=False)
