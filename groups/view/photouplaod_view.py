@@ -93,7 +93,9 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
             user = get_user_model().objects.get(id=user) 
             photos = photo_group.objects.filter(user=user)
             serializer = self.get_serializer(photos, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({ "status": True,  
+                             "message": "get_ list Data retrieved successfully.",
+                             "data":{"user_data":serializer.data}}, status=status.HTTP_200_OK)
         
         except user.DoesNotExist:
             return Response(
@@ -249,8 +251,8 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
             else:
                 data = serializer.data
                 data['logo_image_url'] = None
-            return Response({'status': True, 'message': 'Facility data retrieved successfully.', 'data': data} ,status=status.HTTP_200_OK)
+            return Response({'status': True, 'message': 'Photo group data retrieved successfully.', 'data': data} ,status=status.HTTP_200_OK)
         except Http404:
-            return Response({'status': False, 'message': 'Facility not found.'},status=status.HTTP_400_BAD_REQUEST)
+            return Response({'status': False, 'message': 'FaciPhoto grouplity not found.'},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'status': False, 'message': Global_error_message, 'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

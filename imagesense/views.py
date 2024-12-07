@@ -18,11 +18,11 @@ from .models import BlackListedToken
 import boto3
 from django.conf import settings
 import concurrent.futures
+import multiprocessing
 import os
 from rest_framework.exceptions import ValidationError
-from face.function_call import flatten_errors
-import multiprocessing
-from .aws_services import AWSRekognitionService
+
+
 User = get_user_model()
 
 class GenerateOTP(APIView):
@@ -231,6 +231,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
     # Define paths
     # reference_image_path = 'C:/Users/DELL/Downloads/highcrop.jpg'  # Replace with your reference image path
+    local_folder_path = 'media/photos/20126010@gmail.com'  # Replace with your local folder path
     # user_email = request.user.email
     #     if not user_email:
     #         return Response({"error": "User email not found."}, status=400)
@@ -253,7 +254,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                 return Response({ "status": True, "message": "You are not a authorized user.","data": matching_images}, status=status.HTTP_400_BAD_REQUEST)
             
         if 'image' not in request.data:
-            return Response({"error": "No image uploaded."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"status": False, "message":"Something went wrong!","error":str(e)}, status=status.HTTP_404_NOT_FOUND)
         
         if len(request.FILES) > settings.DATA_UPLOAD_MAX_NUMBER_FILES:
             raise ValidationError(f"Cannot upload more than {settings.DATA_UPLOAD_MAX_NUMBER_FILES} files at once.")
@@ -286,15 +287,12 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             # Filter out None values (no match found)
             matching_images = [img for img in matching_images if img is not None]
             if matching_images:
-                return Response({ "status": True, "message": "Photos retrieved successfully.","data": matching_images}, status=status.HTTP_200_OK)
+                return Response({ "status": True, "message": "Photos retrieved successfully.","data": {"images":matching_images}}, status=status.HTTP_200_OK)
             else:
                 return Response({"status": False, "message": "No matching faces found in the event images."}, status=status.HTTP_404_NOT_FOUND)
 
         except Exception as e:
-            return Response({'status':False,
-                                'message':"something went wrong!",
-                                'error':str(e)},
-                              status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": f"Error processing the image: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def compare_faces_in_image(self, reference_image_data, event_image_path):
         """Helper method to compare faces in reference image with an event image."""
@@ -344,10 +342,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, 
-            status=status.HTTP_201_CREATED, 
-            headers=headers)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 
@@ -356,18 +351,33 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             partial = kwargs.pop('partial', False)
             instance = self.get_object()
             if not instance.is_active:
-                raise CustomError("User is inactive", code="user_inactive")
+                return Response({'status': False, 'message': "User is inactive", 'code': "user_inactive"},status=status.HTTP_400_BAD_REQUEST)
+
+            if not partial:
+                missing_fields_message = check_required_fields(['email', 'phone_no'], request.data)
+                if missing_fields_message:
+                    return Response( {'status': False, 'message': missing_fields_message},status=status.HTTP_400_BAD_REQUEST)
+
+            email = request.data.get('email')
+            email_error = validate_unique_email(self.get_queryset(), email, instance)
+            if email_error:
+                return Response({'status': False, 'message': email_error}, status=status.HTTP_400_BAD_REQUEST)
+
+            phone_no = request.data.get('phone_no')
+            if phone_no and phone_no != instance.phone_no:
+                if self.get_queryset().filter(phone_no=phone_no).exists():
+                    return Response({'status': False, 'message': "This phone number already exists!"},status=status.HTTP_400_BAD_REQUEST)
 
             serializer = self.get_serializer(instance, data=request.data, partial=partial)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
-                return Response({'status': True, 
-                                 'message': 'User updated successfully', 
-                                 'data': {'user':serializer.data}}, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({'status':False,
-                    'message':"something went wrong!",
-                    'error':str(e)},status=status.HTTP_400_BAD_REQUEST)
+                return Response({'status': True, 'message': 'User updated successfully', 'data': {'user':serializer.data}}, status=status.HTTP_200_OK)
+        except CustomError as e:
+             return Response({
+            'status': False,
+            'message': e.message,
+            'code': e.code
+        }, status=status.HTTP_400_BAD_REQUEST)
     
     
             
