@@ -21,7 +21,7 @@ import concurrent.futures
 import multiprocessing
 import os
 from rest_framework.exceptions import ValidationError
-# from face.function_call import check_required_fields,validate_unique_email
+from face.function_call import check_required_fields
 
 User = get_user_model()
 
