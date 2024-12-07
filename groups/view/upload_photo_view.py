@@ -18,9 +18,6 @@ from django.core.files.storage import default_storage
 from django.conf import settings
 User = get_user_model()
 
-
-
-
 # class CustomGroupViewSet(viewsets.ModelViewSet):
 #     queryset = photo_group.objects.all()
 #     serializer_class = photo_serializer
@@ -244,7 +241,6 @@ class PhotoGroupImageView(viewsets.ModelViewSet):
         return super().get_queryset().filter(photo_group__user=self.request.user)
 
     def list(self, request, *args, **kwargs):
-        import ipdb;ipdb.set_trace()
         queryset = self.filter_queryset(self.get_queryset())
         try:
             if not queryset.exists():
