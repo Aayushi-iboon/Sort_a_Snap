@@ -359,9 +359,9 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                     return Response( {'status': False, 'message': missing_fields_message},status=status.HTTP_400_BAD_REQUEST)
 
             email = request.data.get('email')
-            email_error = validate_unique_email(self.get_queryset(), email, instance)
-            if email_error:
-                return Response({'status': False, 'message': email_error}, status=status.HTTP_400_BAD_REQUEST)
+            # email_error = validate_unique_email(self.get_queryset(), email, instance)
+            # if email_error:
+            #     return Response({'status': False, 'message': email_error}, status=status.HTTP_400_BAD_REQUEST)
 
             phone_no = request.data.get('phone_no')
             if phone_no and phone_no != instance.phone_no:
