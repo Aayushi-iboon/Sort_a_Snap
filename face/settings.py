@@ -32,7 +32,11 @@ DEBUG = os.getenv("DEBUG")
 
 # ALLOWED_HOSTS = ['192.168.1.72','localhost','127.0.0.1']
 ALLOWED_HOSTS = ['192.168.1.72','localhost','127.0.0.1', "*"]
-
+# CSRF and CORS Settings
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:81',
+    'http://127.0.0.1:81'
+]
 # ALLOWED_HOSTS = []
 
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
@@ -96,6 +100,7 @@ DATABASES = {
         "USER": os.getenv("DATABASE_USER"),
         "PASSWORD": os.getenv("DATABASE_PASSWORD"),
         "HOST": os.getenv("DATABASE_HOST"),
+        # "HOST": "localhost",
         "PORT": os.getenv("DATABASE_PORT"),
     }
 }

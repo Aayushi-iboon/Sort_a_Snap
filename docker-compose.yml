@@ -19,11 +19,6 @@ services:
       - "host.docker.internal:host-gateway"
     depends_on:
       - redis
-    environment:
-      - DATABASE_HOST=host.docker.internal
-    #   - CELERY_BROKER_URL=redis://redis:6379/0
-    #   - CELERY_RESULT_BACKEND=redis://redis:6379/0
-    #   - DATABASE_URL=postgresql://facial_user:j#dfkhdbxci12ncdi@host.docker.internal:5432/snap_shot
 
   celery:
     container_name: celery_worker
@@ -43,11 +38,6 @@ services:
     depends_on:
       - redis
       - backend
-    environment:
-      - DATABASE_HOST=host.docker.internal
-    #   - CELERY_BROKER_URL=redis://redis:6379/0
-    #   - CELERY_RESULT_BACKEND=redis://redis:6379/0
-    #   - DATABASE_URL=postgresql://facial_user:j#dfkhdbxci12ncdi@host.docker.internal:5432/snap_shot
 
   celery-beat:
     container_name: celery_beat
@@ -62,11 +52,6 @@ services:
     depends_on:
       - redis
       - backend
-    environment:
-      - DATABASE_HOST=host.docker.internal
-    #   - CELERY_BROKER_URL=redis://redis:6379/0
-    #   - CELERY_RESULT_BACKEND=redis://redis:6379/0
-    #   - DATABASE_URL=postgresql://facial_user:j#dfkhdbxci12ncdi@host.docker.internal:5432/snap_shot
 
   redis:
     container_name: redis
