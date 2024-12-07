@@ -280,31 +280,38 @@ class PhotoGroupImageView(viewsets.ModelViewSet):
         )
 
     def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        required_fields = ["photo_group"]
-        missing_fields_message = check_required_fields(required_fields, request.data)
-        if missing_fields_message:
+        try:
+            partial = kwargs.pop('partial', False)
+            instance = self.get_object()
+            required_fields = ["photo_group"]
+            missing_fields_message = check_required_fields(required_fields, request.data)
+            if missing_fields_message:
+                return Response(
+                    {"status": False, "message": missing_fields_message},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        
+            serializer = self.serializer_class(
+                instance,
+                data=request.data,
+                context={'request': request},
+                partial=partial
+            )
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(
+                    {"status": True, "message": "Image updated successfully.", "data": serializer.data},
+                    status=status.HTTP_200_OK
+                )
             return Response(
-                {"status": False, "message": missing_fields_message},
+                {"status": False, "message": "Invalid data provided."},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        serializer = self.serializer_class(
-            instance,
-            data=request.data,
-            context={'request': request},
-            partial=partial
-        )
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
+        except Exception as e:
             return Response(
-                {"status": True, "message": "Image updated successfully.", "data": serializer.data},
-                status=status.HTTP_200_OK
+                {'status': False, 'message': "Something went wrong!", 'error': str(e)},
+                status=status.HTTP_400_BAD_REQUEST
             )
-        return Response(
-            {"status": False, "message": "Invalid data provided."},
-            status=status.HTTP_400_BAD_REQUEST
-        )
 
     def destroy(self, request, *args, **kwargs):
         try:
