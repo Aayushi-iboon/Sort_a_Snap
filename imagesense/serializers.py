@@ -1,8 +1,14 @@
 # my_app/serializers.py
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken, TokenError
+from django.core.cache import cache
+import hashlib
 import logging
+from imagesense.models import BlackListToken
 from django.contrib.auth.password_validation import validate_password
+import jwt
+
 
 logger = logging.getLogger(__name__)
 
@@ -94,3 +100,36 @@ class UserProfileSerializer(serializers.ModelSerializer):
     #         doctor_instance.save()
 
     #     return bright_sales_instance
+    
+
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+    access = serializers.CharField(required=False) 
+    user = serializers.IntegerField()
+    token = serializers.CharField()
+
+    default_error_messages = {
+        'bad_token': ('Token is invalid or expired')
+    }
+
+    def validate(self, attrs):
+        self.refresh_token = attrs.get('refresh')
+        self.access_token = attrs.get('access')  
+        self.user = attrs.get('user')  
+        self.token = attrs.get('token')
+        return attrs
+
+    def save(self, **kwargs):
+        try:
+            token = RefreshToken(self.refresh_token)
+            token.blacklist()
+            cache_key =hashlib.sha256(self.token.encode()).hexdigest()
+            cache.set(cache_key, "blacklisted", timeout=84600)
+        except TokenError:
+            self.fail('bad_token')
+
+        if self.access_token:
+            try:
+                AccessToken(self.access_token).blacklist()
+            except TokenError:
+                self.fail('bad_token')

@@ -100,13 +100,13 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 
-class BlackListedToken(models.Model):
-    token = models.CharField(max_length=500)
-    user = models.ForeignKey(User, related_name="token_user", on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(auto_now=True)
+# class BlackListedToken(models.Model):
+#     token = models.CharField(max_length=500)
+#     user = models.ForeignKey(User, related_name="token_user", on_delete=models.CASCADE)
+#     timestamp = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        unique_together = ("token", "user")
+#     class Meta:
+#         unique_together = ("token", "user")
         
         
         
@@ -119,3 +119,14 @@ def set_user_slug(sender, instance, *args, **kwargs):
 
 pre_save.connect(set_user_slug, sender=User)
 
+
+
+
+class BlackListToken(models.Model):
+    token = models.CharField(max_length=500)
+    user = models.ForeignKey(User, related_name="token_user", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(null=True, blank=True)  # Optionally store expiration date
+
+    def __str__(self):
+        return f"Token {self.token} for user {self.user.email}"

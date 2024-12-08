@@ -16,6 +16,9 @@ from face.function_call import ALLOWED_IMAGE_TYPES
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
+
+
 User = get_user_model()
 
 rekognition_client = boto3.client('rekognition', region_name='us-west-2')  # Update the region as needed
@@ -84,22 +87,23 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
 
     def get_list(self, request, *args, **kwargs):
         user = request.data.get('user')
-        if not user:
-            return Response(
-                {"status":False,'message': 'user_id is required in the request body'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        print(user)
         try:
+            if not user:
+                return Response(
+                    {"status":False,'message': 'user is required in the request body'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
             user = get_user_model().objects.get(id=user) 
             photos = photo_group.objects.filter(user=user)
             serializer = self.get_serializer(photos, many=True)
             return Response({ "status": True,  
-                             "message": "get_ list Data retrieved successfully.",
-                             "data":{"user_data":serializer.data}}, status=status.HTTP_200_OK)
+                            "message": "get_ list Data retrieved successfully.",
+                            "data":{"user_data":serializer.data}}, status=status.HTTP_200_OK)
         
-        except user.DoesNotExist:
+        except ObjectDoesNotExist:
             return Response(
-                {"status":False,'message': 'User not found'}, 
+                {"status":False,'message': 'User not found',"data":None}, 
                 status=status.HTTP_404_NOT_FOUND
             )
 

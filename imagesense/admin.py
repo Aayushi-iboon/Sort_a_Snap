@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User,BlackListedToken
+from .models import User,BlackListToken
 from .model import family
 from .model.contact_us import ContactUs
 from .model.privacypolicy import PrivacyPolicy
@@ -42,7 +42,12 @@ class UserAdmin(BaseUserAdmin):
     ordering = ('id',)
 
     # You can add other custom configurations if necessary
-    
+
+
+@admin.register(BlackListToken)
+class BlackListedTokenAdmin(admin.ModelAdmin):
+    readonly_fields = ['created_at']  # Ensure this field exists in your model
+    list_display = ['user', 'token', 'created_at']
     
 
 @admin.register(family)
@@ -88,8 +93,3 @@ class ContactUsAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at']
     
     
-
-@admin.register(BlackListedToken)
-class BlackListedTokenAdmin(admin.ModelAdmin):
-    list_display = ("token", "user", "timestamp")
-    readonly_fields = ("token", "user", "timestamp")

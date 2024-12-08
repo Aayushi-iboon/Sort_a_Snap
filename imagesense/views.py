@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .tasks import send_otp,user_otp
-from .serializers import OTPSerializer, UserProfileSerializer
+from .serializers import OTPSerializer, UserProfileSerializer,LogoutSerializer
 from rest_framework_simplejwt.tokens import RefreshToken,AccessToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, status
@@ -14,7 +14,7 @@ from django.http import Http404
 from face.exceptions import CustomError
 from rest_framework.authtoken.models import Token
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
-from .models import BlackListedToken 
+from .models import BlackListToken 
 import boto3
 from django.conf import settings
 import concurrent.futures
@@ -181,40 +181,64 @@ class VerifyOTP(APIView):
         return Response({'status': True,"message": "Invalid OTP or missing email/phone."}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class LogoutView(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    
-    def logout(self, request, *args, **kwargs):
-        try:
-            import ipdb;ipdb.set_trace()
-            access_token = request.headers.get('Authorization')
-            if access_token is None or not access_token.startswith('Bearer '):
-                return Response({
-                    'status': False,
-                    'message': 'Access token is missing or invalid'
-                }, status=status.HTTP_400_BAD_REQUEST)
 
-            access_token = access_token.split(' ')[1]  
-            try:
-                token = AccessToken(access_token)
-                cache.set(f'blacklisted_{access_token}', True, timeout=token.lifetime.total_seconds())
-                user = request.user 
-                BlackListedToken.objects.create(token=access_token, user=user)
+class UserLogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = LogoutSerializer
+
+    def post(self, request, *args, **kwargs):
+        # Create a mutable copy of request.data
+        data = request.data.copy()
+        data['user'] = request.user.id
+        data['token'] = request.auth.get('jti')
+
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response({"status": True, "message": "Logout successfully."})
+
+# class LogoutView(viewsets.ModelViewSet):
+#     permission_classes = [IsAuthenticated]
+    
+#     def logout(self, request, *args, **kwargs):
+#         try:
+#             access_token = request.headers.get('Authorization')
+#             if access_token is None or not access_token.startswith('Bearer '):
+#                 return Response({
+#                     'status': False,
+#                     'message': 'Access token is missing or invalid'
+#                 }, status=status.HTTP_400_BAD_REQUEST)
+
+#             access_token = access_token.split(' ')[1]  
+#             try:
+#                 token = AccessToken(access_token)
+#                 cache.set(f'blacklisted_{access_token}', True, timeout=token.lifetime.total_seconds())
+#                 user = request.user 
                 
-                return Response({
-                    'status': True,
-                    'message': 'User logged out successfully'
-                }, status=status.HTTP_200_OK)
-            except TokenError:
-                return Response({
-                    'status': False,
-                    'message': 'Token is invalid or expired'
-                }, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return Response({
-                'status': False,
-                'message': str(e)
-            }, status=status.HTTP_400_BAD_REQUEST)
+#                 # Check if the token is already blacklisted for the user
+#                 if not BlackListToken.objects.filter(token=access_token, user=user).exists():
+#                     BlackListToken.objects.create(token=access_token, user=user)
+#                 else:
+#                     return Response({
+#                         'status': True,
+#                         'message': 'Token is already blacklisted'
+#                     }, status=status.HTTP_200_OK)
+                    
+#                 return Response({
+#                     'status': True,
+#                     'message': 'User logged out successfully'
+#                 }, status=status.HTTP_200_OK)
+#             except TokenError:
+#                 return Response({
+#                     'status': False,
+#                     'message': 'Token is invalid or expired'
+#                 }, status=status.HTTP_400_BAD_REQUEST)
+#         except Exception as e:
+#             return Response({
+#                 'status': False,
+#                 'message': str(e)
+#             }, status=status.HTTP_400_BAD_REQUEST)
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -228,10 +252,16 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         aws_secret_access_key= settings.AWS_SECRET_ACCESS_KEY,
         region_name='ap-south-1'  # Replace with your preferred AWS region
     )
+    s3_client = boto3.client(
+        's3',
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        region_name='ap-south-1'
+    )
 
     # Define paths
     # reference_image_path = 'C:/Users/DELL/Downloads/highcrop.jpg'  # Replace with your reference image path
-    local_folder_path = 'media/photos/20126010@gmail.com'  # Replace with your local folder path
+    # local_folder_path = 'media/photos/20126010@gmail.com'  # Replace with your local folder path
     # user_email = request.user.email
     #     if not user_email:
     #         return Response({"error": "User email not found."}, status=400)
@@ -243,63 +273,72 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         """
         Dynamically generates the folder path based on the user's email.
         """
-        return os.path.join('media', 'photos', user_email)
+        return f'photos/{user_email}'
+        # return os.path.join('media', 'photos', user_email)
     
     def analyze_face(self, request, *args, **kwargs):
         """Compare faces in a reference image with images in the event folder."""
         # import ipdb;ipdb.set_trace()
         try:
-            local_folder_path = f'media/photos/{request.user}'  # Replace with your local folder path
-        except Exception as e:
-                return Response({ "status": True, "message": "You are not a authorized user.","data": matching_images}, status=status.HTTP_400_BAD_REQUEST)
-            
-        if 'image' not in request.data:
-            return Response({"status": False, "message":"Something went wrong!","error":str(e)}, status=status.HTTP_404_NOT_FOUND)
-        
-        if len(request.FILES) > settings.DATA_UPLOAD_MAX_NUMBER_FILES:
-            raise ValidationError(f"Cannot upload more than {settings.DATA_UPLOAD_MAX_NUMBER_FILES} files at once.")
-       
-        uploaded_file = request.data['image']
-        reference_image_data = uploaded_file.read()
+            s3_bucket_name = os.getenv("AWS_STORAGE_BUCKET_NAME")
+            user_folder_path = self.get_user_folder_path(request.user.email)
+            s3_bucket_url = f'https://{s3_bucket_name}.s3.ap-south-1.amazonaws.com'
 
-        try:
-           
+            if 'image' not in request.data:
+                return Response({"status": False, "message": "No image provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+            uploaded_file = request.data['image']
+            reference_image_data = uploaded_file.read()
+
+            # Detect faces in the reference image
             response = self.rekognition_client.detect_faces(
                 Image={'Bytes': reference_image_data},
                 Attributes=['DEFAULT']
             )
-
             reference_faces = response['FaceDetails']
             if not reference_faces:
                 return Response({"status": False, "message": "No faces detected in the reference image."}, status=status.HTTP_400_BAD_REQUEST)
 
-            
-            event_image_paths = [os.path.join(local_folder_path, img) 
-                                 for img in os.listdir(local_folder_path) 
-                                 if img.lower().endswith(('png', 'jpg', 'jpeg'))]
+            # List images from the user's folder in the S3 bucket
+            response = self.s3_client.list_objects_v2(Bucket=s3_bucket_name, Prefix=user_folder_path)
+            event_image_keys = [
+                obj['Key'] for obj in response.get('Contents', []) 
+                if obj['Key'].lower().endswith(('png', 'jpg', 'jpeg'))
+            ]
 
-          
+            if not event_image_keys:
+                return Response({"status": False, "message": "No event images found for the user."}, status=status.HTTP_404_NOT_FOUND)
+
+            image_urls = [f'{s3_bucket_url}/{key}' for key in event_image_keys]
+            print(image_urls)
+            # Compare faces using multithreading
             max_threads = min(16, multiprocessing.cpu_count())
             with concurrent.futures.ThreadPoolExecutor(max_workers=max_threads) as executor:
-                matching_images = list(executor.map(lambda path: self.compare_faces_in_image(reference_image_data, path), 
-                                                    event_image_paths))
+                matching_images = list(executor.map(
+                    lambda key: self.compare_faces_in_image(reference_image_data, s3_bucket_name, key),
+                    event_image_keys
+                ))
 
             # Filter out None values (no match found)
             matching_images = [img for img in matching_images if img is not None]
-            if matching_images:
-                return Response({ "status": True, "message": "Photos retrieved successfully.","data": {"images":matching_images}}, status=status.HTTP_200_OK)
+            
+            matched_images = ["https://eventpics1.s3.ap-south-1.amazonaws.com/" + img for img in matching_images]
+
+            if matched_images:
+                return Response({"status": True, "message": "Photos retrieved successfully.", "data": {"images": matched_images}}, status=status.HTTP_200_OK)
             else:
                 return Response({"status": False, "message": "No matching faces found in the event images."}, status=status.HTTP_404_NOT_FOUND)
-
         except Exception as e:
-            return Response({"error": f"Error processing the image: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"status": False,"message":"something went wrong","error": f"Error processing the image: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 
-    def compare_faces_in_image(self, reference_image_data, event_image_path):
-        """Helper method to compare faces in reference image with an event image."""
+    def compare_faces_in_image(self, reference_image_data, bucket_name, event_image_key):
+        """Helper method to compare faces in the reference image with an image stored in S3."""
         try:
-            with open(event_image_path, 'rb') as image_file:
-                event_image_data = image_file.read()
+            # Get image data from S3
+            event_image_data = self.s3_client.get_object(Bucket=bucket_name, Key=event_image_key)['Body'].read()
 
+            # Compare the images using Rekognition
             compare_response = self.rekognition_client.compare_faces(
                 SourceImage={'Bytes': reference_image_data},
                 TargetImage={'Bytes': event_image_data},
@@ -308,9 +347,9 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
             for match in compare_response['FaceMatches']:
                 if match['Similarity'] >= 60:
-                    return event_image_path
+                    return event_image_key  # Return the key of the matching image
         except Exception as e:
-            print(f"Error processing {event_image_path}: {e}")
+            print(f"Error processing {event_image_key}: {e}")
             return None
 
 

@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import GenerateOTP, VerifyOTP
 from rest_framework.routers import DefaultRouter
-from .views import UserProfileViewSet,LogoutView
+from .views import UserProfileViewSet,UserLogoutView
 from .view.family_view import FamilyDataView
 from .view.privacypolicy_view import PrivacypolicyDataView
 from .view.contact_us_view import ContactusDataView
@@ -13,7 +13,8 @@ from django.conf import settings
 urlpatterns = [
     path("generate-otp/", GenerateOTP.as_view(), name="generate_otp"),
     path("verify-otp/", VerifyOTP.as_view(), name="verify_otp"),
-    path('logout/', LogoutView.as_view({'post':'logout'}), name='logout'),
+    path('user/logout/', UserLogoutView.as_view(), name='user_logout'),
+    # path('logout/', LogoutView.as_view({'post':'logout'}), name='logout'),
 
     path("edit-profile-image/", UserProfileViewSet.as_view({'get':'list'}), name="list_user_profile_image"),
     path("analyze-face-image/", UserProfileViewSet.as_view({'post':'analyze_face'}), name="analyze_face_image"),
