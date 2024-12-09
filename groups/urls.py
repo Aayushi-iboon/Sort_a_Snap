@@ -13,6 +13,8 @@ urlpatterns = [
     path("get-customgroup-viewset-delete/<int:pk>/", CustomGroupViewSet.as_view({'delete':'destroy'}), name="customgroup_viewset_delete"),
     path("get-customgroup-viewset-retrieve/<int:pk>/", CustomGroupViewSet.as_view({'get':'retrieve'}), name="customgroup_viewset_retrieve"),
     path("get-customgroup-viewset-userlist/", CustomGroupViewSet.as_view({'get':'userlist'}), name="get-customgroup-viewset-userlist"),
+    path("get-customgroup-viewset-pagelist/", CustomGroupViewSet.as_view({'get':'list_page'}), name="get-customgroup-viewset-pagelist"),
+    
     
     path("photo-viewset-list/", PhotoGroupViewSet.as_view({'get':'list'}), name="photo_viewset_list"),
     path("photo-get-list/", PhotoGroupViewSet.as_view({'post':'get_list'}), name="photo_get_list"),
@@ -31,6 +33,8 @@ urlpatterns = [
     path("upload-group-photo/update/<int:pk>/", PhotoGroupView.as_view({'patch':'update'}), name="update_group_upload_photo"),
     path("upload-group-photo-delete/<int:pk>/", PhotoGroupView.as_view({'delete':'destroy'}), name="delete_group_photo"),
     path("upload-group-photo/retrieve/<int:pk>/", PhotoGroupView.as_view({'get':'retrieve'}), name="group_retrive_photo"),
+    path("photo-group-viewset-pagelist/", PhotoGroupView.as_view({'get':'list_page'}), name="photo_viewset_pagelist"),
+    
     
     # path("get-subgroup-viewset/list/", SubGroupViewSet.as_view({'get':'list'}), name="get_subgroup_list"),
     # path("get-subgroup-viewset/", SubGroupViewSet.as_view({'get':'list'}), name="get_subgroup_list"),
@@ -42,6 +46,7 @@ urlpatterns = [
 
 
     path("photo-group-image-viewset-list/", PhotoGroupImageView.as_view({'get':'list'}), name="photo_image_viewset_list"),
+    path("photo-group-image-viewset-pagelist/", PhotoGroupImageView.as_view({'get':'list_page'}), name="photo_image_viewset_pagelist"),
     path("upload-group-image-photo/", PhotoGroupImageView.as_view({'post':'create'}), name="group_image_upload_photo"),
     path("upload-group-image-photo/update/<int:pk>/", PhotoGroupImageView.as_view({'patch':'update'}), name="update_group_image__upload_photo"),
     path("upload-group-image-photo-delete/<int:pk>/", PhotoGroupImageView.as_view({'delete':'destroy'}), name="delete_group_image_photo"),

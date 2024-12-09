@@ -78,7 +78,8 @@ class GenerateOTP(APIView):
                     send_otp.delay(email)
                     return Response({
                         "status": True,
-                        "message": f"OTP sent to {email}."
+                        "message": f"OTP sent to {email}.",
+                        "data":None
                     }, status=status.HTTP_200_OK)
 
             elif phone:
@@ -178,7 +179,7 @@ class VerifyOTP(APIView):
                     }, status=status.HTTP_200_OK)
                 return Response({'status': True,"message": "Phone number verified. Please verify your email as well."}, status=status.HTTP_200_OK)
         
-        return Response({'status': True,"message": "Invalid OTP or missing email/phone."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'status': False,"message": "Invalid OTP or missing email/phone."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -440,7 +441,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         try:
             instance = self.get_object()
             serializer = self.serializer_class(instance, context={'request': request})
-            return Response({'status': True, 'message': 'User data retrieved successfully.', 'data': {"user":serializer.data}} ,status=status.HTTP_200_OK)
+            return Response({'status': True, 'message': 'User data retrieved successfully.', 'data': serializer.data} ,status=status.HTTP_200_OK)
         except Http404:
             return Response({'status': False, 'message': 'Data not found.'},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:

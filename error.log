@@ -1,0 +1,254 @@
+ERROR 2024-12-09 06:17:18,154 log Internal Server Error: /api/group/get-customgroup-viewset-pagelist/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/group_views.py", line 67, in list_page
+    queryset = queryset.annotate(last_modified=Coalesce('updated_at', 'created_at')).order_by('-last_modified')
+NameError: name 'Coalesce' is not defined
+ERROR 2024-12-09 06:17:18,155 basehttp "GET /api/group/get-customgroup-viewset-pagelist/ HTTP/1.1" 500 100400
+ERROR 2024-12-09 06:34:33,928 log Internal Server Error: /api/group/confirm-OTP-viewset/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/group_views.py", line 473, in user_confirm
+    users=get_user_model().objects.get(phone_no=mobile_number)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 649, in get
+    raise self.model.DoesNotExist(
+imagesense.models.User.DoesNotExist: User matching query does not exist.
+ERROR 2024-12-09 06:34:33,929 basehttp "POST /api/group/confirm-OTP-viewset/ HTTP/1.1" 500 109409
+ERROR 2024-12-09 06:35:04,132 log Internal Server Error: /api/group/confirm-OTP-viewset/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/group_views.py", line 473, in user_confirm
+    users=get_user_model().objects.get(phone_no=mobile_number)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 649, in get
+    raise self.model.DoesNotExist(
+imagesense.models.User.DoesNotExist: User matching query does not exist.
+ERROR 2024-12-09 06:35:04,133 basehttp "POST /api/group/confirm-OTP-viewset/ HTTP/1.1" 500 109405
+ERROR 2024-12-09 06:44:24,457 log Internal Server Error: /api/group/confirm-OTP-viewset/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/group_views.py", line 474, in user_confirm
+    users=get_user_model().objects.get(phone_no=mobile_no)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 649, in get
+    raise self.model.DoesNotExist(
+imagesense.models.User.DoesNotExist: User matching query does not exist.
+ERROR 2024-12-09 06:44:24,459 basehttp "POST /api/group/confirm-OTP-viewset/ HTTP/1.1" 500 109419
+ERROR 2024-12-09 09:01:49,661 log Internal Server Error: /api/group/photo-group-viewset-pagelist/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/upload_photo_view.py", line 152, in list_page
+    queryset = queryset.annotate(last_modified=Coalesce('updated_at', 'created_at')).order_by('-last_modified')
+NameError: name 'Coalesce' is not defined
+ERROR 2024-12-09 09:01:49,662 basehttp "GET /api/group/photo-group-viewset-pagelist/ HTTP/1.1" 500 100955
+ERROR 2024-12-09 12:06:22,501 log Internal Server Error: /admin/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/response.py", line 92, in rendered_content
+    return template.render(context, self._request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 1008, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 1008, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 1008, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 1008, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/templatetags/static.py", line 116, in render
+    url = self.url(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/templatetags/static.py", line 113, in url
+    return self.handle_simple(path)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/templatetags/static.py", line 129, in handle_simple
+    return staticfiles_storage.url(path)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/storages/backends/s3.py", line 690, in url
+    params["Bucket"] = self.bucket.name
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/storages/backends/s3.py", line 514, in bucket
+    self._bucket = self.connection.Bucket(self.bucket_name)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/boto3/resources/factory.py", line 528, in create_resource
+    return partial(
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/boto3/resources/base.py", line 123, in __init__
+    raise ValueError(f'Required parameter {identifier} not set')
+ValueError: Required parameter name not set
+ERROR 2024-12-09 12:06:22,502 basehttp "GET /admin/ HTTP/1.1" 500 381228
+ERROR 2024-12-09 12:06:23,578 log Internal Server Error: /admin/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 220, in _get_response
+    response = response.render()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/response.py", line 114, in render
+    self.content = self.rendered_content
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/response.py", line 92, in rendered_content
+    return template.render(context, self._request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 1008, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 1008, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 1008, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 1008, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 1008, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/template/base.py", line 969, in render_annotated
+    return self.render(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/templatetags/static.py", line 116, in render
+    url = self.url(context)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/templatetags/static.py", line 113, in url
+    return self.handle_simple(path)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/templatetags/static.py", line 129, in handle_simple
+    return staticfiles_storage.url(path)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/storages/backends/s3.py", line 690, in url
+    params["Bucket"] = self.bucket.name
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/storages/backends/s3.py", line 514, in bucket
+    self._bucket = self.connection.Bucket(self.bucket_name)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/boto3/resources/factory.py", line 528, in create_resource
+    return partial(
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/boto3/resources/base.py", line 123, in __init__
+    raise ValueError(f'Required parameter {identifier} not set')
+ValueError: Required parameter name not set
+ERROR 2024-12-09 12:06:23,578 basehttp "GET /admin/ HTTP/1.1" 500 381228

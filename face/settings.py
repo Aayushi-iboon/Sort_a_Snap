@@ -56,7 +56,10 @@ INSTALLED_APPS = [
     'django_filters',
     'imagesense',
     'rest_framework',
-    'groups'
+    'groups',
+    
+    
+    'corsheaders',
     
 ]
 
@@ -68,7 +71,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
+    'corsheaders.middleware.CorsMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000","http://localhost:8001","http://localhost:8080"  # Add your web app's origin
 ]
 
 ROOT_URLCONF = 'face.urls'
@@ -138,6 +145,17 @@ STORAGES = {
 }
 
 
+AWS_S3_CUSTOM_DOMAIN = f'{os.getenv("AWS_STATIC_BUCKET_NAME")}.s3.{AWS_REGION}.amazonaws.com'
+STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+
+
+if DEBUG:
+    STATICFILES_DIRS = [BASE_DIR / "static"]
+    STATIC_URL = "/static/"
+else:
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+
+
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 MEDIA_URL = f"https://{os.getenv('AWS_MEDIA_BUCKET_NAME')}.s3.amazonaws.com/"
 
@@ -175,9 +193,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / "static"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

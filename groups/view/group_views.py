@@ -15,9 +15,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import ValidationError
 from rest_framework import status, permissions
 import random
+from django.db.models.functions import Coalesce
+from rest_framework import filters
 from rest_framework.decorators import permission_classes
 import logging
 from face.function_call import check_required_fields
+from face.function_call import StandardResultsSetPagination
 User = get_user_model()
 logging.getLogger(__name__)
 
@@ -26,6 +29,7 @@ class CustomGroupViewSet(viewsets.ModelViewSet):
     serializer_class = CustomGroupSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter,DjangoFilterBackend]
+    pagination_class = StandardResultsSetPagination
     filterset_fields = ['name']
     search_fields = ['name']
 
@@ -52,6 +56,45 @@ class CustomGroupViewSet(viewsets.ModelViewSet):
                 'message': "Something went wrong!",
                 'error': str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def list_page(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        ordering = request.query_params.get('ordering', None)
+        if ordering:
+            queryset = queryset.order_by(ordering)
+        else:
+            queryset = queryset.annotate(last_modified=Coalesce('updated_at', 'created_at')).order_by('-last_modified')    
+        try:
+            if not queryset.exists():
+                return Response({"status": False, "message": "Data not found!", 'data': []}, status=status.HTTP_204_NO_CONTENT)
+            
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer = self.serializer_class(page, many=True, context={'request': request})
+                serializer = self.get_paginated_response(serializer.data)
+            else:
+                serializer = self.serializer_class(queryset, many=True, context={'request': request})
+
+            count = serializer.data['count']
+            limit = int(request.GET.get('page_size', 10))
+            current_page = int(request.GET.get('page', 1))
+            return Response({
+                "status": True, 
+                "message":"group Data.",
+                'data': {'total_page': (count + limit - 1) // limit,
+                'count': count,
+                'current_page':current_page,"group":serializer.data['results']}
+            }, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            return Response({
+                'status': False,
+                'message': "Something went wrong!",
+                'error': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
+            
 
     def create(self, request, *args, **kwargs):
         try:
@@ -400,17 +443,17 @@ class JoinGroupView(viewsets.ModelViewSet):
         
     def user_verify(self,request):
         try:
-            mobile_number = request.data.get('phone_no')
-            if not mobile_number:
+            mobile_no = request.data.get('phone_no')
+            if not mobile_no:
                 return Response({
                     'status': False,
                     'message': 'Mobile number is required to send OTP.'
                 }, status=status.HTTP_400_BAD_REQUEST)
             else:
-                user_otp.delay(mobile_number)
+                user_otp.delay(mobile_no)
                 return Response({
                     'status': True,
-                    'message': f'OTP sent to {mobile_number} successfully.',
+                    'message': f'OTP sent to {mobile_no} successfully.',
                     # 'otp': otp  # Remove this in production; included here for testing purposes
                 }, status=status.HTTP_200_OK)
         except Exception as e:
@@ -421,19 +464,34 @@ class JoinGroupView(viewsets.ModelViewSet):
             }, status=status.HTTP_400_BAD_REQUEST)
     
     def user_confirm(self, request):
-        mobile_number = request.data.get("phone_no")
+        mobile_no = request.data.get("phone_no")
         otp = request.data.get("otp")   
-        cached_otp = cache.get(f"otp_{mobile_number}")
-        if cached_otp == int(otp):
-            cache.set(f"verified_{mobile_number}", True, timeout=300)
-            users=get_user_model().objects.get(phone_no=mobile_number)
-            users.otp_status =True
-            users.save()
-            return Response({'status':True,'message':'user verified successfully !!',
-            }, status=status.HTTP_200_OK)
-        
-        return Response({"message": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
-    
+        try:
+            cached_otp = cache.get(f"otp_{mobile_no}")
+            if cached_otp == int(otp):
+                cache.set(f"verified_{mobile_no}", True, timeout=300)
+                try:
+                    users=get_user_model().objects.get(phone_no=mobile_no)
+                except Exception as e:
+                    return Response({
+                    'status': True,
+                    'message': "User doesn't exist",
+                    'error': str(e)
+                }, status=status.HTTP_400_BAD_REQUEST)
+                users.otp_status =True
+                users.save()
+                return Response({'status':True,'message':'user verified successfully !!',
+                }, status=status.HTTP_200_OK)
+            
+            return Response({"status":True,"message": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({
+                'status': False,
+                'message': "Something went wrong!",
+                'error': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+            
     
     # working only if authenticated
     
@@ -552,7 +610,7 @@ class JoinGroupView(viewsets.ModelViewSet):
         # Serialize and return response
         serializer = GroupMemberSerializer(group_member)
         return Response(
-            {"data": serializer.data},
+            {"status":True,"data": serializer.data},
             status=status.HTTP_201_CREATED)
         
         

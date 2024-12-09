@@ -16,6 +16,8 @@ from face.function_call import ALLOWED_IMAGE_TYPES
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.conf import settings
+from django.db.models.functions import Coalesce
+
 User = get_user_model()
 
 # class CustomGroupViewSet(viewsets.ModelViewSet):
@@ -130,17 +132,56 @@ User = get_user_model()
 class PhotoGroupView(viewsets.ModelViewSet):
     queryset = photo_group.objects.all()
     serializer_class = PhotoGroupSerializer
+    pagination_class = StandardResultsSetPagination
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     filterset_fields = ['photo_name']
     search_fields = ['photo_name']
     
     
-    # def get_queryset(self):
-    #     return self.queryset.filter(user=self.request.user)
     def get_queryset(self):
         return super().get_queryset()
+    
+    
+    def list_page(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
 
+        ordering = request.query_params.get('ordering', None)
+        if ordering:
+            queryset = queryset.order_by(ordering)
+        else:
+            queryset = queryset.annotate(last_modified=Coalesce('updated_at', 'created_at')).order_by('-last_modified')    
+        try:
+            if not queryset.exists():
+                return Response({"status": False, "message": "Data not found!", 'data': []}, status=status.HTTP_204_NO_CONTENT)
+            
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer = self.serializer_class(page, many=True, context={'request': request})
+                serializer = self.get_paginated_response(serializer.data)
+            else:
+                serializer = self.serializer_class(queryset, many=True, context={'request': request})
+
+            count = serializer.data['count']
+            limit = int(request.GET.get('page_size', 10))
+            current_page = int(request.GET.get('page', 1))
+            return Response({
+                "status": True, 
+                "message":"group Data.",
+                'data': {'total_page': (count + limit - 1) // limit,
+                'count': count,
+                'current_page':current_page,
+                "group":serializer.data['results']
+                }
+            }, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            return Response({
+                'status': False,
+                'message': "Something went wrong!",
+                'error': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
+            
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         try:
@@ -229,10 +270,10 @@ class PhotoGroupView(viewsets.ModelViewSet):
 
 
 class PhotoGroupImageView(viewsets.ModelViewSet):
-  
     queryset = PhotoGroupImage.objects.all()
     serializer_class = PhotoGroupImageSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = StandardResultsSetPagination
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     filterset_fields = ['photo_group']  
     search_fields = ['photo_group__name'] 
@@ -259,6 +300,43 @@ class PhotoGroupImageView(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+    def list_page(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        ordering = request.query_params.get('ordering', None)
+        if ordering:
+            queryset = queryset.order_by(ordering)
+        else:
+            queryset = queryset.annotate(last_modified=Coalesce('updated_at', 'created_at')).order_by('-last_modified')    
+        try:
+            if not queryset.exists():
+                return Response({"status": False, "message": "Data not found!", 'data': []}, status=status.HTTP_204_NO_CONTENT)
+            
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer = self.serializer_class(page, many=True, context={'request': request})
+                serializer = self.get_paginated_response(serializer.data)
+            else:
+                serializer = self.serializer_class(queryset, many=True, context={'request': request})
+
+            count = serializer.data['count']
+            limit = int(request.GET.get('page_size', 10))
+            current_page = int(request.GET.get('page', 1))
+            return Response({
+                "status": True, 
+                "message":"group Data.",
+                'data': {'total_page': (count + limit - 1) // limit,
+                'count': count,
+                'current_page':current_page,"group":serializer.data['results']}
+            }, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            return Response({
+                'status': False,
+                'message': "Something went wrong!",
+                'error': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
+    
     def create(self, request, *args, **kwargs):
         required_fields = ["photo_group", "image2"]
         missing_fields_message = check_required_fields(required_fields, request.data)

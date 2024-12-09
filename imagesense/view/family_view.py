@@ -68,7 +68,7 @@ class FamilyDataView(viewsets.ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         try:
-            org_required_fields = ["profile_image","name"]
+            org_required_fields = ["user","profile_image","name"]
             
             family_error_message = check_required_fields(org_required_fields, request.data)
             if family_error_message:

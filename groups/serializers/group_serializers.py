@@ -193,7 +193,7 @@ class CustomGroupSerializer(serializers.ModelSerializer):
                 "access": instance.access,
                 "code": instance.code,
                 "thumbnail": instance.thumbnail.url if instance.thumbnail else None,
-                "Created By": instance.created_by.user.id if instance.created_by else None,
+                "Created By": instance.created_by.id if instance.created_by else None,
                 "members": self.context.get('members', []),  # Include members if available
                 **common_fields,
             }
