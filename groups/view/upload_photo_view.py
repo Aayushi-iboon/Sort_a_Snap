@@ -16,6 +16,7 @@ from face.function_call import ALLOWED_IMAGE_TYPES
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.conf import settings
+from django.http import HttpResponse
 from django.db.models.functions import Coalesce
 
 User = get_user_model()
@@ -429,3 +430,29 @@ class PhotoGroupImageView(viewsets.ModelViewSet):
                 {'status': False, 'message': "Something went wrong!", 'error': str(e)},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+    def download_image(self, request, pk):
+        try:
+            # Retrieve the instance
+            photo_image = PhotoGroupImage.objects.get(pk=pk)
+            if not photo_image.image2:
+                return Response(
+                    {'status': False, 'message': 'Image not available.'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            serializer = self.serializer_class(photo_image, context={'request': request})
+
+            file = photo_image.image2.open()
+            response = HttpResponse(file, content_type='image/jpeg')  # Adjust content type as needed
+            response['Content-Disposition'] = f'attachment; filename="{photo_image.image2.name.split("/")[-1]}"'
+
+            return Response(
+                {
+                    'status': True,
+                    'message': 'Image downloaded successfully.',
+                    'data': serializer.data
+                },
+                status=status.HTTP_200_OK,
+            )
+        except PhotoGroupImage.DoesNotExist:
+            raise Http404("Image not found")

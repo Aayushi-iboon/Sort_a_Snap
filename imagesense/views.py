@@ -192,7 +192,16 @@ class UserLogoutView(APIView):
         data = request.data.copy()
         data['user'] = request.user.id
         data['token'] = request.auth.get('jti')
-
+        try:
+            users=get_user_model().objects.get(id=data['user'])
+            users.otp_status = False
+            users.otp_status_email = False
+            users.save()
+        except Exception as e:
+            return Response({
+                "status": False, "message": "User not found !!"
+            },status=status.HTTP_400_BAD_REQUEST)
+            
         serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()

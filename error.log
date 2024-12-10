@@ -252,3 +252,280 @@ Traceback (most recent call last):
     raise ValueError(f'Required parameter {identifier} not set')
 ValueError: Required parameter name not set
 ERROR 2024-12-09 12:06:23,578 basehttp "GET /admin/ HTTP/1.1" 500 381228
+ERROR 2024-12-10 08:48:17,453 log Internal Server Error: /api/group/upload-group-image-download_image/945/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/upload_photo_view.py", line 440, in download_image
+    file_path = photo_image.image2.path
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/files.py", line 65, in path
+    return self.storage.path(self.name)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/files/storage/base.py", line 137, in path
+    raise NotImplementedError("This backend doesn't support absolute paths.")
+NotImplementedError: This backend doesn't support absolute paths.
+ERROR 2024-12-10 08:48:17,454 basehttp "GET /api/group/upload-group-image-download_image/945/ HTTP/1.1" 500 108170
+ERROR 2024-12-10 09:08:19,852 log Internal Server Error: /api/group/upload-group-image-download_image/945/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/upload_photo_view.py", line 441, in download_image
+    status=status.HTTP_404_NOT_FOUND
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/http/response.py", line 376, in __init__
+    self.content = content
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/http/response.py", line 401, in content
+    content = b"".join(self.make_bytes(chunk) for chunk in value)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/http/response.py", line 401, in <genexpr>
+    content = b"".join(self.make_bytes(chunk) for chunk in value)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/files/base.py", line 78, in __iter__
+    for chunk in self.chunks():
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/files/base.py", line 55, in chunks
+    self.seek(0)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/files/utils.py", line 45, in <lambda>
+    seek = property(lambda self: self.file.seek)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/files/utils.py", line 45, in <lambda>
+    seek = property(lambda self: self.file.seek)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/storages/backends/s3.py", line 179, in _get_file
+    self.obj.download_fileobj(
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/boto3/s3/inject.py", line 890, in object_download_fileobj
+    return self.meta.client.download_fileobj(
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/boto3/s3/inject.py", line 794, in download_fileobj
+    future = manager.download(
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/s3transfer/manager.py", line 383, in download
+    return self._submit_transfer(
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/s3transfer/manager.py", line 533, in _submit_transfer
+    self._submission_executor.submit(
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/s3transfer/futures.py", line 470, in submit
+    future = ExecutorFuture(self._executor.submit(task))
+  File "/usr/lib/python3.10/concurrent/futures/thread.py", line 169, in submit
+    raise RuntimeError('cannot schedule new futures after '
+RuntimeError: cannot schedule new futures after interpreter shutdown
+ERROR 2024-12-10 09:08:19,854 basehttp "GET /api/group/upload-group-image-download_image/945/ HTTP/1.1" 500 162702
+ERROR 2024-12-10 09:56:10,707 log Internal Server Error: /api/group/create-customgroupmember-viewset/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/group_views.py", line 613, in join
+    {"status":True,"data": serializer.data},
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 571, in data
+    ret = super().data
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 249, in data
+    self._data = self.to_representation(self.instance)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 523, in to_representation
+    for field in fields:
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 384, in _readable_fields
+    for field in self.fields.values():
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 372, in fields
+    for key, value in self.get_fields().items():
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 1103, in get_fields
+    field_class, field_kwargs = self.build_field(
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 1249, in build_field
+    return self.build_unknown_field(field_name, model_class)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 1367, in build_unknown_field
+    raise ImproperlyConfigured(
+django.core.exceptions.ImproperlyConfigured: Field name `created_at` is not valid for model `GroupMember` in `groups.serializers.group_serializers.GroupMemberSerializer`.
+ERROR 2024-12-10 09:56:10,730 basehttp "POST /api/group/create-customgroupmember-viewset/ HTTP/1.1" 500 147043
+ERROR 2024-12-10 09:58:38,383 log Internal Server Error: /api/group/create-customgroupmember-viewset/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/group_views.py", line 613, in join
+    {"status":True,"data": serializer.data},
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 571, in data
+    ret = super().data
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 249, in data
+    self._data = self.to_representation(self.instance)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 523, in to_representation
+    for field in fields:
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 384, in _readable_fields
+    for field in self.fields.values():
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/utils/functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 372, in fields
+    for key, value in self.get_fields().items():
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 1103, in get_fields
+    field_class, field_kwargs = self.build_field(
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 1249, in build_field
+    return self.build_unknown_field(field_name, model_class)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 1367, in build_unknown_field
+    raise ImproperlyConfigured(
+django.core.exceptions.ImproperlyConfigured: Field name `created_at__id` is not valid for model `GroupMember` in `groups.serializers.group_serializers.GroupMemberSerializer`.
+ERROR 2024-12-10 09:58:38,400 basehttp "POST /api/group/create-customgroupmember-viewset/ HTTP/1.1" 500 147127
+ERROR 2024-12-10 10:35:10,303 log Internal Server Error: /api/analyze-face-image/
+ERROR 2024-12-10 10:35:10,304 basehttp "POST /api/analyze-face-image/ HTTP/1.1" 500 360
+ERROR 2024-12-10 10:48:41,401 log Internal Server Error: /api/analyze-face-image/
+ERROR 2024-12-10 10:48:41,401 basehttp "POST /api/analyze-face-image/ HTTP/1.1" 500 142
+ERROR 2024-12-10 11:20:31,044 log Internal Server Error: /api/user/logout/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/imagesense/serializers.py", line 127, in save
+    token = RefreshToken(self.refresh_token)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework_simplejwt/tokens.py", line 61, in __init__
+    self.verify()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework_simplejwt/tokens.py", line 245, in verify
+    self.check_blacklist()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework_simplejwt/tokens.py", line 257, in check_blacklist
+    raise TokenError(_("Token is blacklisted"))
+rest_framework_simplejwt.exceptions.TokenError: Token is blacklisted
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/imagesense/views.py", line 208, in post
+    serializer.save()
+  File "/home/iboon_laptop_18/Documents/imagelens/imagesense/serializers.py", line 132, in save
+    self.fail('bad_token')
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/fields.py", line 600, in fail
+    message_string = msg.format(**kwargs)
+AttributeError: 'dict' object has no attribute 'format'
+ERROR 2024-12-10 11:20:31,046 basehttp "POST /api/user/logout/ HTTP/1.1" 500 127767
+ERROR 2024-12-10 11:20:31,964 log Internal Server Error: /api/user/logout/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/imagesense/serializers.py", line 127, in save
+    token = RefreshToken(self.refresh_token)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework_simplejwt/tokens.py", line 61, in __init__
+    self.verify()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework_simplejwt/tokens.py", line 245, in verify
+    self.check_blacklist()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework_simplejwt/tokens.py", line 257, in check_blacklist
+    raise TokenError(_("Token is blacklisted"))
+rest_framework_simplejwt.exceptions.TokenError: Token is blacklisted
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/imagesense/views.py", line 208, in post
+    serializer.save()
+  File "/home/iboon_laptop_18/Documents/imagelens/imagesense/serializers.py", line 132, in save
+    self.fail('bad_token')
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/fields.py", line 600, in fail
+    message_string = msg.format(**kwargs)
+AttributeError: 'dict' object has no attribute 'format'
+ERROR 2024-12-10 11:20:31,964 basehttp "POST /api/user/logout/ HTTP/1.1" 500 127767
+ERROR 2024-12-10 11:39:23,418 log Internal Server Error: /api/user/logout/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/imagesense/serializers.py", line 127, in save
+    token = RefreshToken(self.refresh_token)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework_simplejwt/tokens.py", line 61, in __init__
+    self.verify()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework_simplejwt/tokens.py", line 245, in verify
+    self.check_blacklist()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework_simplejwt/tokens.py", line 257, in check_blacklist
+    raise TokenError(_("Token is blacklisted"))
+rest_framework_simplejwt.exceptions.TokenError: Token is blacklisted
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/imagesense/views.py", line 208, in post
+    serializer.save()
+  File "/home/iboon_laptop_18/Documents/imagelens/imagesense/serializers.py", line 132, in save
+    self.fail('bad_token')
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/fields.py", line 600, in fail
+    message_string = msg.format(**kwargs)
+AttributeError: 'dict' object has no attribute 'format'
+ERROR 2024-12-10 11:39:23,419 basehttp "POST /api/user/logout/ HTTP/1.1" 500 127767

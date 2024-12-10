@@ -51,6 +51,8 @@ urlpatterns = [
     path("upload-group-image-photo/update/<int:pk>/", PhotoGroupImageView.as_view({'patch':'update'}), name="update_group_image__upload_photo"),
     path("upload-group-image-photo-delete/<int:pk>/", PhotoGroupImageView.as_view({'delete':'destroy'}), name="delete_group_image_photo"),
     path("upload-group-image-photo/retrieve/<int:pk>/", PhotoGroupImageView.as_view({'get':'retrieve'}), name="group_retrive_image_photo"),
+    path("upload-group-image-download_image/<int:pk>/", PhotoGroupImageView.as_view({'get':'download_image'}), name="group_retrive_download_image"),
+    
     
 
     # path("get-customgroupmember-viewset/", GroupMemberViewSet.as_view({'get':'list'}), name="get_customgroupmember_viewset"),

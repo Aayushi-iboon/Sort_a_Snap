@@ -8,6 +8,7 @@ import logging
 from imagesense.models import BlackListToken
 from django.contrib.auth.password_validation import validate_password
 import jwt
+from rest_framework.exceptions import ValidationError
 
 
 logger = logging.getLogger(__name__)
@@ -104,13 +105,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
-    access = serializers.CharField(required=False) 
+    access = serializers.CharField(required=False)
     user = serializers.IntegerField()
     token = serializers.CharField()
-
-    default_error_messages = {
-        'bad_token': ('Token is invalid or expired')
-    }
 
     def validate(self, attrs):
         self.refresh_token = attrs.get('refresh')
@@ -126,10 +123,26 @@ class LogoutSerializer(serializers.Serializer):
             cache_key =hashlib.sha256(self.token.encode()).hexdigest()
             cache.set(cache_key, "blacklisted", timeout=84600)
         except TokenError:
-            self.fail('bad_token')
+           
+            raise ValidationError({
+                "status": False,
+                "message": "Token is not valid!"
+            })
 
         if self.access_token:
             try:
                 AccessToken(self.access_token).blacklist()
             except TokenError:
-                self.fail('bad_token')
+            
+                raise ValidationError({
+                    "status": False,
+                    "message": "Token is not valid!"
+                })
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        return {
+            'status': True,
+            'message': 'Data retrieved successfully',
+            'data': representation
+        }

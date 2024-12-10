@@ -13,7 +13,7 @@ class GroupMemberSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GroupMember
-        fields = ['id', 'group', 'user', 'role', 'joined_at', 'user_verified','created_at']
+        fields = ['id', 'group', 'user', 'role', 'joined_at', 'user_verified']
         read_only_fields = ['joined_at']
     
     
@@ -229,7 +229,7 @@ class PhotoGroupImage_serializer(serializers.ModelSerializer):
         fields = ['id','image2','photo_group']
     
     def to_representation(self, instance):
-        # Default representation from the parent class
+         # Default representation from the parent class
         representation = super().to_representation(instance)
 
         # Custom representation
@@ -237,7 +237,7 @@ class PhotoGroupImage_serializer(serializers.ModelSerializer):
             "id": instance.id,
             "image_url": instance.image2.url if instance.image2 else None,  
             "photo_user_name": instance.photo_group.user.email if instance.photo_group else None, 
-        }     
+        }    
    
 class photo_serializer(serializers.ModelSerializer):
     images = PhotoGroupImage_serializer(many=True) 
