@@ -1,8 +1,8 @@
 #!/bin/sh
-chown -R root:root static/
-chmod -R 755 static/
-chown -R root:root media/
-chmod -R 755 media/
+#chown -R root:root static/
+#chmod -R 755 static/
+#chown -R root:root media/
+#chmod -R 755 media/
 python manage.py collectstatic --noinput
 
 python3 manage.py makemigrations imagesense
