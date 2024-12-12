@@ -28,6 +28,7 @@ class FamilyDataView(viewsets.ModelViewSet):
     def get_queryset(self):
         user_id = self.request.query_params.get('user_id', None)
         if user_id:
+            # import ipdb;ipdb.set_trace()
             try:
                 user = get_user_model().objects.get(id=user_id)
                 return family.objects.filter(user=user)

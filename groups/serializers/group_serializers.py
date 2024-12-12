@@ -2,37 +2,14 @@ from rest_framework import serializers
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 from imagesense.serializers import UserProfileSerializer
+# from imagesense.serializer.family_serializer import FamilySerializer
 import base64
 from rest_framework import serializers
 from groups.model.group import CustomGroup, GroupMember,photo_group,PhotoGroupImage
 from datetime import datetime
 User = get_user_model()
 
-class GroupMemberSerializer(serializers.ModelSerializer):
-    user = UserProfileSerializer()  # Assuming this is a nested serializer for user data
 
-    class Meta:
-        model = GroupMember
-        fields = ['id', 'group', 'user', 'role', 'joined_at', 'user_verified']
-        read_only_fields = ['joined_at']
-    
-    
-    def validate_group(self, value):
-        if not CustomGroup.objects.filter(id=value.id).exists():
-            raise serializers.ValidationError("Group does not exist.")
-        return value
-    
-    
-    def create(self, validated_data):
-        user_email = validated_data.pop('user')
-        try:
-            user = get_user_model().objects.get(email=user_email)
-        except get_user_model().DoesNotExist:
-            raise serializers.ValidationError({"user": "User with this email does not exist."})
-
-        group_member = GroupMember.objects.create(user=user, **validated_data)
-        return group_member
-    
     
     # def create(self, validated_data):
     #     # Automatically assign the authenticated user (if user is authenticated)
@@ -162,7 +139,32 @@ class GroupMemberSerializer(serializers.ModelSerializer):
     #         }
     #         return member_data
 
+class GroupMemberSerializer(serializers.ModelSerializer):
+    user = UserProfileSerializer()  # Assuming this is a nested serializer for user data
 
+    class Meta:
+        model = GroupMember
+        fields = ['id', 'group', 'user', 'role', 'joined_at', 'user_verified']
+        read_only_fields = ['joined_at']
+    
+    
+    def validate_group(self, value):
+        if not CustomGroup.objects.filter(id=value.id).exists():
+            raise serializers.ValidationError("Group does not exist.")
+        return value
+    
+    
+    def create(self, validated_data):
+        user_email = validated_data.pop('user')
+        try:
+            user = get_user_model().objects.get(email=user_email)
+        except get_user_model().DoesNotExist:
+            raise serializers.ValidationError({"user": "User with this email does not exist."})
+
+        group_member = GroupMember.objects.create(user=user, **validated_data)
+        return group_member
+    
+    
 class CustomGroupSerializer(serializers.ModelSerializer):
     members = GroupMemberSerializer(source='groupmember_set', many=True, read_only=True)
 
@@ -194,7 +196,6 @@ class CustomGroupSerializer(serializers.ModelSerializer):
                 "code": instance.code,
                 "thumbnail": instance.thumbnail.url if instance.thumbnail else None,
                 "Created By": instance.created_by.id if instance.created_by else None,
-                "members": self.context.get('members', []),  # Include members if available
                 **common_fields,
             }
             return group_data
@@ -216,6 +217,7 @@ class CustomGroupSerializer(serializers.ModelSerializer):
                 "code": instance.code,
                 "user_id": instance.created_by.id if instance.created_by else None,
                 "user": instance.created_by.email if instance.created_by else None,
+                "members": self.context.get('members', []),
                 "thumbnail": instance.thumbnail.url if instance.thumbnail else None,
                 'created at': created_at_str,
                 **common_fields,
@@ -277,7 +279,11 @@ class photo_serializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         request = self.context.get('request')
         from_method = self.context.get('from_method', 'unknown')
+        # import ipdb;ipdb.set_trace()
         representation = super().to_representation(instance)
+        images = representation.get('images', [])
+        image_details = [{'id': img.get('id'), 'image_url': img.get('image_url')} for img in images]
+        images_data = representation.get("images", [])
         if request and request.method == 'GET':
             # If specific group details are requested
             group_data = {
@@ -297,6 +303,11 @@ class photo_serializer(serializers.ModelSerializer):
                 "group": instance.group.name,
                 "temp_name": instance.photo_name,
                 "images": representation.get("images", [])
+            }
+            return group_data
+        elif from_method == 'photo_image_list':
+            group_data = {
+                "images": image_details
             }
             return group_data
         else:

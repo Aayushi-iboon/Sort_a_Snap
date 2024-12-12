@@ -33,6 +33,10 @@ class PhotoGroupSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         images_data = self.context['request'].data.getlist('images')  
+        user = validated_data.get('user')
+        group = validated_data.get('group', None)
+        if not group:
+            validated_data['group'] = None
         photogroup = photo_group.objects.create(**validated_data)
         for i, image_file in enumerate(images_data):          
             if isinstance(image_file, (str, bytes)):

@@ -53,8 +53,15 @@ class sub_group(models.Model):
 # Function to generate the upload path for image2
 def user_image_upload_path(instance, filename):
     # Ensure the directory structure is user-specific
-    user_email = instance.photo_group.user.email
-    return os.path.join(f'photos/{user_email}', filename)
+    if instance.photo_group.group:
+        group_name = instance.photo_group.group.name  # Assuming `CustomGroup` has a `name` field
+        user_email = instance.photo_group.user.email
+        return os.path.join(f'photos/{user_email}/{group_name}', filename)
+    else:
+        user_email = instance.photo_group.user.email
+        return os.path.join(f'photos/{user_email}', filename)
+    # user_email = instance.photo_group.user.email
+    # return os.path.join(f'photos/{user_email}', filename)
 
 class photo_group(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -75,7 +82,7 @@ class PhotoGroupImage(models.Model):
     updated_at = models.DateTimeField(auto_now=True,null=True,blank=True)
 
 class GroupMember(models.Model):
-    group = models.ForeignKey(CustomGroup, on_delete=models.CASCADE)
+    group = models.ForeignKey(CustomGroup, on_delete=models.CASCADE,related_name='groupmember_set')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  
     role = models.CharField(max_length=50,null=True,blank=True)
     user_verified = models.BooleanField(default=False) 

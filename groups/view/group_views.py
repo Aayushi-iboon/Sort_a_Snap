@@ -8,17 +8,16 @@ from imagesense.tasks import user_otp
 from django.core.cache import cache
 from face.function_call import flatten_errors
 from django.contrib.auth import get_user_model
-from face.permissions import GroupPermission
 from rest_framework import filters
-from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import ValidationError
 from rest_framework import status, permissions
 import random
 from django.db.models.functions import Coalesce
 from rest_framework import filters
-from rest_framework.decorators import permission_classes
 import logging
+from imagesense.model.family import family
+from groups.model.group import photo_group
 from face.function_call import check_required_fields
 from face.function_call import StandardResultsSetPagination
 User = get_user_model()
@@ -33,6 +32,19 @@ class CustomGroupViewSet(viewsets.ModelViewSet):
     filterset_fields = ['name']
     search_fields = ['name']
 
+    # def get_family_photos(self, request, pk=None):
+    #     try:
+    #         # Get the specific CustomGroup
+    #         import ipdb;ipdb.set_trace()
+    #         custom_group = self.get_object()
+
+    #         # Retrieve all family members linked to this group
+    #         family_members = family.objects.filter(user__in=custom_group.created_by.family_members.all())
+            
+    #         photo_groups = photo_group.objects.filter(family_members__in=family_members).distinct()
+            
+    #     except CustomGroup.DoesNotExist:
+    #         return Response({"status":False,"error": "CustomGroup not found"}, status=status.HTTP_400_BAD_REQUEST)
     
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -191,7 +203,7 @@ class CustomGroupViewSet(viewsets.ModelViewSet):
             
             
     def userlist(self, request, *args, **kwargs):
-        userid = request.data.get('user')
+        userid = kwargs.get('user')
         if userid:
             users=CustomGroup.objects.filter(created_by=userid)
         else:
@@ -203,9 +215,9 @@ class CustomGroupViewSet(viewsets.ModelViewSet):
         try:
             if not users.exists():
                 return Response({
-                    "status": False,
+                    "status": True,
                     "message": "No groups found for the user!",
-                    'data': []
+                    'data': None
                 }, status=status.HTTP_204_NO_CONTENT)
                 
             serializer = self.serializer_class(users, many=True)

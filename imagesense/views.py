@@ -22,6 +22,7 @@ import multiprocessing
 import os
 from rest_framework.exceptions import ValidationError
 from face.function_call import check_required_fields
+from groups.model.group import CustomGroup
 
 User = get_user_model()
 
@@ -269,13 +270,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         region_name='ap-south-1'
     )
 
-    # Define paths
-    # reference_image_path = 'C:/Users/DELL/Downloads/highcrop.jpg'  # Replace with your reference image path
-    # local_folder_path = 'media/photos/20126010@gmail.com'  # Replace with your local folder path
-    # user_email = request.user.email
-    #     if not user_email:
-    #         return Response({"error": "User email not found."}, status=400)
-    # local_folder_path = self.get_user_folder_path(user_email)
     def get_queryset(self):
         return super().get_queryset()
     
@@ -308,9 +302,21 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             reference_faces = response['FaceDetails']
             if not reference_faces:
                 return Response({"status": False, "message": "No faces detected in the reference image."}, status=status.HTTP_400_BAD_REQUEST)
-
-            # List images from the user's folder in the S3 bucket
-            response = self.s3_client.list_objects_v2(Bucket=s3_bucket_name, Prefix=user_folder_path)
+            group_id = request.data.get('group', None)
+            # group_id = kwargs.get('group')
+            # userid = kwargs.get('user')
+            # import ipdb;ipdb.set_trace()
+            if group_id:
+                # Filter by specific group
+                group = CustomGroup.objects.filter(id=group_id).first()
+                if not group:
+                    return Response({"status": False, "message": "Invalid group ID provided."}, status=status.HTTP_404_NOT_FOUND)
+                folder_prefix = f'photos/{request.user.email}/{group.name}/'
+            else:
+                # Search in all groups for the user
+                folder_prefix = f'photos/{request.user.email}'
+            
+            response = self.s3_client.list_objects_v2(Bucket=s3_bucket_name, Prefix=folder_prefix)
             event_image_keys = [
                 obj['Key'] for obj in response.get('Contents', []) 
                 if obj['Key'].lower().endswith(('png', 'jpg', 'jpeg'))
@@ -319,9 +325,10 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             if not event_image_keys:
                 return Response({"status": False, "message": "No event images found for the user."}, status=status.HTTP_404_NOT_FOUND)
 
-            image_urls = [f'{s3_bucket_url}/{key}' for key in event_image_keys]
-            print(image_urls)
+            # image_urls = [f'{s3_bucket_url}/{key}' for key in event_image_keys]
+            # print(image_urls)
             # Compare faces using multithreading
+            
             max_threads = min(16, multiprocessing.cpu_count())
             with concurrent.futures.ThreadPoolExecutor(max_workers=max_threads) as executor:
                 matching_images = list(executor.map(
@@ -332,7 +339,8 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             # Filter out None values (no match found)
             matching_images = [img for img in matching_images if img is not None]
             
-            matched_images = ["https://eventpics1.s3.ap-south-1.amazonaws.com/" + img for img in matching_images]
+            # matched_images = ["https://eventpics1.s3.ap-south-1.amazonaws.com/" + img for img in matching_images]
+            matched_images = [f'{s3_bucket_url}/{img}' for img in matching_images]
 
             if matched_images:
                 return Response({"status": True, "message": "Photos retrieved successfully.", "data": {"images": matched_images}}, status=status.HTTP_200_OK)
