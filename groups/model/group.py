@@ -38,17 +38,6 @@ class CustomGroup(models.Model):
 
 
 
-class sub_group(models.Model):
-    main_group = models.ForeignKey(CustomGroup, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    access = models.CharField(max_length=50, null=True, blank=True, choices=CustomGroup.ACCESS_CHOICES)
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
-
-    def __str__(self):
-        return f"{self.name}"
-    
-    class Meta:
-        db_table = "groups_sub_group"
         
 # Function to generate the upload path for image2
 def user_image_upload_path(instance, filename):
@@ -91,3 +80,15 @@ class GroupMember(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.group.name}"
+
+class sub_group(models.Model):
+    main_group = models.ForeignKey(CustomGroup, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    access = models.CharField(max_length=50, null=True, blank=True, choices=CustomGroup.ACCESS_CHOICES)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return f"{self.name}"
+    
+    class Meta:
+        db_table = "groups_sub_group"

@@ -66,7 +66,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    # "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -116,48 +116,48 @@ DATABASES = {
     }
 }
 
-#STORAGES = {
-#    "default": {  # Default storage for files
-#        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-#        "OPTIONS": {
-#            "bucket_name": os.getenv("AWS_STORAGE_BUCKET_NAME"),
-#            "access_key": os.getenv("AWS_ACCESS_KEY_ID"),
-#            "secret_key": os.getenv("AWS_SECRET_ACCESS_KEY"),
-#            "region_name": os.getenv("AWS_REGION"),  
-#        },
-#    },
-#    "media": {  
-#        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-#        "OPTIONS": {
-#            "bucket_name": os.getenv("AWS_MEDIA_BUCKET_NAME"),
-#            "access_key": os.getenv("AWS_ACCESS_KEY_ID"),
-#            "secret_key": os.getenv("AWS_SECRET_ACCESS_KEY"),
-#            "region_name": os.getenv("AWS_REGION"),  
-#        },
-#    },
-#    "staticfiles": {  
-#        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-#        "OPTIONS": {
-#            "bucket_name": os.getenv("AWS_STATIC_BUCKET_NAME"),
-#            "access_key": os.getenv("AWS_ACCESS_KEY_ID"),
-#            "secret_key": os.getenv("AWS_SECRET_ACCESS_KEY"),
-#            "region_name": os.getenv("AWS_REGION"), 
-#        },
-#    },
-#}
+STORAGES = {
+   "default": {  # Default storage for files
+       "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+       "OPTIONS": {
+           "bucket_name": os.getenv("AWS_STORAGE_BUCKET_NAME"),
+           "access_key": os.getenv("AWS_ACCESS_KEY_ID"),
+           "secret_key": os.getenv("AWS_SECRET_ACCESS_KEY"),
+           "region_name": os.getenv("AWS_REGION"),  
+       },
+   },
+   "media": {  
+       "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+       "OPTIONS": {
+           "bucket_name": os.getenv("AWS_MEDIA_BUCKET_NAME"),
+           "access_key": os.getenv("AWS_ACCESS_KEY_ID"),
+           "secret_key": os.getenv("AWS_SECRET_ACCESS_KEY"),
+           "region_name": os.getenv("AWS_REGION"),  
+       },
+   },
+   "staticfiles": {  
+       "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+       "OPTIONS": {
+           "bucket_name": os.getenv("AWS_STATIC_BUCKET_NAME"),
+           "access_key": os.getenv("AWS_ACCESS_KEY_ID"),
+           "secret_key": os.getenv("AWS_SECRET_ACCESS_KEY"),
+           "region_name": os.getenv("AWS_REGION"), 
+       },
+   },
+}
 
 
-#AWS_S3_CUSTOM_DOMAIN = f'{os.getenv("AWS_STATIC_BUCKET_NAME")}.s3.{AWS_REGION}.amazonaws.com'
-#STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+AWS_S3_CUSTOM_DOMAIN = f'{os.getenv("AWS_STATIC_BUCKET_NAME")}.s3.{AWS_REGION}.amazonaws.com'
+STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
 STATIC_DIR = BASE_DIR / 'static'
 
-#if DEBUG:
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [STATIC_DIR]
+if DEBUG:
+    STATIC_URL = '/static/'
+    STATICFILES_DIRS = [STATIC_DIR]
 #STATIC_ROOT = BASE_DIR / 'static_files'
-STATIC_ROOT = '/var/www/sortasnap/static'
-#else:
-#STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+    STATIC_ROOT = '/var/www/sortasnap/static'
+else:
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
 
 
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"

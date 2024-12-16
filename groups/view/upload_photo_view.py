@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from groups.model.group import photo_group,PhotoGroupImage
+from groups.model.group import photo_group,PhotoGroupImage,GroupMember,CustomGroup
 from groups.serializers.photo_upload_serializer import PhotoGroupSerializer,PhotoGroupImageSerializer
 from rest_framework.permissions import IsAuthenticated  
 from rest_framework.response import Response
@@ -17,6 +17,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.conf import settings
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.db.models.functions import Coalesce
 
 User = get_user_model()
@@ -267,7 +268,22 @@ class PhotoGroupView(viewsets.ModelViewSet):
             return Response({'status': False, 'message': 'Data not found.'},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'status': False, 'message': Global_error_message, 'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def access_group_images(self, request, pk=None):
         
+        group = get_object_or_404(CustomGroup, pk=pk)
+
+        
+        if not GroupMember.objects.filter(group=group, user=request.user).exists():
+            return Response({"status": False,"message": "You are not a member of this group."}, status=status.HTTP_400_BAD_REQUEST)
+
+        
+        images = photo_group.objects.filter(group=group).select_related('user')
+
+        
+        serializer = self.get_serializer(images, many=True,context={'request': request,'from_method': 'all_images'})
+        return Response({"status": True,'message': 'image data retrieved successfully', "data": serializer.data},status=status.HTTP_200_OK)
+
 
 
 class PhotoGroupImageView(viewsets.ModelViewSet):
