@@ -279,8 +279,8 @@ class photo_serializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         request = self.context.get('request')
         from_method = self.context.get('from_method', 'unknown')
-        # import ipdb;ipdb.set_trace()
         representation = super().to_representation(instance)
+        # import ipdb;ipdb.set_trace()
         images = representation.get('images', [])
         image_details = [{'id': img.get('id'), 'image_url': img.get('image_url')} for img in images]
         images_data = representation.get("images", [])
@@ -306,10 +306,11 @@ class photo_serializer(serializers.ModelSerializer):
             }
             return group_data
         elif from_method == 'photo_image_list':
-            group_data = {
-                "images": image_details
-            }
-            return group_data
+            if 'all_images' not in self.context:
+                self.context['all_images'] = []
+            self.context['all_images'].extend(image_details)
+            return {"images": self.context.get('all_images', [])}
+            
         else:
             # Default case: Provide basic group details
             group_data = {
