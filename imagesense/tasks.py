@@ -7,6 +7,8 @@ from twilio.rest import Client
 import os
 from django.conf import settings
 import boto3
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 
 # Initialize AWS Rekognition client
 rekognition_client = boto3.client(
@@ -21,7 +23,6 @@ local_folder_path = 'C:/Users/DELL/OneDrive - xergamin/Documents/Sort_A_Snap/One
 
 @shared_task
 def send_otp(email):
-    # import ipdb;ipdb.set_trace()  
     print(f"Sending OTP to: {email}")
     otp = random.randint(100000, 999999)
     print(f"Generated OTP: {otp}")
@@ -29,20 +30,30 @@ def send_otp(email):
     otp = cache.get(f"otp_{email}")
     print(f"OTP retrieved from cache: {otp}")
     
-    subject = "Your OTP Code"
-    message = f"Your OTP code is {otp}"
+    subject = "Sort a Snap - OTP Verification"
+    
+
+    html_message = render_to_string('mail.html', {'otp': otp,'email':email})
+    
     from_email = settings.EMAIL_HOST_USER
     recipient_list = [email]
-    try: 
-        print(type(from_email),type(recipient_list))
-        send_mail(subject, message, from_email, recipient_list)
+
+    try:
+        # Send Email with HTML Content
+        email_message = EmailMessage(
+            subject=subject,
+            body=html_message,
+            from_email=from_email,
+            to=recipient_list
+        )
+        email_message.content_subtype = "html"  # Set content type to HTML
+        email_message.send()
+        
         print(f"OTP {otp} sent to {email}")
-        print(f"OTP successfully sent to {email}")
+        return otp
     except Exception as e:
         print(f"Failed to send OTP to {email}. Error: {e}")
         return f"Failed to send OTP to the : {str(e)}"
-    
-    return otp
 
 
 @shared_task
@@ -84,3 +95,4 @@ def compare_faces_in_image(reference_image_data, event_image_path):
     except Exception as e:
         print(f"Error processing {event_image_path}: {e}")
         return None
+
