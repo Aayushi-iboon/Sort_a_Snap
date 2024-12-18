@@ -9,6 +9,8 @@ from django.conf import settings
 import boto3
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
+from twilio.base.exceptions import TwilioRestException
+
 
 # Initialize AWS Rekognition client
 rekognition_client = boto3.client(
@@ -59,23 +61,28 @@ def send_otp(email):
 @shared_task
 def user_otp(mobile_no):
     otp = random.randint(10000000, 99999999)
-    account_sid =os.getenv("SID")
+    account_sid = os.getenv("SID")
     auth_token = os.getenv("auth_token")
     client = Client(account_sid, auth_token)
     try:
+        # Use either `from_` or `messaging_service_sid`
         message = client.messages.create(
-            body=f"Your OTP code is {otp}",
-            from_=os.getenv("TWILIO_PHONE_NUMBER"),
+            body=f"Your OTP code for Sort Snap is {otp}. Please use it to complete your verification. The code is valid for 5 minutes.",
+            from_=os.getenv("TWILIO_PHONE_NUMBER"),  # Twilio number
+            # messaging_service_sid=os.getenv("TWILIO_MESSAGING_SERVICE_SID"),
             to=mobile_no,
         )
-        cache.set(f"otp_{mobile_no}", otp, timeout=300) 
-        otp = cache.get(f"otp_{mobile_no}")
+        cache.set(f"otp_{mobile_no}", otp, timeout=300)
         print(f"OTP {otp} sent to {mobile_no}")
         return f"OTP {otp} successfully sent to {mobile_no}"
+    
+    except TwilioRestException as e:
+        print(f"Failed to send OTP to {mobile_no}. Twilio Error: {e}")
+        return f"Failed to send OTP to {mobile_no}. Twilio Error: {e}"
+    
     except Exception as e:
         print(f"Failed to send OTP to {mobile_no}. Error: {e}")
         return f"Failed to send OTP to {mobile_no}. Error: {e}"
-    
 
 def compare_faces_in_image(reference_image_data, event_image_path):
     """Compare faces in reference image and event image, return matching image path if similarity > 60."""
