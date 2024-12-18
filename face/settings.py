@@ -76,9 +76,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000","http://localhost:8001","http://localhost:8080","https://stage.sortasnap.com"  # Add your web app's origin
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:8000","http://localhost:8001","http://localhost:8080","https://stage.sortasnap.com"  # Add your web app's origin
+# ]
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'face.urls'
 
