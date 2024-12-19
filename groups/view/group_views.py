@@ -311,7 +311,7 @@ class JoinGroupView(viewsets.ModelViewSet):
                 group = CustomGroup.objects.get(code=group_code)
             except CustomGroup.DoesNotExist:
                 return Response({"status":False,
-                                 "detail": "Invalid group code."}, status=status.HTTP_404_NOT_FOUND)
+                                 "message": "Invalid group code."}, status=status.HTTP_404_NOT_FOUND)
             
             if not user:
                 random_suffix = random.randint(1000, 9999)  # Random suffix for the email
@@ -350,7 +350,7 @@ class JoinGroupView(viewsets.ModelViewSet):
 
         
         if GroupMember.objects.filter(group=group, user=user).exists():
-            return Response({"detail": "User is already a member of this group."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"status":True,"message": "User is already a member of this group."}, status=status.HTTP_400_BAD_REQUEST)
 
         role = "Member" if user.is_authenticated else "Guest"
         
@@ -360,7 +360,7 @@ class JoinGroupView(viewsets.ModelViewSet):
         # Serialize and return response
         serializer = GroupMemberSerializer(group_member)
         return Response(
-            {"status":True,"data": serializer.data},
+            {"status":True,"message":"user joined group successfully ","data": serializer.data},
             status=status.HTTP_201_CREATED)
         
         
