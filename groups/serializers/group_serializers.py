@@ -192,12 +192,13 @@ class GroupMemberSerializer(serializers.ModelSerializer):
                 "code": instance.group.code,
                 "thumbnail": instance.group.thumbnail.url if instance.group.thumbnail else None,
                 "created_by": instance.group.created_by.email if instance.group.created_by else None,
-                "joined_at": instance.joined_at.strftime('%Y-%m-%d %H:%M:%S') if instance.joined_at else None,
-                "user": {
-                    "id": instance.user.id,
-                    "email": instance.user.email,
-                    "name": f"{instance.user.first_name} {instance.user.last_name}",
-                },
+                # "joined_at": instance.joined_at.strftime('%Y-%m-%d %H:%M:%S') if instance.joined_at else None,
+                "created at": instance.joined_at.strftime('%Y-%m-%d %H:%M:%S') if instance.joined_at else None,
+                # "user": {
+                #     "id": instance.user.id,
+                #     "email": instance.user.email,
+                #     "name": f"{instance.user.first_name} {instance.user.last_name}",
+                # },
                 
             }
             return group_data
@@ -213,10 +214,19 @@ class GroupMemberSerializer(serializers.ModelSerializer):
                     "id": instance.user.id,
                     "email": instance.user.email,
                 },
-                
             }
             return group_data
-
+        elif from_method == 'created_group_list':
+            group_data = {
+                "id": instance.group.id,
+                "name": instance.group.name,
+                "access": instance.group.access,
+                "code": instance.group.code,
+                "thumbnail": instance.group.thumbnail.url if instance.group.thumbnail else None,
+                "created_by": instance.group.created_by.email if instance.group.created_by else None,
+                "created at": instance.joined_at.strftime('%Y-%m-%d %H:%M:%S') if instance.joined_at else None,
+            }
+            return group_data
         else:
             # Default representation
             group_data = {
@@ -259,11 +269,23 @@ class CustomGroupSerializer(serializers.ModelSerializer):
                 "access": instance.access,
                 "code": instance.code,
                 "thumbnail": instance.thumbnail.url if instance.thumbnail else None,
+                # "Created By": instance.created_by.id if instance.created_by else None,
+                "Created By": instance.created_by.email if instance.created_by else None,
+                'created at': created_at_str,
+                # **common_fields,
+            }
+            return group_data
+
+        elif from_method == 'member_group_list':
+            # If listing all groups with a simplified structure
+            group_data = {
+                "name": instance.name,
+                "access": instance.access,
                 "Created By": instance.created_by.id if instance.created_by else None,
                 **common_fields,
             }
             return group_data
-
+        
         elif from_method == 'list_groups':
             # If listing all groups with a simplified structure
             group_data = {

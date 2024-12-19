@@ -206,6 +206,8 @@ class CustomGroupViewSet(viewsets.ModelViewSet):
         userid = kwargs.get('user')
         if userid:
             users=CustomGroup.objects.filter(created_by=userid)
+            member_groups = GroupMember.objects.filter(user_id=userid).select_related('group')
+
         else:
             return Response({
                 'status': False,
@@ -213,19 +215,35 @@ class CustomGroupViewSet(viewsets.ModelViewSet):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            if not users.exists():
+            
+            created_groups = CustomGroup.objects.filter(created_by_id=userid)
+            created_groups_data = self.serializer_class(created_groups, many=True,context={'request': request,'from_method':'created_group_list'}).data
+
+            
+            member_groups = GroupMember.objects.filter(user_id=userid).select_related('group')
+            member_groups_data = GroupMemberSerializer(member_groups, many=True,context={'request': request,'from_method':'member_group_list'}).data
+            
+            
+            if not users.exists() and not member_groups.exists():
                 return Response({
-                    "status": True,
+                    "status": True, 
                     "message": "No groups found for the user!",
-                    # 'data': {"user_data":[]}
+                    "data": {
+                        "created_groups": [],
+                        "member_groups": []
+                    }
                 }, status=status.HTTP_204_NO_CONTENT)
-                
-            serializer = self.serializer_class(users, many=True)
+            
+            # serializer = self.serializer_class(users, many=True)
             return Response({
-                "status": True,
-                "message": "User-specific groups retrieved successfully.",
-                'data': {"user_data": serializer.data} 
+                'status': True,
+                'message': "Groups retrieved successfully.",
+                'data': {
+                    'created_groups': created_groups_data,
+                    'member_groups': member_groups_data,
+                }
             }, status=status.HTTP_200_OK)
+            
         except Exception as e:
             return Response({
                 'status': False,
@@ -349,8 +367,8 @@ class JoinGroupView(viewsets.ModelViewSet):
             return Response({"detail": "No code or phone number provided."}, status=status.HTTP_400_BAD_REQUEST)
 
         
-        if GroupMember.objects.filter(group=group, user=user).exists():
-            return Response({"status":True,"message": "User is already a member of this group."}, status=status.HTTP_400_BAD_REQUEST)
+        # if GroupMember.objects.filter(group=group, user=user).exists():
+        #     return Response({"status":True,"message": "User is already a member of this group."}, status=status.HTTP_400_BAD_REQUEST)
 
         role = "Member" if user.is_authenticated else "Guest"
         
