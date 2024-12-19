@@ -167,7 +167,7 @@ class PhotoGroupView(viewsets.ModelViewSet):
 
         
         if not GroupMember.objects.filter(group=group, user=request.user).exists():
-            return Response({"status": False,"message": "You are not a member of this group."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"status": True,"message": "You are not a member of this group."}, status=status.HTTP_400_BAD_REQUEST)
 
         
         images = photo_group.objects.filter(group=group).select_related('user')

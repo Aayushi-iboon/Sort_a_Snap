@@ -385,7 +385,7 @@ class JoinGroupView(viewsets.ModelViewSet):
             return Response({
                 "status": True,
                 "message": "User's group memberships retrieved successfully.",
-                "data": {"group" : serializer.data}
+                "data": {"user_data" : serializer.data}
             }, status=status.HTTP_200_OK)
         
         except IntegrityError as e:
