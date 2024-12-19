@@ -44,7 +44,6 @@ class FamilyDataView(viewsets.ModelViewSet):
                 return Response({
                     "status": False,
                     "message": "Data not found!",
-                    'data': []
                 }, status=status.HTTP_204_NO_CONTENT)
 
             serializer = self.serializer_class(queryset, many=True, context={'request': request,'from_method': 'user_family'})

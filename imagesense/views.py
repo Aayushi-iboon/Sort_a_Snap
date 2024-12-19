@@ -21,7 +21,7 @@ import concurrent.futures
 import multiprocessing
 import os
 from rest_framework.exceptions import ValidationError
-from face.function_call import check_required_fields
+from face.function_call import check_required_fields,validate_email,flatten_errors
 from groups.model.group import CustomGroup
 
 User = get_user_model()
@@ -32,23 +32,8 @@ class GenerateOTP(APIView):
         if serializer.is_valid():
             email = serializer.validated_data.get('email')
             phone = serializer.validated_data.get('phone_no')
-        #     if email:
-        #         user_with_email = User.objects.filter(email=email).first()
-        #         if user_with_email:
-        #             return Response({
-        #                 "message": "A user with this email already exists."
-        #             }, status=status.HTTP_400_BAD_REQUEST)
-
-        # # Check if a phone number is provided and if a user with that phone number already exists
-        #     if phone:
-        #         user_with_phone = User.objects.filter(phone_no=phone).first()
-        #         if user_with_phone:
-        #             return Response({
-        #                 "message": "A user with this phone number already exists."
-        #             }, status=status.HTTP_400_BAD_REQUEST)
-        
             if email:
-                # Email-specific flow
+                
                 user = User.objects.filter(email=email).first()
                 if user:
                     if user.otp_status_email:
@@ -63,7 +48,8 @@ class GenerateOTP(APIView):
                                     "access": str(refresh.access_token),
                                 },
                                 "email": user.email,
-                                "edit_profile":user.edit_profile
+                                "edit_profile":user.edit_profile,
+                                'user_id':user.id,
                             }
                         }, status=status.HTTP_200_OK)
                     else:
@@ -99,7 +85,8 @@ class GenerateOTP(APIView):
                                     "access": str(refresh.access_token),
                                 },
                                 "phone": user.phone_no,
-                                "edit_profile":user.edit_profile
+                                "edit_profile":user.edit_profile,
+                                'user_id':user.id,
                             }
                         }, status=status.HTTP_200_OK)
                     else:
@@ -119,7 +106,11 @@ class GenerateOTP(APIView):
                         "data":None
                     }, status=status.HTTP_200_OK)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({
+        "status": False,
+        "message": "Validation failed.",
+        "errors": flatten_errors(serializer.errors)  # Include the validation errors
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 class VerifyOTP(APIView):
     def post(self, request):
@@ -195,9 +186,12 @@ class UserLogoutView(APIView):
         data['token'] = request.auth.get('jti')
         try:
             users=get_user_model().objects.get(id=data['user'])
-            users.otp_status = False
-            users.otp_status_email = False
-            users.save()
+            if users:
+                users.otp_status = False
+                users.otp_status_email = False
+                users.save()
+            else:
+                return Response({'status': False,"message": "Invalid User"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({
                 "status": False, "message": "User not found !!"
@@ -209,47 +203,6 @@ class UserLogoutView(APIView):
 
         return Response({"status": True, "message": "Logout successfully."})
 
-# class LogoutView(viewsets.ModelViewSet):
-#     permission_classes = [IsAuthenticated]
-    
-#     def logout(self, request, *args, **kwargs):
-#         try:
-#             access_token = request.headers.get('Authorization')
-#             if access_token is None or not access_token.startswith('Bearer '):
-#                 return Response({
-#                     'status': False,
-#                     'message': 'Access token is missing or invalid'
-#                 }, status=status.HTTP_400_BAD_REQUEST)
-
-#             access_token = access_token.split(' ')[1]  
-#             try:
-#                 token = AccessToken(access_token)
-#                 cache.set(f'blacklisted_{access_token}', True, timeout=token.lifetime.total_seconds())
-#                 user = request.user 
-                
-#                 # Check if the token is already blacklisted for the user
-#                 if not BlackListToken.objects.filter(token=access_token, user=user).exists():
-#                     BlackListToken.objects.create(token=access_token, user=user)
-#                 else:
-#                     return Response({
-#                         'status': True,
-#                         'message': 'Token is already blacklisted'
-#                     }, status=status.HTTP_200_OK)
-                    
-#                 return Response({
-#                     'status': True,
-#                     'message': 'User logged out successfully'
-#                 }, status=status.HTTP_200_OK)
-#             except TokenError:
-#                 return Response({
-#                     'status': False,
-#                     'message': 'Token is invalid or expired'
-#                 }, status=status.HTTP_400_BAD_REQUEST)
-#         except Exception as e:
-#             return Response({
-#                 'status': False,
-#                 'message': str(e)
-#             }, status=status.HTTP_400_BAD_REQUEST)
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -340,12 +293,39 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             matching_images = [img for img in matching_images if img is not None]
             
             # matched_images = ["https://eventpics1.s3.ap-south-1.amazonaws.com/" + img for img in matching_images]
-            matched_images = [f'{s3_bucket_url}/{img}' for img in matching_images]
+            # matched_images = [f'{s3_bucket_url}/{img}' for img in matching_images]
 
-            if matched_images:
-                return Response({"status": True, "message": "Photos retrieved successfully.", "data": {"images": matched_images}}, status=status.HTTP_200_OK)
+            if matching_images:
+                images_with_ids = [{
+                        "id": idx + 1100,  # Assuming starting ID as 1100
+                        "image_url": f'{s3_bucket_url}/{img}'
+                    }
+                    for idx, img in enumerate(matching_images)
+                ]
+
+                return Response({
+                    "status": True,
+                    "message": "matching image retrieved successfully.",
+                    "data": {
+                        "user_data": [
+                            {
+                                "images": images_with_ids
+                            }
+                        ]
+                    }
+                }, status=status.HTTP_200_OK)
+
             else:
-                return Response({"status": False, "message": "No matching faces found in the event images."}, status=status.HTTP_404_NOT_FOUND)
+                return Response({
+                    "status": False,
+                    "message": "No matching images found.",
+                }, status=status.HTTP_404_NOT_FOUND)
+            
+            
+            # if matched_images:
+            #     return Response({"status": True, "message": "Photos retrieved successfully.", "data": {"images": matched_images}}, status=status.HTTP_200_OK)
+            # else:
+            #     return Response({"status": False, "message": "No matching faces found in the event images."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"status": False,"message":"something went wrong","error": f"Error processing the image: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         

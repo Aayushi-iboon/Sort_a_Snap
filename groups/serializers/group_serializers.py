@@ -164,6 +164,70 @@ class GroupMemberSerializer(serializers.ModelSerializer):
         group_member = GroupMember.objects.create(user=user, **validated_data)
         return group_member
     
+    def to_representation(self, instance):
+        """
+        Custom representation of the GroupMember model to include detailed group information.
+        """
+        request = self.context.get('request')
+        from_method = self.context.get('from_method', 'unknown')
+
+        # def get_common_fields(instance):
+        #     """Helper function to extract common fields for all conditions."""
+        #     return {
+        #         "id": instance.id,
+        #         "user_verified": instance.user_verified,
+        #         "role": instance.role,
+        #         "joined_at": instance.joined_at.strftime('%Y-%m-%d %H:%M:%S') if instance.joined_at else None,
+        #     }
+
+        # common_fields = get_common_fields(instance)
+
+        if request and request.method == 'GET':
+            # Detailed group information for GET requests
+            group_data = {
+                
+                "id": instance.group.id,
+                "name": instance.group.name,
+                "access": instance.group.access,
+                "code": instance.group.code,
+                "thumbnail": instance.group.thumbnail.url if instance.group.thumbnail else None,
+                "created_by": instance.group.created_by.email if instance.group.created_by else None,
+                "joined_at": instance.joined_at.strftime('%Y-%m-%d %H:%M:%S') if instance.joined_at else None,
+                "user": {
+                    "id": instance.user.id,
+                    "email": instance.user.email,
+                    "name": f"{instance.user.first_name} {instance.user.last_name}",
+                },
+                
+            }
+            return group_data
+
+        elif from_method == 'group_list':
+            # Simplified structure for member listing
+            group_data = {
+                "group": {
+                    "id": instance.group.id,
+                    "name": instance.group.name,
+                },
+                "user": {
+                    "id": instance.user.id,
+                    "email": instance.user.email,
+                },
+                
+            }
+            return group_data
+
+        else:
+            # Default representation
+            group_data = {
+                "group_id": instance.group.id,
+                "group_name": instance.group.name,
+                "user_id": instance.user.id,
+                "user_email": instance.user.email,
+                
+            }
+            return group_data
+    
     
 class CustomGroupSerializer(serializers.ModelSerializer):
     members = GroupMemberSerializer(source='groupmember_set', many=True, read_only=True)
@@ -237,8 +301,8 @@ class PhotoGroupImage_serializer(serializers.ModelSerializer):
         # Custom representation
         return {
             "id": instance.id,
-            "image_url": instance.image2.url if instance.image2 else None,  
-            "photo_user_name": instance.photo_group.user.email if instance.photo_group else None, 
+            "image_url": getattr(instance.image2, 'url', None) if instance.image2 else None,
+            "photo_user_name": getattr(instance.photo_group.user, 'email', None) if instance.photo_group and instance.photo_group.user else None,
         }    
    
 class photo_serializer(serializers.ModelSerializer):
@@ -305,10 +369,22 @@ class photo_serializer(serializers.ModelSerializer):
                 "images": representation.get("images", [])
             }
             return group_data
+        
         elif from_method == 'photo_image_list':
-            if 'all_images' not in self.context:
-                self.context['all_images'] = []
-            self.context['all_images'].extend(image_details)
+            # Initialize 'all_images' if not already present in the context
+            self.context.setdefault('all_images', [])
+            
+            # Validate and filter valid images with 'image_url'
+            valid_images = [img for img in (image_details or []) if isinstance(img, dict) and img.get('image_url')]
+            
+            # Deduplicate images by checking if the image is already in 'all_images'
+            existing_image_urls = {img['image_url'] for img in self.context['all_images']}
+            unique_images = [img for img in valid_images if img['image_url'] not in existing_image_urls]
+
+            # Extend 'all_images' with unique images
+            self.context['all_images'].extend(unique_images)
+
+            # Return the updated list of all images
             return {"images": self.context.get('all_images', [])}
             
         else:

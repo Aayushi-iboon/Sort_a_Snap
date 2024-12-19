@@ -22,114 +22,6 @@ from django.db.models.functions import Coalesce
 
 User = get_user_model()
 
-# class CustomGroupViewSet(viewsets.ModelViewSet):
-#     queryset = photo_group.objects.all()
-#     serializer_class = photo_serializer
-#     permission_classes = [IsAuthenticated]
-#     filter_backends = [filters.SearchFilter,DjangoFilterBackend]
-#     filterset_fields = ['name']
-#     search_fields = ['name']
-
-#     def list(self, request, *args, **kwargs):
-#         queryset = self.filter_queryset(self.get_queryset())
-#         try:
-#             if not queryset.exists():
-#                 return Response({
-#                     "status": False,
-#                     "message": "No groups found!",
-#                     'data': []
-#                 }, status=status.HTTP_204_NO_CONTENT)
-                
-#             serializer = self.serializer_class(queryset, many=True)
-#             return Response({
-#                 "status": True,
-#                 "message": "Groups retrieved successfully.",
-#                 'data': {"user_data":serializer.data} 
-#             }, status=status.HTTP_200_OK)
-#         except Exception as e:
-#             return Response({
-#                 'status': False,
-#                 'message': "Something went wrong!",
-#                 'error': str(e)
-#             }, status=status.HTTP_400_BAD_REQUEST)
-
-#     def create(self, request, *args, **kwargs):
-#         try:
-#             serializer = self.serializer_class(data=request.data)
-#             if serializer.is_valid():
-#                 group = serializer.save(created_by=request.user)  # Assuming the logged-in user creates the group
-#                 return Response({
-#                     'status': True,
-#                     'message': 'Group created successfully.',
-#                     'id': group.id
-#                 }, status=status.HTTP_201_CREATED)
-#             return Response({
-#                 'status': False,
-#                 'message': 'Failed to create group',
-#                 'errors': serializer.errors
-#             }, status=status.HTTP_400_BAD_REQUEST)
-#         except Exception as e:
-#             return Response({
-#                 'status': False,
-#                 'message': "Something went wrong!",
-#                 'error': str(e)
-#             }, status=status.HTTP_400_BAD_REQUEST)
-
-#     def update(self, request, *args, **kwargs):
-#         try:
-#             partial = kwargs.pop('partial', True)
-#             instance = self.get_object()
-#             serializer = self.serializer_class(instance, data=request.data, partial=partial)
-#             if serializer.is_valid():
-#                 serializer.save()
-#                 return Response({
-#                     'status': True,
-#                     'message': 'Group updated successfully.',
-#                     'data': serializer.data
-#                 }, status=status.HTTP_200_OK)
-#             return Response({
-#                 'status': False,
-#                 'message': 'Failed to update group',
-#                 'errors': flatten_errors(serializer.errors)
-#             }, status=status.HTTP_400_BAD_REQUEST)
-#         except Exception as e:
-#             return Response({
-#                 'status': False,
-#                 'message': 'An unexpected error occurred while updating group',
-#                 'error': str(e)
-#             }, status=status.HTTP_400_BAD_REQUEST)
-
-#     def retrieve(self, request, *args, **kwargs):
-#         try:
-#             instance = self.get_object()
-#             serializer = self.serializer_class(instance)
-#             return Response({
-#                 'status': True,
-#                 'message': 'Group data retrieved successfully.',
-#                 'data': serializer.data
-#             }, status=status.HTTP_200_OK)
-#         except Exception as e:
-#             return Response({
-#                 'status': False,
-#                 'message': 'Group not found.',
-#                 'error': str(e)
-#             }, status=status.HTTP_400_BAD_REQUEST)
-
-#     def destroy(self, request, *args, **kwargs):
-#         try:
-#             instance = self.get_object()
-#             instance.delete()
-#             return Response({
-#                 'status': True,
-#                 'message': 'Group deleted successfully.'
-#             }, status=status.HTTP_200_OK)
-#         except Exception as e:
-#             return Response({
-#                 'status': False,
-#                 'message': 'Error deleting group.',
-#                 'error': str(e)
-#             }, status=status.HTTP_400_BAD_REQUEST)
-
 
 class PhotoGroupView(viewsets.ModelViewSet):
     queryset = photo_group.objects.all()
@@ -282,7 +174,7 @@ class PhotoGroupView(viewsets.ModelViewSet):
 
         
         serializer = self.get_serializer(images, many=True,context={'request': request,'from_method': 'all_images'})
-        return Response({"status": True,'message': 'image data retrieved successfully', "data": serializer.data},status=status.HTTP_200_OK)
+        return Response({"status": True,'message': 'image data retrieved successfully', "data": {"user_data":serializer.data}},status=status.HTTP_200_OK)
 
 
 

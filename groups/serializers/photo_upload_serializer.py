@@ -78,7 +78,6 @@ class PhotoGroupSerializer(serializers.ModelSerializer):
         images = instance.images.all()  
         images_data = [
             {
-                "id": image.id,
                 "image_url": image.image2.url if image.image2 else None  # Check if image2 exists
             }
             for image in images

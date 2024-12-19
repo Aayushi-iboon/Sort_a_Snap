@@ -48,8 +48,10 @@ urlpatterns = [
     path("create-customgroupmember-viewset/", JoinGroupView.as_view({'post':'join'}), name="create_customgroupmember_viewset"),
     path("generate-OTP-viewset/", JoinGroupView.as_view({'post':'user_verify'}), name="generate_OTP_viewset"),
     path("confirm-OTP-viewset/", JoinGroupView.as_view({'post':'user_confirm'}), name="confirm_OTP_viewset"),
+    path("user-joined-group/", JoinGroupView.as_view({'get':'access_user_joined_group'}), name="user_joined_group"),
 
 
+    
     path("photo-group-image-viewset-list/", PhotoGroupImageView.as_view({'get':'list'}), name="photo_image_viewset_list"),
     path("photo-group-image-viewset-pagelist/", PhotoGroupImageView.as_view({'get':'list_page'}), name="photo_image_viewset_pagelist"),
     path("upload-group-image-photo/", PhotoGroupImageView.as_view({'post':'create'}), name="group_image_upload_photo"),

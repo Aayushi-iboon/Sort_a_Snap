@@ -118,6 +118,14 @@ class LogoutSerializer(serializers.Serializer):
 
     def save(self, **kwargs):
         try:
+            user_model = get_user_model()
+            user = user_model.objects.get(id=self.user)
+        except user_model.DoesNotExist:
+            raise ValidationError({
+                "status": False,
+                "message": "User not found!"
+            })
+        try:
             token = RefreshToken(self.refresh_token)
             token.blacklist()
             cache_key =hashlib.sha256(self.token.encode()).hexdigest()

@@ -68,7 +68,6 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
                 return Response({
                     "status": False,
                     "message": "No groups found!",
-                    'data': []
                 }, status=status.HTTP_204_NO_CONTENT)
                 
             serializer = self.serializer_class(queryset, many=True, context={'request': request,'from_method':'photo_image'})
@@ -107,39 +106,6 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-    # def get_all_group(self, request, *args, **kwargs):
-    #     user_id = kwargs.get('user')
-    #     try:
-    #         if not user_id:
-    #             return Response(
-    #                 {"status": False, "message": "user is required."},
-    #                 status=status.HTTP_400_BAD_REQUEST
-    #             )
-    #         User = get_user_model()
-    #         user = User.objects.get(id=user_id)
-    #         groups = CustomGroup.objects.filter(created_by=user)
-    #         if not groups.exists():
-    #             return Response(
-    #                 {"status": False, "message": "No groups found for this user."},
-    #                 status=status.HTTP_404_NOT_FOUND
-    #             )
-            
-    #         # Serialize and return data
-    #         serializer = CustomGroupSerializer(groups, many=True)
-    #         return Response(
-    #             {"status": True, "message": "Groups retrieved successfully.", "data": serializer.data},
-    #             status=status.HTTP_200_OK
-    #         )
-    #     except User.DoesNotExist:
-    #         return Response(
-    #             {"status": False, "message": "User not found."},
-    #             status=status.HTTP_404_NOT_FOUND
-    #         )
-    #     except Exception as e:
-    #         return Response(
-    #             {"status": False, "message": "something went wrong!","error" : str(e)},
-    #             status=status.HTTP_500_INTERNAL_SERVER_ERROR
-    #         )
             
             
     def get_group_wise_user(self, request, *args, **kwargs):
@@ -162,10 +128,10 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
                     {"status":False,'message': 'No photos found for the given user and group'},
                 status=status.HTTP_404_NOT_FOUND
             )
-            serializer = self.get_serializer(photos, many=True,context={'request': request,'from_method':''})
+            serializer = self.get_serializer(photos, many=True,context={'request': request,'from_method':'photo_image_list'})
             return Response({ "status": True,  
                              "message": "group and user wise Data retrieved successfully.",
-                             "data":{"user_data":serializer.data}}, status=status.HTTP_200_OK)
+                             "data":{"user_data":[serializer.data[-1]]}}, status=status.HTTP_200_OK)
         
         except user.DoesNotExist:
             return Response(
