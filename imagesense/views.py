@@ -33,25 +33,32 @@ class GenerateOTP(APIView):
             email = serializer.validated_data.get('email')
             phone = serializer.validated_data.get('phone_no')
             if email:
-                
                 user = User.objects.filter(email=email).first()
                 if user:
                     if user.otp_status_email:
                         # User is verified by email
-                        refresh = RefreshToken.for_user(user)
+                        user.otp_status_email = False
+                        user.save()
+                        send_otp.delay(email)
                         return Response({
                             "status": True,
-                            "message": "User already exists and is email-verified!",
-                            "data": {
-                                "token": {
-                                    "refresh": str(refresh),
-                                    "access": str(refresh.access_token),
-                                },
-                                "email": user.email,
-                                "edit_profile":user.edit_profile,
-                                'user_id':user.id,
-                            }
+                            "message": f"OTP sent to {email} for verification.",
+                            "data":None
                         }, status=status.HTTP_200_OK)
+                        # refresh = RefreshToken.for_user(user)
+                        # return Response({
+                        #     "status": True,
+                        #     "message": "User already exists and is email-verified!",
+                        #     "data": {
+                        #         "token": {
+                        #             "refresh": str(refresh),
+                        #             "access": str(refresh.access_token),
+                        #         },
+                        #         "email": user.email,
+                        #         "edit_profile":user.edit_profile,
+                        #         'user_id':user.id,
+                        #     }
+                        # }, status=status.HTTP_200_OK)
                     else:
                         # Resend email OTP
                         send_otp.delay(email)
@@ -74,21 +81,29 @@ class GenerateOTP(APIView):
                 user = User.objects.filter(phone_no=phone).first()
                 if user:
                     if user.otp_status:
-                        # User is verified by phone
-                        refresh = RefreshToken.for_user(user)
+                        user.otp_status = False
+                        user.save()
+                        user_otp.delay(phone)
                         return Response({
                             "status": True,
-                            "message": "User already exists and is phone-verified!",
-                            "data": {
-                                "token": {
-                                    "refresh": str(refresh),
-                                    "access": str(refresh.access_token),
-                                },
-                                "phone": user.phone_no,
-                                "edit_profile":user.edit_profile,
-                                'user_id':user.id,
-                            }
+                            "message": f"OTP sent to {phone} for verification.",
+                            "data":None
                         }, status=status.HTTP_200_OK)
+                        # User is verified by phone
+                        # refresh = RefreshToken.for_user(user)
+                        # return Response({
+                        #     "status": True,
+                        #     "message": "User already exists and is phone-verified!",
+                        #     "data": {
+                        #         "token": {
+                        #             "refresh": str(refresh),
+                        #             "access": str(refresh.access_token),
+                        #         },
+                        #         "phone": user.phone_no,
+                        #         "edit_profile":user.edit_profile,
+                        #         'user_id':user.id,
+                        #     }
+                        # }, status=status.HTTP_200_OK)
                     else:
                         # Resend phone OTP
                         user_otp.delay(phone)
