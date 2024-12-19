@@ -720,3 +720,1217 @@ ERROR 2024-12-12 19:19:20,839 log Internal Server Error: /api/analyze-face-image
 ERROR 2024-12-12 19:19:20,840 basehttp "POST /api/analyze-face-image/?group=15 HTTP/1.1" 500 95
 ERROR 2024-12-12 23:03:02,609 log Internal Server Error: /api/analyze-face-image/
 ERROR 2024-12-12 23:03:02,611 basehttp "POST /api/analyze-face-image/ HTTP/1.1" 500 95
+ERROR 2024-12-18 12:57:57,086 basehttp "POST /api/generate-otp/ HTTP/1.1" 500 59
+ERROR 2024-12-18 12:58:13,437 basehttp "POST /api/generate-otp/ HTTP/1.1" 500 59
+ERROR 2024-12-18 16:10:37,981 log Internal Server Error: /api/user/logout/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/imagesense/views.py", line 187, in post
+    missing_fields_message = check_required_fields(data['user'],data)
+  File "/home/iboon_laptop_18/Documents/imagelens/face/function_call.py", line 13, in check_required_fields
+    missing_fields = [field for field in required_fields if field not in request_data or not request_data[field]]
+TypeError: 'int' object is not iterable
+ERROR 2024-12-18 16:10:37,985 basehttp "POST /api/user/logout/ HTTP/1.1" 500 104514
+ERROR 2024-12-18 19:52:09,024 log Internal Server Error: /api/group/create-customgroupmember-viewset/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/group_views.py", line 565, in join
+    phone_no = user_data.get('phone_no')
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR 2024-12-18 19:52:09,028 basehttp "POST /api/group/create-customgroupmember-viewset/ HTTP/1.1" 500 99770
+ERROR 2024-12-18 19:53:00,148 log Internal Server Error: /api/group/create-customgroupmember-viewset/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/group_views.py", line 565, in join
+    phone_no = user_data.get('phone_no')
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR 2024-12-18 19:53:00,151 basehttp "POST /api/group/create-customgroupmember-viewset/ HTTP/1.1" 500 99770
+ERROR 2024-12-18 19:53:40,987 log Internal Server Error: /api/group/create-customgroupmember-viewset/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/group_views.py", line 565, in join
+    phone_no = user_data.get('phone_no')
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR 2024-12-18 19:53:40,989 basehttp "POST /api/group/create-customgroupmember-viewset/ HTTP/1.1" 500 99770
+ERROR 2024-12-18 19:53:47,212 log Internal Server Error: /api/group/create-customgroupmember-viewset/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/group_views.py", line 565, in join
+    phone_no = user_data.get('phone_no')
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR 2024-12-18 19:53:47,214 basehttp "POST /api/group/create-customgroupmember-viewset/ HTTP/1.1" 500 99770
+ERROR 2024-12-18 19:55:36,005 log Internal Server Error: /api/group/create-customgroupmember-viewset/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/group_views.py", line 565, in join
+    phone_no = user_data.get('phone_no')
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR 2024-12-18 19:55:36,008 basehttp "POST /api/group/create-customgroupmember-viewset/ HTTP/1.1" 500 100180
+ERROR 2024-12-18 19:55:45,634 log Internal Server Error: /api/group/create-customgroupmember-viewset/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/group_views.py", line 565, in join
+    phone_no = user_data.get('phone_no')
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR 2024-12-18 19:55:45,636 basehttp "POST /api/group/create-customgroupmember-viewset/ HTTP/1.1" 500 100180
+ERROR 2024-12-18 19:56:41,869 log Internal Server Error: /api/group/create-customgroupmember-viewset/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/group_views.py", line 565, in join
+    phone_no = user_data.get('phone_no')
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR 2024-12-18 19:56:41,873 basehttp "POST /api/group/create-customgroupmember-viewset/ HTTP/1.1" 500 100194
+ERROR 2024-12-18 19:57:17,922 log Internal Server Error: /api/group/create-customgroupmember-viewset/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/group_views.py", line 565, in join
+    phone_no = user_data.get('phone_no')
+AttributeError: 'NoneType' object has no attribute 'get'
+ERROR 2024-12-18 19:57:17,924 basehttp "POST /api/group/create-customgroupmember-viewset/ HTTP/1.1" 500 100194
+ERROR 2024-12-18 20:00:08,329 log Internal Server Error: /api/group/create-customgroupmember-viewset/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/group_views.py", line 565, in join
+    user_data=request.data.get('user')
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/group_views.py", line 565, in join
+    user_data=request.data.get('user')
+  File "/usr/lib/python3.10/bdb.py", line 90, in trace_dispatch
+    return self.dispatch_line(frame)
+  File "/usr/lib/python3.10/bdb.py", line 114, in dispatch_line
+    self.user_line(frame)
+  File "/usr/lib/python3.10/pdb.py", line 253, in user_line
+    self.interaction(frame, None)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/IPython/core/debugger.py", line 464, in interaction
+    OldPdb.interaction(self, frame, tb)
+  File "/usr/lib/python3.10/pdb.py", line 348, in interaction
+    self._cmdloop()
+  File "/usr/lib/python3.10/pdb.py", line 313, in _cmdloop
+    self.cmdloop()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/IPython/terminal/debugger.py", line 143, in cmdloop
+    line = self.thread_executor.submit(self._prompt).result()
+  File "/usr/lib/python3.10/concurrent/futures/thread.py", line 169, in submit
+    raise RuntimeError('cannot schedule new futures after '
+RuntimeError: cannot schedule new futures after interpreter shutdown
+ERROR 2024-12-18 20:00:08,335 basehttp "POST /api/group/create-customgroupmember-viewset/ HTTP/1.1" 500 137854
+ERROR 2024-12-19 11:11:34,361 log Internal Server Error: /api/group/get-group-wise-user/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 134, in get_group_wise_user
+    "data":{"user_data":serializer.data}}, status=status.HTTP_200_OK)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 795, in data
+    ret = super().data
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 249, in data
+    self._data = self.to_representation(self.instance)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 713, in to_representation
+    return [
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 714, in <listcomp>
+    self.child.to_representation(item) for item in iterable
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/serializers/group_serializers.py", line 375, in to_representation
+    self.context['all_images'][0].extend(image_details)
+IndexError: list index out of range
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 136, in get_group_wise_user
+    except user.DoesNotExist:
+AttributeError: 'str' object has no attribute 'DoesNotExist'
+ERROR 2024-12-19 11:11:34,367 basehttp "POST /api/group/get-group-wise-user/ HTTP/1.1" 500 138710
+ERROR 2024-12-19 12:06:53,124 log Internal Server Error: /api/group/get-group-wise-user/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 133, in get_group_wise_user
+    return Response({ "status": True,
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 133, in get_group_wise_user
+    return Response({ "status": True,
+  File "/usr/lib/python3.10/bdb.py", line 90, in trace_dispatch
+    return self.dispatch_line(frame)
+  File "/usr/lib/python3.10/bdb.py", line 114, in dispatch_line
+    self.user_line(frame)
+  File "/usr/lib/python3.10/pdb.py", line 253, in user_line
+    self.interaction(frame, None)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/IPython/core/debugger.py", line 464, in interaction
+    OldPdb.interaction(self, frame, tb)
+  File "/usr/lib/python3.10/pdb.py", line 348, in interaction
+    self._cmdloop()
+  File "/usr/lib/python3.10/pdb.py", line 313, in _cmdloop
+    self.cmdloop()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/IPython/terminal/debugger.py", line 143, in cmdloop
+    line = self.thread_executor.submit(self._prompt).result()
+  File "/usr/lib/python3.10/concurrent/futures/thread.py", line 169, in submit
+    raise RuntimeError('cannot schedule new futures after '
+RuntimeError: cannot schedule new futures after interpreter shutdown
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 137, in get_group_wise_user
+    except user.DoesNotExist:
+AttributeError: 'str' object has no attribute 'DoesNotExist'
+ERROR 2024-12-19 12:06:53,147 basehttp "POST /api/group/get-group-wise-user/ HTTP/1.1" 500 151216
+ERROR 2024-12-19 12:07:16,427 log Internal Server Error: /api/analyze-face-image/
+ERROR 2024-12-19 12:07:16,428 basehttp "POST /api/analyze-face-image/ HTTP/1.1" 500 142
+ERROR 2024-12-19 12:10:04,739 log Internal Server Error: /api/group/get-group-wise-user/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 133, in get_group_wise_user
+    return Response({ "status": True,
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 133, in get_group_wise_user
+    return Response({ "status": True,
+  File "/usr/lib/python3.10/bdb.py", line 90, in trace_dispatch
+    return self.dispatch_line(frame)
+  File "/usr/lib/python3.10/bdb.py", line 114, in dispatch_line
+    self.user_line(frame)
+  File "/usr/lib/python3.10/pdb.py", line 253, in user_line
+    self.interaction(frame, None)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/IPython/core/debugger.py", line 464, in interaction
+    OldPdb.interaction(self, frame, tb)
+  File "/usr/lib/python3.10/pdb.py", line 348, in interaction
+    self._cmdloop()
+  File "/usr/lib/python3.10/pdb.py", line 313, in _cmdloop
+    self.cmdloop()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/IPython/terminal/debugger.py", line 143, in cmdloop
+    line = self.thread_executor.submit(self._prompt).result()
+  File "/usr/lib/python3.10/concurrent/futures/thread.py", line 169, in submit
+    raise RuntimeError('cannot schedule new futures after '
+RuntimeError: cannot schedule new futures after interpreter shutdown
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 137, in get_group_wise_user
+    except user.DoesNotExist:
+AttributeError: 'str' object has no attribute 'DoesNotExist'
+ERROR 2024-12-19 12:10:04,786 basehttp "POST /api/group/get-group-wise-user/ HTTP/1.1" 500 151216
+ERROR 2024-12-19 12:10:43,706 log Internal Server Error: /api/group/get-group-wise-user/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 133, in get_group_wise_user
+    return Response({ "status": True,
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 133, in get_group_wise_user
+    return Response({ "status": True,
+  File "/usr/lib/python3.10/bdb.py", line 90, in trace_dispatch
+    return self.dispatch_line(frame)
+  File "/usr/lib/python3.10/bdb.py", line 114, in dispatch_line
+    self.user_line(frame)
+  File "/usr/lib/python3.10/pdb.py", line 253, in user_line
+    self.interaction(frame, None)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/IPython/core/debugger.py", line 464, in interaction
+    OldPdb.interaction(self, frame, tb)
+  File "/usr/lib/python3.10/pdb.py", line 348, in interaction
+    self._cmdloop()
+  File "/usr/lib/python3.10/pdb.py", line 313, in _cmdloop
+    self.cmdloop()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/IPython/terminal/debugger.py", line 143, in cmdloop
+    line = self.thread_executor.submit(self._prompt).result()
+  File "/usr/lib/python3.10/concurrent/futures/thread.py", line 169, in submit
+    raise RuntimeError('cannot schedule new futures after '
+RuntimeError: cannot schedule new futures after interpreter shutdown
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 137, in get_group_wise_user
+    except user.DoesNotExist:
+AttributeError: 'str' object has no attribute 'DoesNotExist'
+ERROR 2024-12-19 12:10:43,714 basehttp "POST /api/group/get-group-wise-user/ HTTP/1.1" 500 151216
+ERROR 2024-12-19 12:21:55,954 log Internal Server Error: /api/group/get-group-wise-user/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 135, in get_group_wise_user
+    "data":{"user_data":serializer.data}}, status=status.HTTP_200_OK)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 795, in data
+    ret = super().data
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 249, in data
+    self._data = self.to_representation(self.instance)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 713, in to_representation
+    return [
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 714, in <listcomp>
+    self.child.to_representation(item) for item in iterable
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/serializers/group_serializers.py", line 362, in to_representation
+    representation = super().to_representation(instance)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 538, in to_representation
+    ret[field.field_name] = field.to_representation(attribute)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 713, in to_representation
+    return [
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 714, in <listcomp>
+    self.child.to_representation(item) for item in iterable
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/serializers/group_serializers.py", line 303, in to_representation
+    image_urls = [image.url for image in instance.image2.all()] if instance.image2 else []
+AttributeError: 'ImageFieldFile' object has no attribute 'all'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 137, in get_group_wise_user
+    except user.DoesNotExist:
+AttributeError: 'str' object has no attribute 'DoesNotExist'
+ERROR 2024-12-19 12:21:55,999 basehttp "POST /api/group/get-group-wise-user/ HTTP/1.1" 500 158904
+ERROR 2024-12-19 12:25:04,859 log Internal Server Error: /api/group/get-group-wise-user/
+ERROR 2024-12-19 12:25:04,861 basehttp "POST /api/group/get-group-wise-user/ HTTP/1.1" 500 75
+ERROR 2024-12-19 12:25:33,749 log Internal Server Error: /api/group/get-group-wise-user/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 135, in get_group_wise_user
+    "data":{"user_data":serializer.data}}, status=status.HTTP_200_OK)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 795, in data
+    ret = super().data
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 249, in data
+    self._data = self.to_representation(self.instance)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 713, in to_representation
+    return [
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 714, in <listcomp>
+    self.child.to_representation(item) for item in iterable
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/serializers/group_serializers.py", line 362, in to_representation
+    representation = super().to_representation(instance)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 538, in to_representation
+    ret[field.field_name] = field.to_representation(attribute)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 713, in to_representation
+    return [
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/serializers.py", line 714, in <listcomp>
+    self.child.to_representation(item) for item in iterable
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/serializers/group_serializers.py", line 303, in to_representation
+    image_urls = [image.url for image in instance.image2.all()] if instance.image2 else []
+AttributeError: 'ImageFieldFile' object has no attribute 'all'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 137, in get_group_wise_user
+    except user.DoesNotExist:
+AttributeError: 'str' object has no attribute 'DoesNotExist'
+ERROR 2024-12-19 12:25:33,766 basehttp "POST /api/group/get-group-wise-user/ HTTP/1.1" 500 158904
+ERROR 2024-12-19 12:32:30,921 log Internal Server Error: /api/group/get-group-wise-user/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 133, in get_group_wise_user
+    return Response({ "status": True,
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 133, in get_group_wise_user
+    return Response({ "status": True,
+  File "/usr/lib/python3.10/bdb.py", line 90, in trace_dispatch
+    return self.dispatch_line(frame)
+  File "/usr/lib/python3.10/bdb.py", line 114, in dispatch_line
+    self.user_line(frame)
+  File "/usr/lib/python3.10/pdb.py", line 253, in user_line
+    self.interaction(frame, None)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/IPython/core/debugger.py", line 464, in interaction
+    OldPdb.interaction(self, frame, tb)
+  File "/usr/lib/python3.10/pdb.py", line 348, in interaction
+    self._cmdloop()
+  File "/usr/lib/python3.10/pdb.py", line 313, in _cmdloop
+    self.cmdloop()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/IPython/terminal/debugger.py", line 143, in cmdloop
+    line = self.thread_executor.submit(self._prompt).result()
+  File "/usr/lib/python3.10/concurrent/futures/thread.py", line 169, in submit
+    raise RuntimeError('cannot schedule new futures after '
+RuntimeError: cannot schedule new futures after interpreter shutdown
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 137, in get_group_wise_user
+    except user.DoesNotExist:
+AttributeError: 'str' object has no attribute 'DoesNotExist'
+ERROR 2024-12-19 12:32:30,941 basehttp "POST /api/group/get-group-wise-user/ HTTP/1.1" 500 151240
+ERROR 2024-12-19 12:32:50,896 log Internal Server Error: /api/group/get-group-wise-user/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/__init__.py", line 2123, in get_prep_value
+    return int(value)
+ValueError: invalid literal for int() with base 10: 'null'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 125, in get_group_wise_user
+    photos = photo_group.objects.filter(user_id=user, group__id=group) if group else photo_group.objects.filter(user_id=user)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1476, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1494, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1501, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1609, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1641, in _add_q
+    child_clause, needed_inner = self.build_filter(
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1555, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1385, in build_lookup
+    lookup = lookup_class(lhs, rhs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 30, in __init__
+    self.rhs = self.get_prep_lookup()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 369, in get_prep_lookup
+    return super().get_prep_lookup()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 88, in get_prep_lookup
+    return self.lhs.output_field.get_prep_value(self.rhs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/__init__.py", line 2125, in get_prep_value
+    raise e.__class__(
+ValueError: Field 'id' expected a number but got 'null'.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 137, in get_group_wise_user
+    except user.DoesNotExist:
+AttributeError: 'str' object has no attribute 'DoesNotExist'
+ERROR 2024-12-19 12:32:50,915 basehttp "POST /api/group/get-group-wise-user/ HTTP/1.1" 500 171162
+ERROR 2024-12-19 12:33:58,343 log Internal Server Error: /api/group/get-group-wise-user/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 133, in get_group_wise_user
+    return Response({ "status": True,
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 133, in get_group_wise_user
+    return Response({ "status": True,
+  File "/usr/lib/python3.10/bdb.py", line 90, in trace_dispatch
+    return self.dispatch_line(frame)
+  File "/usr/lib/python3.10/bdb.py", line 114, in dispatch_line
+    self.user_line(frame)
+  File "/usr/lib/python3.10/pdb.py", line 253, in user_line
+    self.interaction(frame, None)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/IPython/core/debugger.py", line 464, in interaction
+    OldPdb.interaction(self, frame, tb)
+  File "/usr/lib/python3.10/pdb.py", line 348, in interaction
+    self._cmdloop()
+  File "/usr/lib/python3.10/pdb.py", line 313, in _cmdloop
+    self.cmdloop()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/IPython/terminal/debugger.py", line 143, in cmdloop
+    line = self.thread_executor.submit(self._prompt).result()
+  File "/usr/lib/python3.10/concurrent/futures/thread.py", line 169, in submit
+    raise RuntimeError('cannot schedule new futures after '
+RuntimeError: cannot schedule new futures after interpreter shutdown
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 137, in get_group_wise_user
+    except user.DoesNotExist:
+AttributeError: 'str' object has no attribute 'DoesNotExist'
+ERROR 2024-12-19 12:33:58,351 basehttp "POST /api/group/get-group-wise-user/ HTTP/1.1" 500 151240
+ERROR 2024-12-19 12:36:01,630 log Internal Server Error: /api/group/get-group-wise-user/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/__init__.py", line 2123, in get_prep_value
+    return int(value)
+ValueError: invalid literal for int() with base 10: 'null'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 125, in get_group_wise_user
+    photos = photo_group.objects.filter(user_id=user, group__id=group) if group else photo_group.objects.filter(user_id=user)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1476, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1494, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1501, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1609, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1641, in _add_q
+    child_clause, needed_inner = self.build_filter(
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1555, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1385, in build_lookup
+    lookup = lookup_class(lhs, rhs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 30, in __init__
+    self.rhs = self.get_prep_lookup()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 369, in get_prep_lookup
+    return super().get_prep_lookup()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 88, in get_prep_lookup
+    return self.lhs.output_field.get_prep_value(self.rhs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/__init__.py", line 2125, in get_prep_value
+    raise e.__class__(
+ValueError: Field 'id' expected a number but got 'null'.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 136, in get_group_wise_user
+    except user.DoesNotExist:
+AttributeError: 'str' object has no attribute 'DoesNotExist'
+ERROR 2024-12-19 12:36:01,669 basehttp "POST /api/group/get-group-wise-user/ HTTP/1.1" 500 171153
+ERROR 2024-12-19 12:36:18,305 log Internal Server Error: /api/group/get-group-wise-user/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/__init__.py", line 2123, in get_prep_value
+    return int(value)
+ValueError: invalid literal for int() with base 10: 'null'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 125, in get_group_wise_user
+    photos = photo_group.objects.filter(user_id=user, group__id=group) if group else photo_group.objects.filter(user_id=user)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1476, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1494, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1501, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1609, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1641, in _add_q
+    child_clause, needed_inner = self.build_filter(
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1555, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1385, in build_lookup
+    lookup = lookup_class(lhs, rhs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 30, in __init__
+    self.rhs = self.get_prep_lookup()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 369, in get_prep_lookup
+    return super().get_prep_lookup()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 88, in get_prep_lookup
+    return self.lhs.output_field.get_prep_value(self.rhs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/__init__.py", line 2125, in get_prep_value
+    raise e.__class__(
+ValueError: Field 'id' expected a number but got 'null'.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 136, in get_group_wise_user
+    except user.DoesNotExist:
+AttributeError: 'str' object has no attribute 'DoesNotExist'
+ERROR 2024-12-19 12:36:18,335 basehttp "POST /api/group/get-group-wise-user/ HTTP/1.1" 500 171153
+ERROR 2024-12-19 12:38:32,051 log Internal Server Error: /api/group/get-group-wise-user/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/__init__.py", line 2123, in get_prep_value
+    return int(value)
+ValueError: invalid literal for int() with base 10: 'null'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 125, in get_group_wise_user
+    photos = photo_group.objects.filter(user_id=user, group__id=group) if group else photo_group.objects.filter(user_id=user)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1476, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1494, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1501, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1609, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1641, in _add_q
+    child_clause, needed_inner = self.build_filter(
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1555, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1385, in build_lookup
+    lookup = lookup_class(lhs, rhs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 30, in __init__
+    self.rhs = self.get_prep_lookup()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 369, in get_prep_lookup
+    return super().get_prep_lookup()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 88, in get_prep_lookup
+    return self.lhs.output_field.get_prep_value(self.rhs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/__init__.py", line 2125, in get_prep_value
+    raise e.__class__(
+ValueError: Field 'id' expected a number but got 'null'.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 136, in get_group_wise_user
+    except user.DoesNotExist:
+AttributeError: 'str' object has no attribute 'DoesNotExist'
+ERROR 2024-12-19 12:38:32,054 basehttp "POST /api/group/get-group-wise-user/ HTTP/1.1" 500 171153
+ERROR 2024-12-19 12:38:56,148 log Internal Server Error: /api/group/get-group-wise-user/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/__init__.py", line 2123, in get_prep_value
+    return int(value)
+ValueError: invalid literal for int() with base 10: 'null'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 125, in get_group_wise_user
+    photos = photo_group.objects.filter(user_id=user, group__id=group) if group else photo_group.objects.filter(user_id=user)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1476, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1494, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1501, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1609, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1641, in _add_q
+    child_clause, needed_inner = self.build_filter(
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1555, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1385, in build_lookup
+    lookup = lookup_class(lhs, rhs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 30, in __init__
+    self.rhs = self.get_prep_lookup()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 369, in get_prep_lookup
+    return super().get_prep_lookup()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 88, in get_prep_lookup
+    return self.lhs.output_field.get_prep_value(self.rhs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/__init__.py", line 2125, in get_prep_value
+    raise e.__class__(
+ValueError: Field 'id' expected a number but got 'null'.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 136, in get_group_wise_user
+    except user.DoesNotExist:
+AttributeError: 'str' object has no attribute 'DoesNotExist'
+ERROR 2024-12-19 12:38:56,150 basehttp "POST /api/group/get-group-wise-user/ HTTP/1.1" 500 171153
+ERROR 2024-12-19 12:39:02,304 log Internal Server Error: /api/group/get-group-wise-user/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/__init__.py", line 2123, in get_prep_value
+    return int(value)
+ValueError: invalid literal for int() with base 10: 'null'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 125, in get_group_wise_user
+    photos = photo_group.objects.filter(user_id=user, group__id=group) if group else photo_group.objects.filter(user_id=user)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1476, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1494, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1501, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1609, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1641, in _add_q
+    child_clause, needed_inner = self.build_filter(
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1555, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1385, in build_lookup
+    lookup = lookup_class(lhs, rhs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 30, in __init__
+    self.rhs = self.get_prep_lookup()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 369, in get_prep_lookup
+    return super().get_prep_lookup()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 88, in get_prep_lookup
+    return self.lhs.output_field.get_prep_value(self.rhs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/__init__.py", line 2125, in get_prep_value
+    raise e.__class__(
+ValueError: Field 'id' expected a number but got 'null'.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 136, in get_group_wise_user
+    except user.DoesNotExist:
+AttributeError: 'str' object has no attribute 'DoesNotExist'
+ERROR 2024-12-19 12:39:02,307 basehttp "POST /api/group/get-group-wise-user/ HTTP/1.1" 500 171153
+ERROR 2024-12-19 12:39:38,928 log Internal Server Error: /api/group/get-group-wise-user/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/__init__.py", line 2123, in get_prep_value
+    return int(value)
+ValueError: invalid literal for int() with base 10: 'null'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 125, in get_group_wise_user
+    photos = photo_group.objects.filter(user_id=user, group__id=group) if group else photo_group.objects.filter(user_id=user)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1476, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1494, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1501, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1609, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1641, in _add_q
+    child_clause, needed_inner = self.build_filter(
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1555, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1385, in build_lookup
+    lookup = lookup_class(lhs, rhs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 30, in __init__
+    self.rhs = self.get_prep_lookup()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 369, in get_prep_lookup
+    return super().get_prep_lookup()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 88, in get_prep_lookup
+    return self.lhs.output_field.get_prep_value(self.rhs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/__init__.py", line 2125, in get_prep_value
+    raise e.__class__(
+ValueError: Field 'id' expected a number but got 'null'.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 136, in get_group_wise_user
+    except user.DoesNotExist:
+AttributeError: 'str' object has no attribute 'DoesNotExist'
+ERROR 2024-12-19 12:39:38,933 basehttp "POST /api/group/get-group-wise-user/ HTTP/1.1" 500 171153
+ERROR 2024-12-19 12:40:39,011 log Internal Server Error: /api/group/get-group-wise-user/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/__init__.py", line 2123, in get_prep_value
+    return int(value)
+ValueError: invalid literal for int() with base 10: 'null'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 125, in get_group_wise_user
+    photos = photo_group.objects.filter(user_id=user, group__id=group) if group else photo_group.objects.filter(user_id=user)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1476, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1494, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1501, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1609, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1641, in _add_q
+    child_clause, needed_inner = self.build_filter(
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1555, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1385, in build_lookup
+    lookup = lookup_class(lhs, rhs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 30, in __init__
+    self.rhs = self.get_prep_lookup()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 369, in get_prep_lookup
+    return super().get_prep_lookup()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 88, in get_prep_lookup
+    return self.lhs.output_field.get_prep_value(self.rhs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/__init__.py", line 2125, in get_prep_value
+    raise e.__class__(
+ValueError: Field 'id' expected a number but got 'null'.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 136, in get_group_wise_user
+    except user.DoesNotExist:
+AttributeError: 'str' object has no attribute 'DoesNotExist'
+ERROR 2024-12-19 12:40:39,015 basehttp "POST /api/group/get-group-wise-user/ HTTP/1.1" 500 171153
+ERROR 2024-12-19 12:41:28,754 log Internal Server Error: /api/group/get-group-wise-user/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/__init__.py", line 2123, in get_prep_value
+    return int(value)
+ValueError: invalid literal for int() with base 10: 'null'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 125, in get_group_wise_user
+    photos = photo_group.objects.filter(user_id=user, group__id=group) if group else photo_group.objects.filter(user_id=user)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1476, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1494, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1501, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1609, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1641, in _add_q
+    child_clause, needed_inner = self.build_filter(
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1555, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1385, in build_lookup
+    lookup = lookup_class(lhs, rhs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 30, in __init__
+    self.rhs = self.get_prep_lookup()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 369, in get_prep_lookup
+    return super().get_prep_lookup()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 88, in get_prep_lookup
+    return self.lhs.output_field.get_prep_value(self.rhs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/__init__.py", line 2125, in get_prep_value
+    raise e.__class__(
+ValueError: Field 'id' expected a number but got 'null'.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 136, in get_group_wise_user
+    except user.DoesNotExist:
+AttributeError: 'str' object has no attribute 'DoesNotExist'
+ERROR 2024-12-19 12:41:28,775 basehttp "POST /api/group/get-group-wise-user/ HTTP/1.1" 500 171153
+ERROR 2024-12-19 12:41:51,737 log Internal Server Error: /api/group/get-group-wise-user/
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/__init__.py", line 2123, in get_prep_value
+    return int(value)
+ValueError: invalid literal for int() with base 10: 'null'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 125, in get_group_wise_user
+    photos = photo_group.objects.filter(user_id=user, group__id=group) if group else photo_group.objects.filter(user_id=user)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1476, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1494, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/query.py", line 1501, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1609, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1641, in _add_q
+    child_clause, needed_inner = self.build_filter(
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1555, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/sql/query.py", line 1385, in build_lookup
+    lookup = lookup_class(lhs, rhs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 30, in __init__
+    self.rhs = self.get_prep_lookup()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 369, in get_prep_lookup
+    return super().get_prep_lookup()
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/lookups.py", line 88, in get_prep_lookup
+    return self.lhs.output_field.get_prep_value(self.rhs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/db/models/fields/__init__.py", line 2125, in get_prep_value
+    raise e.__class__(
+ValueError: Field 'id' expected a number but got 'null'.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/viewsets.py", line 124, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/iboon_laptop_18/AI/imagelens/face_env/lib/python3.10/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/iboon_laptop_18/Documents/imagelens/groups/view/photouplaod_view.py", line 136, in get_group_wise_user
+    except user.DoesNotExist:
+AttributeError: 'str' object has no attribute 'DoesNotExist'
+ERROR 2024-12-19 12:41:51,740 basehttp "POST /api/group/get-group-wise-user/ HTTP/1.1" 500 171153

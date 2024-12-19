@@ -16,29 +16,17 @@ from datetime import timedelta
 from dotenv import load_dotenv
 load_dotenv()
 
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
+
 DEBUG = os.getenv("DEBUG")
 
 # ALLOWED_HOSTS = ['192.168.1.72','localhost','127.0.0.1']
-ALLOWED_HOSTS = ['192.168.1.72','localhost','127.0.0.1', "*"]
-# CSRF and CORS Settings
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:81',
-    'http://127.0.0.1:81',
-    'https://stageapi.sortasnap.com'
-]
-# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.1.15','localhost','127.0.0.1', "*"]
 
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
@@ -47,7 +35,6 @@ AWS_REGION = os.getenv("AWS_REGION")
 # Application definition
 
 INSTALLED_APPS = [
-    'corsheaders',
     
     'django.contrib.admin',
     'django.contrib.auth',
@@ -62,11 +49,10 @@ INSTALLED_APPS = [
     'groups',
     
     
-    
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     # "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -75,12 +61,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',    
 ]
 
-#CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:8000","http://localhost:8001","http://localhost:8080","https://stage.sortasnap.com"  # Add your web app's origin
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = True 
+
+
 ROOT_URLCONF = 'face.urls'
 
 TEMPLATES = [
@@ -243,33 +230,6 @@ CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
 CELERY_TIMEZONE = 'UTC'
 
 
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'handlers': {
-#         'console': {
-#             'level': 'DEBUG',
-#             'class': 'logging.StreamHandler',
-#         },
-#         'file': {
-#             'level': 'DEBUG',
-#             'class': 'logging.FileHandler',
-#             'filename': 'myapp.log',
-#         },
-#     },
-#     'loggers': {
-#         'django': {
-#             'handlers': ['console', 'file'],
-#             'level': 'DEBUG',
-#             'propagate': True,
-#         },
-#         'myapp': {  # This is the logger name, which should match the logger in your code
-#             'handlers': ['console', 'file'],
-#             'level': 'DEBUG',
-#             'propagate': True,
-#         },
-#     },
-# }
 
 LOGGING = {
     "version": 1,
@@ -300,26 +260,6 @@ LOGGING = {
         },
     },
 }
-
-# gmail 
-# settings.py
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_USE_SSL = False 
-# EMAIL_HOST_USER = os.getenv("EMAIL_HOST_NAME") 
-# EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD") 
-
-# web mail
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'mail.sortasnap.com'
-# EMAIL_PORT = 465
-# EMAIL_USE_TLS = False   
-# EMAIL_USE_SSL = True 
-# EMAIL_HOST_USER = os.getenv("EMAIL_HOST_NAME") 
-# EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD") 
-# EMAIL_TIMEOUT = 60
 
 # outlook
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
