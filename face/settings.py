@@ -25,6 +25,10 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = os.getenv("DEBUG")
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://stage.sortasnap.com/',  # Add your admin domain here
+]
+
 # ALLOWED_HOSTS = ['192.168.1.72','localhost','127.0.0.1']
 ALLOWED_HOSTS = ["*"]
 
