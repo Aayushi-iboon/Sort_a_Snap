@@ -26,7 +26,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG")
 
 # ALLOWED_HOSTS = ['192.168.1.72','localhost','127.0.0.1']
-ALLOWED_HOSTS = ['192.168.1.15','localhost','127.0.0.1', "*"]
+ALLOWED_HOSTS = ["*"]
 
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
@@ -35,6 +35,7 @@ AWS_REGION = os.getenv("AWS_REGION")
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     
     'django.contrib.admin',
     'django.contrib.auth',
@@ -49,10 +50,10 @@ INSTALLED_APPS = [
     'groups',
     
     
-    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',    
     'django.middleware.security.SecurityMiddleware',
     # "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -61,7 +62,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',    
 ]
 
 
