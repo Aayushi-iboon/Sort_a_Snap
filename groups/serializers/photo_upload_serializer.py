@@ -4,6 +4,9 @@ from django.contrib.auth import get_user_model
 import base64
 from rest_framework import serializers
 from groups.model.group import photo_group,PhotoGroupImage
+from PIL import Image
+from io import BytesIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
 User = get_user_model()
 
 
@@ -42,9 +45,28 @@ class PhotoGroupSerializer(serializers.ModelSerializer):
             if isinstance(image_file, (str, bytes)):
                 raise ValueError("Invalid file data received.")
             else:
+                original_file_size = image_file.size / 1024  # Convert to KB
+                print(f"Original file size for {image_file.name}: {original_file_size:.2f} KB")
+                image = Image.open(image_file)
+                image = image.convert('RGB')  # Ensure it's in RGB mode
+                output = BytesIO()
+                image.save(output, format='JPEG', quality=90)  # Adjust quality as needed
+                output.seek(0)
+                compressed_file_size = len(output.getvalue()) / 1024  # Convert to KB
+                print(f"Compressed file size for {image_file.name}: {compressed_file_size:.2f} KB")
+            
+                compressed_image_file = InMemoryUploadedFile(
+                    output,
+                    'ImageField',
+                    f"{image_file.name.split('.')[0]}_compressed.jpg",
+                    'image/jpeg',
+                    output.getbuffer().nbytes,
+                    None
+                )
+                
                 PhotoGroupImage.objects.create(
                     photo_group=photogroup,
-                    image2=image_file 
+                    image2=compressed_image_file 
                 )
         return photogroup
 
