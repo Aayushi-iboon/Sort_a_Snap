@@ -23,7 +23,7 @@ import os
 from rest_framework.exceptions import ValidationError
 from face.function_call import check_required_fields,validate_email,flatten_errors
 from groups.model.group import CustomGroup,sub_group
-
+from .tasks import assign_user_to_group
 User = get_user_model()
 
 class GenerateOTP(APIView):
@@ -146,6 +146,7 @@ class VerifyOTP(APIView):
                 
                 if user.otp_status_email:  # Check if both email and phone are verified
                     refresh = RefreshToken.for_user(user)
+                    assign_user_to_group(user, "Client_Admin")
                     return Response({
                         'status': True,
                         'message': 'Login successfully !!',
@@ -156,7 +157,9 @@ class VerifyOTP(APIView):
                             'otp_status': user.otp_status_email,
                             'phone_otp_status': user.otp_status,
                             'user_id':user.id,
-                            "edit_profile":user.edit_profile
+                            "edit_profile":user.edit_profile,
+                            'group': ', '.join([group.name for group in user.groups.all()]),
+
                         }
                     }, status=status.HTTP_200_OK)
                 return Response({'status': True,"message": "Email verified. Please verify your phone number as well."}, status=status.HTTP_200_OK)
@@ -171,6 +174,7 @@ class VerifyOTP(APIView):
                 
                 if user.otp_status:  # Check if both email and phone are verified
                     refresh = RefreshToken.for_user(user)
+                    assign_user_to_group(user, "Client_Admin")
                     return Response({
                         'status': True,
                         'message': 'Login successfully !!',
@@ -181,7 +185,9 @@ class VerifyOTP(APIView):
                             'phone': user.phone_no,
                             'otp_status': user.otp_status_email,
                             'phone_otp_status': user.otp_status,
-                            "edit_profile":user.edit_profile
+                            "edit_profile":user.edit_profile,
+                            'group': ', '.join([group.name for group in user.groups.all()]),
+
                         }
                     }, status=status.HTTP_200_OK)
                 return Response({'status': True,"message": "Phone number verified. Please verify your email as well."}, status=status.HTTP_200_OK)

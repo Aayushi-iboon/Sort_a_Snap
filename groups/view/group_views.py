@@ -4,7 +4,7 @@ from groups.serializers.group_serializers import CustomGroupSerializer, GroupMem
 from rest_framework.permissions import IsAuthenticated ,AllowAny
 from rest_framework.response import Response
 from rest_framework import status
-from imagesense.tasks import user_otp
+from imagesense.tasks import user_otp,assign_user_to_group
 from django.core.cache import cache
 from face.function_call import flatten_errors
 from django.contrib.auth import get_user_model
@@ -427,6 +427,7 @@ class JoinGroupView(viewsets.ModelViewSet):
         group_member = GroupMember.objects.create(group=group, user=user, role=role)
 
         # Serialize and return response
+        assign_user_to_group(user,"user")
         serializer = GroupMemberSerializer(group_member)
         return Response(
             {"status":True,"message":"user joined group successfully ","data": serializer.data},

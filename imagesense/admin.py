@@ -18,7 +18,7 @@ class UserAdmin(BaseUserAdmin):
         (None, {'fields': ('email', 'slug', 'password')}),
         ('Personal Info', {'fields': ('phone_no', 'profile_image')}),
         ('Permissions', {
-            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'otp_status','otp_status_email','edit_profile'),
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'otp_status', 'otp_status_email', 'edit_profile'),
         }),
         ('Important Dates', {'fields': ('last_login', 'created_at', 'updated_at')}),
     )
@@ -29,15 +29,23 @@ class UserAdmin(BaseUserAdmin):
         }),
     )
 
-    # Update list_display to match fields on the custom User model
-    list_display = ('id', 'email', 'slug', 'phone_no', 'is_staff','profile_image_tag','otp_status','first_name','last_name','otp_status_email')
+    # Custom method to display groups
+    def display_groups(self, obj):
+        return ", ".join([group.name for group in obj.groups.all()])
+    display_groups.short_description = 'Groups'
+
+    # Update list_display to include custom group method
+    list_display = (
+        'id', 'email', 'slug', 'phone_no', 'is_staff', 'display_groups',
+        'profile_image_tag', 'otp_status', 'first_name', 'last_name', 'otp_status_email'
+    )
     list_display_links = ('id', 'email')
 
-    # Update list_filter: Remove 'is_superuser' and 'user_permissions' since they're not fields
-    list_filter = ('is_active', 'is_staff', 'groups', 'otp_status','otp_status_email')
+    # Update list_filter to include 'groups'
+    list_filter = ('is_active', 'is_staff', 'groups', 'otp_status', 'otp_status_email')
 
     # Search fields for searching in the admin interface
-    search_fields = ('email', 'slug', 'phone_no','otp_status_email')
+    search_fields = ('email', 'slug', 'phone_no', 'otp_status_email')
 
     ordering = ('id',)
 
