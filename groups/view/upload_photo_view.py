@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from groups.model.group import photo_group,PhotoGroupImage,GroupMember,CustomGroup
+from groups.model.group import photo_group,PhotoGroupImage,GroupMember,CustomGroup,sub_group
 from groups.serializers.photo_upload_serializer import PhotoGroupSerializer,PhotoGroupImageSerializer
 from rest_framework.permissions import IsAuthenticated  
 from rest_framework.response import Response
@@ -16,9 +16,13 @@ from face.function_call import ALLOWED_IMAGE_TYPES
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.conf import settings
+from django.urls import reverse
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from mimetypes import guess_type
 from django.db.models.functions import Coalesce
+from rest_framework.decorators import action
+import os
 
 User = get_user_model()
 
@@ -100,16 +104,29 @@ class PhotoGroupView(viewsets.ModelViewSet):
             }, status=status.HTTP_400_BAD_REQUEST)
             
 
+   
+    
     def create(self, request, *args, **kwargs):
-        # import ipdb;ipdb.set_trace()
-        required_fields = ["user","group"]
+        required_fields = ["user", "group"]
         upload_photo_error_message = check_required_fields(required_fields, request.data)
         if upload_photo_error_message:
-            return Response({"status": False, "message": upload_photo_error_message},status=status.HTTP_400_BAD_REQUEST)
+            return Response({"status": False, "message": upload_photo_error_message}, status=status.HTTP_400_BAD_REQUEST)
+
+        sub_group_id = request.data.get("sub_group")
+        group_id = request.data.get("group")
+
+        if sub_group_id:
+            try:
+                sub_group_instance = sub_group.objects.get(id=sub_group_id)
+                request.data["sub_group"] = sub_group_id
+                request.data["group"] = sub_group_instance.main_group.id
+            except sub_group.DoesNotExist:
+                return Response({"status": False, "message": "Invalid sub_group ID."}, status=status.HTTP_400_BAD_REQUEST)
+
         serializer = self.serializer_class(data=request.data, context={'request': request})
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-        
+
         headers = self.get_success_headers(serializer.data)
         return Response({
             "status": True,
@@ -117,6 +134,7 @@ class PhotoGroupView(viewsets.ModelViewSet):
             "data": serializer.data
         }, status=status.HTTP_201_CREATED, headers=headers)
         
+            
         
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
@@ -164,17 +182,25 @@ class PhotoGroupView(viewsets.ModelViewSet):
     def access_group_images(self, request, pk=None):
         
         group = get_object_or_404(CustomGroup, pk=pk)
+        user_id = request.data.get('user')
 
-        
-        if not GroupMember.objects.filter(group=group, user=request.user).exists():
-            return Response({"status": True,"message": "You are not a member of this group."}, status=status.HTTP_400_BAD_REQUEST)
+      
+        is_member = GroupMember.objects.filter(group=group, user=user_id).exists()
+        is_creator = group.created_by_id == user_id
 
-        
+      
         images = photo_group.objects.filter(group=group).select_related('user')
 
-        
-        serializer = self.get_serializer(images, many=True,context={'request': request,'from_method': 'all_images'})
-        return Response({"status": True,'message': 'image data retrieved successfully', "data": {"user_data":serializer.data}},status=status.HTTP_200_OK)
+        # Serialize and respond
+        serializer = self.get_serializer(
+            images, 
+            many=True,
+            context={'request': request, 'from_method': 'all_images'}
+        )
+        return Response(
+            {"status": True, "message": "Image data retrieved successfully", "data": {"user_data": serializer.data}},
+            status=status.HTTP_200_OK
+        )
 
 
 
@@ -209,6 +235,29 @@ class PhotoGroupImageView(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+    def fav_list(self, request, *args, **kwargs):
+        try:
+            queryset = self.filter_queryset(self.get_queryset().filter(fev=True))
+        except Exception as e:
+            return Response(
+                    {"status": True, "message": "No images found!"},status=status.HTTP_204_NO_CONTENT)
+        try:
+            if not queryset.exists():
+                return Response(
+                    {"status": True, "message": "No images found!"},status=status.HTTP_204_NO_CONTENT)
+                
+                
+            serializer = self.serializer_class(queryset, many=True, context={'request': request})
+            return Response(
+                {"status": True, "message": "fev Images retrieved successfully.", 'data': {"images": serializer.data}},
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response(
+                {"status": False, "message": "Something went wrong!"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    
     def list_page(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
 
@@ -246,6 +295,7 @@ class PhotoGroupImageView(viewsets.ModelViewSet):
                 'error': str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
     
+    
     def create(self, request, *args, **kwargs):
         required_fields = ["photo_group", "image2"]
         missing_fields_message = check_required_fields(required_fields, request.data)
@@ -270,14 +320,6 @@ class PhotoGroupImageView(viewsets.ModelViewSet):
         try:
             partial = kwargs.pop('partial', False)
             instance = self.get_object()
-            required_fields = ["photo_group"]
-            missing_fields_message = check_required_fields(required_fields, request.data)
-            if missing_fields_message:
-                return Response(
-                    {"status": False, "message": missing_fields_message},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-        
             serializer = self.serializer_class(
                 instance,
                 data=request.data,
@@ -341,26 +383,62 @@ class PhotoGroupImageView(viewsets.ModelViewSet):
 
     def download_image(self, request, pk):
         try:
-            # Retrieve the instance
+            # Retrieve the image instance
             photo_image = PhotoGroupImage.objects.get(pk=pk)
+
             if not photo_image.image2:
                 return Response(
                     {'status': False, 'message': 'Image not available.'},
                     status=status.HTTP_404_NOT_FOUND
                 )
-            serializer = self.serializer_class(photo_image, context={'request': request})
 
-            file = photo_image.image2.open()
-            response = HttpResponse(file, content_type='image/jpeg')  # Adjust content type as needed
-            response['Content-Disposition'] = f'attachment; filename="{photo_image.image2.name.split("/")[-1]}"'
+            # Generate the URL for downloading the image
+            download_url_path = reverse('serve-image', kwargs={'pk': pk})  # Generate relative URL path
+            download_url = request.build_absolute_uri(download_url_path)  # Create absolute URL
 
+            # Return a success response with the download URL
             return Response(
                 {
                     'status': True,
-                    'message': 'Image downloaded successfully.',
-                    'data': serializer.data
+                    'message': 'Download URL generated successfully.',
+                    'data': {'download_url': download_url}
                 },
-                status=status.HTTP_200_OK,
+                status=status.HTTP_200_OK
             )
+
+        except PhotoGroupImage.DoesNotExist:
+            return Response(
+                {'status': False, 'message': 'Image not found.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {'status': False, 'message': f'An error occurred: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+      
+    @action(detail=True, methods=['get'], url_path='serve-single-image')
+    def serve_single_image(self, request, pk=None):
+        try:
+            # Retrieve the PhotoGroupImage instance
+            photo_image = PhotoGroupImage.objects.get(pk=pk)
+
+            # Check if image2 exists
+            if not photo_image.image2:
+                raise Http404("Image not found.")
+
+            # Extract file name and mime type
+            file_name = photo_image.image2.name.split("/")[-1]
+            mime_type, _ = guess_type(file_name)
+
+            # Open the file directly
+            file = photo_image.image2
+
+            # Prepare the HttpResponse for file download
+            response = HttpResponse(file, content_type=mime_type or 'application/octet-stream')
+            response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+
+            return response
+
         except PhotoGroupImage.DoesNotExist:
             raise Http404("Image not found")

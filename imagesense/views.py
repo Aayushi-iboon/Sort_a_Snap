@@ -22,7 +22,7 @@ import multiprocessing
 import os
 from rest_framework.exceptions import ValidationError
 from face.function_call import check_required_fields,validate_email,flatten_errors
-from groups.model.group import CustomGroup
+from groups.model.group import CustomGroup,sub_group
 
 User = get_user_model()
 
@@ -250,10 +250,8 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     
     def analyze_face(self, request, *args, **kwargs):
         """Compare faces in a reference image with images in the event folder."""
-        # import ipdb;ipdb.set_trace()
         try:
             s3_bucket_name = os.getenv("AWS_STORAGE_BUCKET_NAME")
-            user_folder_path = self.get_user_folder_path(request.user.email)
             s3_bucket_url = f'https://{s3_bucket_name}.s3.ap-south-1.amazonaws.com'
 
             if 'image' not in request.data:
@@ -270,33 +268,42 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             reference_faces = response['FaceDetails']
             if not reference_faces:
                 return Response({"status": False, "message": "No faces detected in the reference image."}, status=status.HTTP_400_BAD_REQUEST)
-            group_id = request.data.get('group', None)
-            # group_id = kwargs.get('group')
-            # userid = kwargs.get('user')
+
             # import ipdb;ipdb.set_trace()
-            if group_id:
-                # Filter by specific group
+            # Get subgroup or group or default to user's folder
+            sub_group_id = request.data.get('sub_group', None)
+            group_id = request.data.get('group', None)
+
+            if sub_group_id:
+                # Check if the sub-group ID is provided
+                subgroup = sub_group.objects.filter(id=sub_group_id).first()  # Use the correct model name
+                if not subgroup:
+                    return Response({"status": False, "message": "Invalid sub-group ID provided."}, status=status.HTTP_404_NOT_FOUND)
+                # If the sub-group exists, set the folder prefix accordingly
+                folder_prefix = f'photos/{request.user.email}/{subgroup.main_group.name}/{subgroup.name}/'
+
+            elif group_id:
+                # Check if the group ID is provided
                 group = CustomGroup.objects.filter(id=group_id).first()
                 if not group:
                     return Response({"status": False, "message": "Invalid group ID provided."}, status=status.HTTP_404_NOT_FOUND)
+                # If the group exists, set the folder prefix accordingly
                 folder_prefix = f'photos/{request.user.email}/{group.name}/'
+
             else:
-                # Search in all groups for the user
-                folder_prefix = f'photos/{request.user.email}'
-            
+                # If neither sub_group_id nor group_id is provided, use the user's default folder
+                folder_prefix = f'photos/{request.user.email}/'
+
             response = self.s3_client.list_objects_v2(Bucket=s3_bucket_name, Prefix=folder_prefix)
             event_image_keys = [
-                obj['Key'] for obj in response.get('Contents', []) 
+                obj['Key'] for obj in response.get('Contents', [])
                 if obj['Key'].lower().endswith(('png', 'jpg', 'jpeg'))
             ]
 
             if not event_image_keys:
-                return Response({"status": False, "message": "No event images found for the user."}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"status": False, "message": "No event images found for the specified criteria."}, status=status.HTTP_404_NOT_FOUND)
 
-            # image_urls = [f'{s3_bucket_url}/{key}' for key in event_image_keys]
-            # print(image_urls)
             # Compare faces using multithreading
-            
             max_threads = min(16, multiprocessing.cpu_count())
             with concurrent.futures.ThreadPoolExecutor(max_workers=max_threads) as executor:
                 matching_images = list(executor.map(
@@ -306,9 +313,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
             # Filter out None values (no match found)
             matching_images = [img for img in matching_images if img is not None]
-            
-            # matched_images = ["https://eventpics1.s3.ap-south-1.amazonaws.com/" + img for img in matching_images]
-            # matched_images = [f'{s3_bucket_url}/{img}' for img in matching_images]
 
             if matching_images:
                 images_with_ids = [{
@@ -320,7 +324,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
                 return Response({
                     "status": True,
-                    "message": "matching image retrieved successfully.",
+                    "message": "Matching images retrieved successfully.",
                     "data": {
                         "user_data": [
                             {
@@ -335,15 +339,13 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                     "status": False,
                     "message": "No matching images found.",
                 }, status=status.HTTP_404_NOT_FOUND)
-            
-            
-            # if matched_images:
-            #     return Response({"status": True, "message": "Photos retrieved successfully.", "data": {"images": matched_images}}, status=status.HTTP_200_OK)
-            # else:
-            #     return Response({"status": False, "message": "No matching faces found in the event images."}, status=status.HTTP_404_NOT_FOUND)
+
         except Exception as e:
-            return Response({"status": False,"message":"something went wrong","error": f"Error processing the image: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+            return Response({
+                "status": False,
+                "message": "Something went wrong.",
+                "error": f"Error processing the image: {e}"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
 
     def compare_faces_in_image(self, reference_image_data, bucket_name, event_image_key):
         """Helper method to compare faces in the reference image with an image stored in S3."""

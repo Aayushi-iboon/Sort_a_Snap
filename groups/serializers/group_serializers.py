@@ -244,7 +244,7 @@ class CustomGroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomGroup
-        fields = ['id', 'name', 'access', 'thumbnail', 'members','code','created_by']
+        fields = ['id', 'name', 'access', 'thumbnail', 'members','code','code_image','created_by']
         read_only_fields = ['code'] 
         
     def to_representation(self, instance):
@@ -272,6 +272,7 @@ class CustomGroupSerializer(serializers.ModelSerializer):
                 # "Created By": instance.created_by.id if instance.created_by else None,
                 "Created By": instance.created_by.email if instance.created_by else None,
                 'created at': created_at_str,
+                'QR_code':instance.code_image.url if instance.code_image else None,
                 # **common_fields,
             }
             return group_data
@@ -306,15 +307,15 @@ class CustomGroupSerializer(serializers.ModelSerializer):
                 "members": self.context.get('members', []),
                 "thumbnail": instance.thumbnail.url if instance.thumbnail else None,
                 'created at': created_at_str,
+                'QR_code':instance.code_image.url if instance.code_image else None,
                 **common_fields,
             }
             return group_data
-        
 
 class PhotoGroupImage_serializer(serializers.ModelSerializer):
     class Meta:
         model = PhotoGroupImage
-        fields = ['id','image2','photo_group']
+        fields = ['id','image2','photo_group','fev']
     
     def to_representation(self, instance):
          # Default representation from the parent class
@@ -323,10 +324,11 @@ class PhotoGroupImage_serializer(serializers.ModelSerializer):
         # Custom representation
         return {
             "id": instance.id,
+            "fev":instance.fev,
             "image_url": getattr(instance.image2, 'url', None) if instance.image2 else None,
             "photo_user_name": getattr(instance.photo_group.user, 'email', None) if instance.photo_group and instance.photo_group.user else None,
         }    
-   
+           
 class photo_serializer(serializers.ModelSerializer):
     images = PhotoGroupImage_serializer(many=True) 
     class Meta:
@@ -366,10 +368,16 @@ class photo_serializer(serializers.ModelSerializer):
         request = self.context.get('request')
         from_method = self.context.get('from_method', 'unknown')
         representation = super().to_representation(instance)
-        # import ipdb;ipdb.set_trace()
         images = representation.get('images', [])
-        image_details = [{'id': img.get('id'), 'image_url': img.get('image_url')} for img in images]
-        images_data = representation.get("images", [])
+        image_details = [
+        {
+            'id': img.get('id'),
+            'image_url': img.get('image_url'),
+            'fev': img.get('fev', False)
+        }
+        for img in images
+        ]
+        # images_data = representation.get("images", [])
         if request and request.method == 'GET':
             # If specific group details are requested
             group_data = {
@@ -391,8 +399,37 @@ class photo_serializer(serializers.ModelSerializer):
                 "images": representation.get("images", [])
             }
             return group_data
+        # image_url
+        if from_method == 'photo_image_list':
+            self.context.setdefault('all_images', [])
+            valid_images = [
+                {
+                    "id": img.get("id"),
+                    "image_url": img.get("image_url"),
+                    "fev": bool(img.get("fev")),
+                    
+                }
+                for img in image_details
+                if isinstance(img, dict) and img.get('image_url')
+            ]
+
+            # Ensure unique images based on their URLs
+            existing_image_urls = {img['image_url'] for img in self.context['all_images']}
+            unique_images = [img for img in valid_images if img['image_url'] not in existing_image_urls]
+            self.context['all_images'].extend(unique_images)
+
+            return {"images": self.context.get('all_images', [])}
+
         
-        elif from_method == 'photo_image_list':
+        elif from_method == 'photo_image_list_list':
+            return {
+                "id": instance.id,
+                "fev": instance.fev,
+                "image_url": getattr(instance.image2, 'url', None) if instance.image2 else None,
+                "photo_user_name": getattr(instance.photo_group.user, 'email', None) if instance.photo_group and instance.photo_group.user else None,
+            }     
+        
+        elif from_method == 'photo_image_group_list':
             # Initialize 'all_images' if not already present in the context
             self.context.setdefault('all_images', [])
             
@@ -404,10 +441,10 @@ class photo_serializer(serializers.ModelSerializer):
             unique_images = [img for img in valid_images if img['image_url'] not in existing_image_urls]
 
             # Extend 'all_images' with unique images
-            self.context['all_images'].extend(unique_images)
+            # self.context['all_images'].extend(unique_images)
 
             # Return the updated list of all images
-            return {"images": self.context.get('all_images', [])}
+            return {"images": unique_images}
             
         else:
             # Default case: Provide basic group details

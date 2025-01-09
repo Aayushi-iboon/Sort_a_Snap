@@ -1,15 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import Group,Permission
+from django.contrib.auth.models import Permission
 # Create your models here.
-
-# my_app/models.py
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
 from django.db import models
-from django.core.validators import FileExtensionValidator
-from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 from django.db.models.signals import pre_save
-from phonenumber_field.modelfields import PhoneNumberField
 import time
 import os
 from django.utils.timezone import now
@@ -42,10 +38,11 @@ def get_timestamped_filename(instance, image):
     return os.path.join("profile_image", new_filename)
 
 
-
-        
-        
 class User(AbstractBaseUser, PermissionsMixin):
+    # role = [ 
+    #     ("1", "default user"),
+    #     ("2", "Admin"),
+    # ]
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=50,null=True,blank=True)
     last_name = models.CharField(max_length=50,null=True,blank=True)
@@ -60,16 +57,18 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(auto_now_add=True,null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True, blank=True)
+    # access = models.CharField(max_length=50,null=True,blank=True,choices=role)
+    
     
     USERNAME_FIELD = 'email'
-    # groups = models.ManyToManyField(
-    #     Group,
-    #     verbose_name='groups',
-    #     blank=True,
-    #     help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
-    #     related_name='users',
-    #     related_query_name='user',
-    # )
+    groups = models.ManyToManyField(
+        Group,
+        verbose_name='groups',
+        blank=True,
+        help_text='group wise permission to user',
+        related_name='users',
+        related_query_name='user',
+    )
     user_permissions = models.ManyToManyField(
         Permission,
         blank=True,
@@ -88,7 +87,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         # if image_file.size > 5 * 1024 * 1024:  # Limit image size to 5MB
         #     raise ValidationError("Image file too large ( > 5MB )")
         # self.image = image_file.read()
-        # self.save()
+        # self.save() 
 
     def profile_image_tag(self):
         if self.profile_image:

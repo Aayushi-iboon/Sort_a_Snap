@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from groups.model.group import photo_group,CustomGroup
+from groups.model.group import photo_group,CustomGroup,GroupMember
 from groups.serializers.group_serializers import photo_serializer,CustomGroupSerializer
 from rest_framework.permissions import IsAuthenticated  
 from rest_framework.response import Response
@@ -17,6 +17,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q 
 
 
 User = get_user_model()
@@ -86,7 +87,6 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
 
     def get_list(self, request, *args, **kwargs):
         user = request.data.get('user')
-        print(user)
         try:
             if not user:
                 return Response(
@@ -95,10 +95,14 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
                 )
             user = get_user_model().objects.get(id=user) 
             photos = photo_group.objects.filter(user=user)
-            serializer = self.get_serializer(photos, many=True,context={'request': request,'from_method':'photo_image_list'})
+            serializer = self.serializer_class(photos, many=True,context={'request': request,'from_method':'photo_image_list'})
+            
+            combined_images = []
+            for data in serializer.data:
+                combined_images.extend(data.get("images", []))
             return Response({ "status": True,  
-                            "message": "get_ list Data retrieved successfully.",
-                            "data":{"user_data":serializer.data}}, status=status.HTTP_200_OK)
+                            "message": "get list Data retrieved successfully.",
+                            "data":{"user_data": serializer.data}}, status=status.HTTP_200_OK)
         
         except ObjectDoesNotExist:
             return Response(
@@ -106,39 +110,51 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-            
-            
+        
     def get_group_wise_user(self, request, *args, **kwargs):
-        user = request.data.get('user')
-        group = request.data.get('group')
-        if not user:
+        user_id = request.data.get('user')
+        group_id = request.data.get('group')  # Retrieve group_id from request data
+
+        if not user_id:
             return Response(
-                {"status":False,'message': 'user_id is required '},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        if not group:
-            return Response(
-                {"status":False,'message': 'group is required '},
+                {"status": False, "message": "user_id is required"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         try:
-            photos = photo_group.objects.filter(user_id=user, group__id=group) if group else photo_group.objects.filter(user_id=user)
-            if not photos.exists():
+            # Get group IDs the user is a member of
+            member_group_ids = GroupMember.objects.filter(user_id=user_id).values_list('group_id', flat=True)
+
+            # Get all photos meeting the criteria
+            all_photos = photo_group.objects.filter(
+                Q(user_id=user_id) |  # Photos uploaded by the user
+                Q(group_id__in=member_group_ids) |  # Photos in groups the user is a member of
+                Q(group_id=group_id)  # Photos in a specific group passed in the request
+            ).distinct()
+
+            # Check if photos exist
+            if not all_photos.exists():
                 return Response(
-                    {"status":False,'message': 'No photos found for the given user and group'},
-                status=status.HTTP_404_NOT_FOUND
+                    {"status": False, "message": "No photos found for the user or their groups."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            # Serialize the photo data
+            serializer = self.get_serializer(
+                all_photos, many=True, context={'request': request, 'from_method': 'photo_image_list'}
             )
-            serializer = self.get_serializer(photos, many=True,context={'request': request,'from_method':'photo_image_list'})
-            return Response({ "status": True,  
-                             "message": "group and user wise Data retrieved successfully.",
-                             "data":{"user_data":[serializer.data[-1]]}}, status=status.HTTP_200_OK)
-        
-        except user.DoesNotExist:
+
+            return Response({
+                "status": True,
+                "message": "Photos retrieved successfully for user and their groups.",
+                "data": {"user_data": serializer.data}
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
             return Response(
-                {"status": False,'message': 'User not found'}, 
-                status=status.HTTP_404_NOT_FOUND
+                {"status": False, "message": "Something went wrong", "error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-              
+                
     def create(self, request, *args, **kwargs):
         try:
             required_fields = ["photo_name","image","user","group"]

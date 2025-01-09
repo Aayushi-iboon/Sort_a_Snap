@@ -60,7 +60,7 @@ def send_otp(email):
 
 @shared_task
 def user_otp(mobile_no):
-    otp = random.randint(10000000, 99999999)
+    otp = random.randint(100000, 999999)
     account_sid = os.getenv("SID")
     auth_token = os.getenv("auth_token")
     client = Client(account_sid, auth_token)

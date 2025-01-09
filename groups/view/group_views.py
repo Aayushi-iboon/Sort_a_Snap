@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from groups.model.group import CustomGroup,GroupMember
 from groups.serializers.group_serializers import CustomGroupSerializer, GroupMemberSerializer
-from rest_framework.permissions import IsAuthenticated  
+from rest_framework.permissions import IsAuthenticated ,AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from imagesense.tasks import user_otp
@@ -18,6 +18,11 @@ import logging
 from face.function_call import check_required_fields
 from face.function_call import StandardResultsSetPagination
 from django.db import IntegrityError
+from django.urls import reverse
+from mimetypes import guess_type
+from django.http import Http404
+from django.http import HttpResponse
+from rest_framework.decorators import action
 
 
 User = get_user_model()
@@ -26,25 +31,12 @@ logging.getLogger(__name__)
 class CustomGroupViewSet(viewsets.ModelViewSet):
     queryset = CustomGroup.objects.all()
     serializer_class = CustomGroupSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter,DjangoFilterBackend]
     pagination_class = StandardResultsSetPagination
     filterset_fields = ['name']
     search_fields = ['name']
 
-    # def get_family_photos(self, request, pk=None):
-    #     try:
-    #         # Get the specific CustomGroup
-    #         import ipdb;ipdb.set_trace()
-    #         custom_group = self.get_object()
-
-    #         # Retrieve all family members linked to this group
-    #         family_members = family.objects.filter(user__in=custom_group.created_by.family_members.all())
-            
-    #         photo_groups = photo_group.objects.filter(family_members__in=family_members).distinct()
-            
-    #     except CustomGroup.DoesNotExist:
-    #         return Response({"status":False,"error": "CustomGroup not found"}, status=status.HTTP_400_BAD_REQUEST)
     
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -189,6 +181,8 @@ class CustomGroupViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
+            if instance.image:
+                instance.image.delete(save=False) 
             instance.delete()
             return Response({
                 'status': True,
@@ -251,7 +245,64 @@ class CustomGroupViewSet(viewsets.ModelViewSet):
                 'error': str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
 
+    def download_QR_image(self, request, pk):
+        try:
+            # Retrieve the CustomGroup instance
+            custom_group = CustomGroup.objects.get(pk=pk)
 
+            if not custom_group.code_image:
+                return Response(
+                    {'status': False, 'message': 'QR code image not available.'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            # Generate the absolute URL for the QR code download
+            download_url_path = reverse('download-qr-code', kwargs={'pk': pk})  # Relative URL path
+            download_url = request.build_absolute_uri(download_url_path)  # Full absolute URL
+
+            return Response(
+                {
+                    'status': True,
+                    'message': 'Download URL generated successfully.',
+                    'data': {'download_url': download_url}
+                },
+                status=status.HTTP_200_OK
+            )
+
+        except CustomGroup.DoesNotExist:
+            raise Http404("CustomGroup not found")
+        except Exception as e:
+            return Response(
+                {'status': False, 'message': f'An error occurred: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    
+    @action(detail=True, methods=['get'], url_path='serve-group-image')
+    def serve_image(self, request, pk=None):
+        try:
+            # Retrieve the image instance
+            custom_group = CustomGroup.objects.get(pk=pk)
+
+            if not custom_group.code_image.url:
+                raise Http404("Image not found.")
+
+            # Extract file name and mime type
+            file_name = custom_group.code_image.name.split("/")[-1]
+            mime_type, _ = guess_type(file_name)
+
+            # Open the file directly
+            file = custom_group.code_image
+
+            # Prepare the HttpResponse for file download
+            response = HttpResponse(file, content_type=mime_type or 'application/octet-stream')
+            response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+
+            return response
+
+        except CustomGroup.DoesNotExist:
+            raise Http404("Image not found")
+    
 class JoinGroupView(viewsets.ModelViewSet):
     queryset = GroupMember.objects.all()
     serializer_class = GroupMemberSerializer

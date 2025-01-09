@@ -52,16 +52,16 @@ class PhotoGroupImageAdmin(admin.ModelAdmin):
     """
     Admin configuration for the PhotoGroupImage model.
     """
-    list_display = ('id', 'photo_group', 'image2')  # Display related photo group and image
+    list_display = ('id', 'photo_group', 'image2','fev')  # Display related photo group and image
     list_filter = ('photo_group',)  # Filter by photo group
      # Enable search
     
-
+  
 @admin.register(sub_group)
 class SubGroupAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'main_group')
-    list_filter = ('main_group', )
-    search_fields = ('name',)
+    list_display = ('id', 'name', 'main_group','created_by')
+    list_filter = ('main_group','name' )
+    search_fields = ('name','main_group')
     
     
     
