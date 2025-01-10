@@ -186,6 +186,7 @@ class VerifyOTP(APIView):
                             'otp_status': user.otp_status_email,
                             'phone_otp_status': user.otp_status,
                             "edit_profile":user.edit_profile,
+                            'user_id':user.id,
                             'group': ', '.join([group.name for group in user.groups.all()]),
 
                         }
