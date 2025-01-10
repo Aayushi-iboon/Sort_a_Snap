@@ -420,6 +420,9 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                     return Response( {'status': False, 'message': missing_fields_message},status=status.HTTP_400_BAD_REQUEST)
 
             email = request.data.get('email')
+            if email and email != instance.email:
+                if self.get_queryset().filter(email=email).exists():
+                    return Response({'status': False, 'message': "email already exists!"},status=status.HTTP_400_BAD_REQUEST)
             # email_error = validate_unique_email(self.get_queryset(), email, instance)
             # if email_error:
             #     return Response({'status': False, 'message': email_error}, status=status.HTTP_400_BAD_REQUEST)
@@ -427,7 +430,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             phone_no = request.data.get('phone_no')
             if phone_no and phone_no != instance.phone_no:
                 if self.get_queryset().filter(phone_no=phone_no).exists():
-                    return Response({'status': False, 'message': "This phone number already exists!"},status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'status': False, 'message': "phone number already exists!"},status=status.HTTP_400_BAD_REQUEST)
 
             serializer = self.get_serializer(instance, data=request.data, partial=partial)
             if serializer.is_valid(raise_exception=True):
@@ -436,7 +439,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         except CustomError as e:
              return Response({
             'status': False,
-            'message': e.message,
+            'message': "something went ",
             'code': e.code
         }, status=status.HTTP_400_BAD_REQUEST)
     
