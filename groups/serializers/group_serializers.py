@@ -373,7 +373,8 @@ class photo_serializer(serializers.ModelSerializer):
         {
             'id': img.get('id'),
             'image_url': img.get('image_url'),
-            'fev': img.get('fev', False)
+            'fev': img.get('fev', False),
+            'sub_group':img.get('sub_group')
         }
         for img in images
         ]
@@ -407,6 +408,7 @@ class photo_serializer(serializers.ModelSerializer):
                     "id": img.get("id"),
                     "image_url": img.get("image_url"),
                     "fev": bool(img.get("fev")),
+                    'sub_group':img.get('sub_group')
                     
                 }
                 for img in image_details

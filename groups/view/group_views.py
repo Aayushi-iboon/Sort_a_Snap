@@ -31,7 +31,7 @@ logging.getLogger(__name__)
 class CustomGroupViewSet(viewsets.ModelViewSet):
     queryset = CustomGroup.objects.all()
     serializer_class = CustomGroupSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter,DjangoFilterBackend]
     pagination_class = StandardResultsSetPagination
     filterset_fields = ['name']
@@ -277,6 +277,10 @@ class CustomGroupViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
     
+    def get_permissions(self):
+        if self.action == 'serve_image':
+            return [AllowAny()]
+        return super().get_permissions()  
     
     @action(detail=True, methods=['get'], url_path='serve-group-image')
     def serve_image(self, request, pk=None):

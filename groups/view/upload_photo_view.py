@@ -17,6 +17,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.conf import settings
 from django.urls import reverse
+from rest_framework.permissions import AllowAny
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from mimetypes import guess_type
@@ -293,7 +294,7 @@ class PhotoGroupImageView(viewsets.ModelViewSet):
                 'status': False,
                 'message': "Something went wrong!",
                 'error': str(e)
-            }, status=status.HTTP_400_BAD_REQUEST)
+            }, status=status.HTTP_400_BAD_REQUimage_2025_01_10T08_58_10_837ZEST)
     
     
     def create(self, request, *args, **kwargs):
@@ -416,7 +417,12 @@ class PhotoGroupImageView(viewsets.ModelViewSet):
                 {'status': False, 'message': f'An error occurred: {str(e)}'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-      
+    
+    def get_permissions(self):
+        if self.action == 'serve_single_image':
+            return [AllowAny()]  # Skip authentication for this action
+        return super().get_permissions()  
+    
     @action(detail=True, methods=['get'], url_path='serve-single-image')
     def serve_single_image(self, request, pk=None):
         try:

@@ -43,6 +43,8 @@ class PhotoGroupSerializer(serializers.ModelSerializer):
         images_data = self.context['request'].data.getlist('images')
         subgroup = validated_data.get('sub_group', None)
         group = validated_data.get('group', None)
+        
+        sub_group_instance = None  # Initialize the variable to avoid UnboundLocalError
 
         # If sub_group is provided, validate and associate it
         if subgroup:
@@ -52,6 +54,7 @@ class PhotoGroupSerializer(serializers.ModelSerializer):
             except sub_group.DoesNotExist:
                 raise serializers.ValidationError("Invalid sub_group ID.")
 
+        # Create the photo group
         photogroup = photo_group.objects.create(**validated_data)
 
         # Process images and save them without compression
@@ -61,6 +64,7 @@ class PhotoGroupSerializer(serializers.ModelSerializer):
             else:
                 PhotoGroupImage.objects.create(
                     photo_group=photogroup,
+                    sub_group=sub_group_instance,  # Will be None if not provided
                     image2=image_file,  # Directly save the image without compression
                     fev=False
                 )
