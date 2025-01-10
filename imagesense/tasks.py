@@ -10,6 +10,7 @@ import boto3
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from twilio.base.exceptions import TwilioRestException
+from django.contrib.auth.models import Group
 
 
 # Initialize AWS Rekognition client
@@ -103,3 +104,11 @@ def compare_faces_in_image(reference_image_data, event_image_path):
         print(f"Error processing {event_image_path}: {e}")
         return None
 
+
+def assign_user_to_group(user, group_name):
+    try:
+        group, created = Group.objects.get_or_create(name=group_name)
+        user.groups.add(group)
+        user.save()
+    except Exception as e:
+        print(f"Error adding user to group: {e}")
