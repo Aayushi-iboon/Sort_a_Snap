@@ -71,3 +71,4 @@ wcwidth==0.2.13
 yarl==1.17.2
 gunicorn
 whitenoise
+qrcode
