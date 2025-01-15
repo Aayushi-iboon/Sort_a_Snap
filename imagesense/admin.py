@@ -18,7 +18,7 @@ class UserAdmin(BaseUserAdmin):
         (None, {'fields': ('email', 'slug', 'password')}),
         ('Personal Info', {'fields': ('phone_no', 'profile_image')}),
         ('Permissions', {
-            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'otp_status', 'otp_status_email', 'edit_profile'),
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups','user_permissions', 'otp_status', 'otp_status_email', 'edit_profile'),
         }),
         ('Important Dates', {'fields': ('last_login', 'created_at', 'updated_at')}),
     )
@@ -41,15 +41,12 @@ class UserAdmin(BaseUserAdmin):
     )
     list_display_links = ('id', 'email')
 
-    # Update list_filter to include 'groups'
+
     list_filter = ('is_active', 'is_staff', 'groups', 'otp_status', 'otp_status_email')
 
-    # Search fields for searching in the admin interface
     search_fields = ('email', 'slug', 'phone_no', 'otp_status_email')
 
     ordering = ('id',)
-
-    # You can add other custom configurations if necessary
 
 
 @admin.register(BlackListToken)

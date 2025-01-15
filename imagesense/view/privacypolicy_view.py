@@ -16,7 +16,7 @@ class PrivacypolicyDataView(viewsets.ModelViewSet):
     queryset = PrivacyPolicy.objects.all()
     serializer_class = policySerializer
     pagination_class = StandardResultsSetPagination
-    
+    permission_classes = [IsAuthenticated]
     
     
     def get_queryset(self):

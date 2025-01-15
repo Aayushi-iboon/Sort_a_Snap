@@ -23,6 +23,8 @@ from django.shortcuts import get_object_or_404
 from mimetypes import guess_type
 from django.db.models.functions import Coalesce
 from rest_framework.decorators import action
+from rest_framework.decorators import permission_classes
+from face.permissions import GroupPermission
 import os
 
 User = get_user_model()
@@ -37,6 +39,17 @@ class PhotoGroupView(viewsets.ModelViewSet):
     filterset_fields = ['photo_name']
     search_fields = ['photo_name']
     
+    def get_permissions(self):
+        if self.action in ['create']:
+            self.required_permission = ['add_photo_group']
+        elif self.action in ['retrieve','list','access_group_images']:
+            self.required_permission = ['view_photo_group']
+        elif self.action in ['update']:
+            self.required_permission = ['change_photo_group']
+        elif self.action in ['destroy']:
+            self.required_permission = ['delete_photo_group']
+        
+        return [IsAuthenticated(), GroupPermission()]
     
     def get_queryset(self):
         return super().get_queryset()
@@ -214,6 +227,23 @@ class PhotoGroupImageView(viewsets.ModelViewSet):
     filterset_fields = ['photo_group']  
     search_fields = ['photo_group__name'] 
 
+    def get_permissions(self):
+        if self.action in ['create']:
+            self.required_permission = ['add_photogroupimage']
+        elif self.action in ['retrieve','list','list_page']:
+            self.required_permission = ['view_photogroupimage']
+        elif self.action in ['update']:
+            self.required_permission = ['change_photogroupimage']
+        elif self.action in ['destroy']:
+            self.required_permission = ['delete_photogroupimage']
+        elif self.action in ['download_image']:
+            self.required_permission = ['download_image']
+        elif self.action in ['fav_list']:
+            self.required_permission = ['fav_list']
+        
+        return [IsAuthenticated(), GroupPermission()]
+    
+    
     def get_queryset(self):
         return super().get_queryset().filter(photo_group__user=self.request.user)
 
@@ -381,12 +411,17 @@ class PhotoGroupImageView(viewsets.ModelViewSet):
                 {'status': False, 'message': "Something went wrong!", 'error': str(e)},
                 status=status.HTTP_400_BAD_REQUEST
             )
+            
+            
+    # def get_permissions(self):
+    #     if self.action == 'download_image':
+    #         return [IsGroup_Admin()]
+    #     return super().get_permissions()
 
     def download_image(self, request, pk):
         try:
             # Retrieve the image instance
             photo_image = PhotoGroupImage.objects.get(pk=pk)
-
             if not photo_image.image2:
                 return Response(
                     {'status': False, 'message': 'Image not available.'},
@@ -418,10 +453,10 @@ class PhotoGroupImageView(viewsets.ModelViewSet):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
     
-    def get_permissions(self):
-        if self.action == 'serve_single_image':
-            return [AllowAny()]  # Skip authentication for this action
-        return super().get_permissions()  
+    # def get_permissions(self):
+    #     if self.action == 'serve_single_image':
+    #         return [AllowAny()]  # Skip authentication for this action
+    #     return super().get_permissions()  
     
     @action(detail=True, methods=['get'], url_path='serve-single-image')
     def serve_single_image(self, request, pk=None):

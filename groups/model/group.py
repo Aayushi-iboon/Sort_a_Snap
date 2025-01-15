@@ -8,6 +8,9 @@ import qrcode
 from io import BytesIO
 from django.core.files.base import ContentFile
 from PIL import Image
+from django.contrib.auth.models import Group
+
+
 
 class CustomGroup(models.Model):
     ACCESS_CHOICES = [ 
@@ -55,7 +58,10 @@ class CustomGroup(models.Model):
             if not CustomGroup.objects.filter(code=code).exists():
                 return code
 
-
+    class Meta:
+        permissions = [
+            ('download_QR_image', 'Can download QR image'),  
+        ]
 
 def user_image_upload_path(instance, filename):
     user_email = instance.photo_group.user.email  # Assuming `photo_group` has a `user` field
@@ -107,7 +113,11 @@ class photo_group(models.Model):
 class GroupMember(models.Model):
     group = models.ForeignKey(CustomGroup, on_delete=models.CASCADE,related_name='groupmember_set')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  
-    role = models.CharField(max_length=50,null=True,blank=True)
+    role = models.CharField(
+        max_length=50,
+        choices=[("User", "User"), ("Group_Admin", "Group_Admin")],
+        default="User"
+    )
     user_verified = models.BooleanField(default=False) 
     joined_at = models.DateTimeField(auto_now_add=True)
     
@@ -130,7 +140,11 @@ class PhotoGroupImage(models.Model):
     def __str__(self):
         return f"{self.photo_group} - {self.image2}"
     
-    
+    class Meta:
+        permissions = [
+            ('download_image', 'Can download image'),  # New permission  
+            ('fav_list','Can make favourite image')
+        ]
     
             
 

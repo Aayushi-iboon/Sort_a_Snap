@@ -71,6 +71,8 @@ urlpatterns = [
     path("generate-OTP-viewset/", JoinGroupView.as_view({'post':'user_verify'}), name="generate_OTP_viewset"),
     path("confirm-OTP-viewset/", JoinGroupView.as_view({'post':'user_confirm'}), name="confirm_OTP_viewset"),
     path("user-joined-group/", JoinGroupView.as_view({'get':'access_user_joined_group'}), name="user_joined_group"),
+    path("member_list/", JoinGroupView.as_view({'post':'member_list'}), name="group_member_list"),
+    path("promote_to_admin/", JoinGroupView.as_view({'post':'promote_to_admin'}), name="promote_t_admin"),
 
 
     

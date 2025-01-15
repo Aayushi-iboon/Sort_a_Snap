@@ -10,6 +10,7 @@ import time
 import os
 from django.utils.timezone import now
 from django.utils.html import format_html
+from django.conf import settings
 
 
 class UserManager(BaseUserManager):
@@ -39,10 +40,6 @@ def get_timestamped_filename(instance, image):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    # role = [ 
-    #     ("1", "default user"),
-    #     ("2", "Admin"),
-    # ]
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=50,null=True,blank=True)
     last_name = models.CharField(max_length=50,null=True,blank=True)
@@ -97,17 +94,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     profile_image_tag.short_description = 'Profile Image'
 
-
-
-# class BlackListedToken(models.Model):
-#     token = models.CharField(max_length=500)
-#     user = models.ForeignKey(User, related_name="token_user", on_delete=models.CASCADE)
-#     timestamp = models.DateTimeField(auto_now=True)
-
-#     class Meta:
-#         unique_together = ("token", "user")
-        
-        
+    
         
 def set_user_slug(sender, instance, *args, **kwargs):
     if not instance.slug:
@@ -119,8 +106,6 @@ def set_user_slug(sender, instance, *args, **kwargs):
 pre_save.connect(set_user_slug, sender=User)
 
 
-
-
 class BlackListToken(models.Model):
     token = models.CharField(max_length=500)
     user = models.ForeignKey(User, related_name="token_user", on_delete=models.CASCADE)
@@ -129,3 +114,18 @@ class BlackListToken(models.Model):
 
     def __str__(self):
         return f"Token {self.token} for user {self.user.email}"
+    
+# class Role(models.Model):
+#     name=models.CharField(max_length=500,unique=True)
+    
+#     def __str__(self):
+#         return self.name
+    
+# class UserRole(models.Model):
+#     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="user_roles", on_delete=models.CASCADE)
+#     role = models.ForeignKey(Role, related_name="role_users", on_delete=models.CASCADE)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(null=True, blank=True)
+
+#     def __str__(self):
+#         return f"{self.user.email} - {self.role.name}"

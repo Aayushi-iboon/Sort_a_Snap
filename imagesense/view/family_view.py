@@ -11,7 +11,7 @@ from django.db.models import Value
 from django.db.models.functions import Replace
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated
-
+# from face.permissions import GroupPermission
 
 # from django_filters.rest_framework import DjangoFilterBackend
 
@@ -24,6 +24,13 @@ class FamilyDataView(viewsets.ModelViewSet):
     # filterset_fields = ['']
     # search_fields = ['']
     
+    # def get_permissions(self):
+    #     if self.action in ['create', 'retrieve','list']:
+    #         print("self_action",self.action)
+    #         self.required_permission = ['add_contactus']
+    #         print("self_action",self.required_permission)
+            
+    #     return [IsAuthenticated(), GroupPermission()]
     
     def get_queryset(self):
         user_id = self.request.query_params.get('user_id', None)

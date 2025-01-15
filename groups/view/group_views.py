@@ -23,7 +23,8 @@ from mimetypes import guess_type
 from django.http import Http404
 from django.http import HttpResponse
 from rest_framework.decorators import action
-
+from django.contrib.auth.models import Group
+from face.permissions import GroupPermission
 
 User = get_user_model()
 logging.getLogger(__name__)
@@ -37,6 +38,19 @@ class CustomGroupViewSet(viewsets.ModelViewSet):
     filterset_fields = ['name']
     search_fields = ['name']
 
+    def get_permissions(self):
+        if self.action in ['create']:
+            self.required_permission = ['add_customgroup']
+        elif self.action in ['retrieve','list','list_page','userlist']:
+            self.required_permission = ['view_customgroup']
+        elif self.action in ['update']:
+            self.required_permission = ['change_customgroup']
+        elif self.action in ['destroy']:
+            self.required_permission = ['delete_customgroup']
+        elif self.action in ['download_QR_image']:
+            self.required_permission = ['download_QR_image']
+        
+        return [IsAuthenticated(), GroupPermission()]
     
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -425,11 +439,10 @@ class JoinGroupView(viewsets.ModelViewSet):
         # if GroupMember.objects.filter(group=group, user=user).exists():
         #     return Response({"status":True,"message": "User is already a member of this group."}, status=status.HTTP_400_BAD_REQUEST)
 
-        role = "Member" if user.is_authenticated else "Guest"
-        
+        role = "User" if user.is_authenticated else "Guest"
+        group_role = Group.objects.get(id=4) 
         # Create the group member entry
-        group_member = GroupMember.objects.create(group=group, user=user, role=role)
-
+        group_member = GroupMember.objects.create(group=group, user=user,role=role)
         # Serialize and return response
         assign_user_to_group(user,"user")
         serializer = GroupMemberSerializer(group_member)
@@ -476,8 +489,70 @@ class JoinGroupView(viewsets.ModelViewSet):
                 "error": str(e),
             }, status=status.HTTP_400_BAD_REQUEST)
 
+    def member_list(self,request):
+        try:
+            group_id = request.data.get('group_id')
+            if not group_id:
+                return Response({
+                    'status': False,
+                    'message': "Group ID is required.",
+                }, status=status.HTTP_400_BAD_REQUEST)
 
-        
-        
-        
+            group_members = GroupMember.objects.filter(group_id=group_id).select_related('user')
+
+            if not group_members.exists():
+                return Response({
+                    "status": True,
+                    "message": "No members found for this group.",
+                }, status=status.HTTP_204_NO_CONTENT)
+
+            # Serialize the data
+            serializer = self.serializer_class(group_members, many=True, context={'request': request,'from_method':'member_list'})
+            return Response({
+                "status": True,
+                "message": "Group members retrieved successfully.",
+                "data": serializer.data
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({
+                "status": False,
+                "message": "Something went wrong.",
+                "error": str(e),
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+    def promote_to_admin(self, request):
+        """
+        Promote a group member to Group_Admin. Only the group creator (Client_Admin) can perform this action.
+        """
+        group_id = request.data.get('group_id')
+        user_id = request.data.get('user_id')
+
+        try:
+            group = CustomGroup.objects.get(id=group_id)
+        except CustomGroup.DoesNotExist:
+            return Response({"status": False, "message": "Group does not exist."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Check if the request user is the group creator
+        if group.created_by != request.user:
+            return Response({"status": False, "message": "You do not have permission to promote members."}, status=status.HTTP_403_FORBIDDEN)
+
+        # Check if the user is a member of the group
+        try:
+            group_member = GroupMember.objects.get(group=group, user_id=user_id)
+        except GroupMember.DoesNotExist:
+            return Response({"status": False, "message": "User is not a member of the group."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Promote the user to Group_Admin
+        group_member.role = "Group_Admin"
+        group_member.save()
+        user = group_member.user
+        group_admin, created = Group.objects.get_or_create(name="Group_Admin")
+        user.groups.add(group_admin)
+        group_user, created = Group.objects.get_or_create(name="User")
+        user.groups.remove(group_user)
+        user.save()
+
+        return Response({"status": True, "message": f"User {group_member.user.email} has been promoted to Group_Admin."}, status=status.HTTP_200_OK)
    

@@ -2,6 +2,9 @@ from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
 import hashlib
 from django.core.cache import cache
+from django.contrib.auth import get_user_model
+from rest_framework.exceptions import PermissionDenied
+User = get_user_model()
 
 
 class IsAuthenticat(IsAuthenticated):
@@ -36,4 +39,21 @@ class GroupPermission(permissions.BasePermission):
         user_groups_permissions = request.user.groups.filter(
             permissions__codename__in=required_permission
         ).exists()
+        if not user_groups_permissions:
+            raise PermissionDenied(detail={
+                "status" : False,
+                "message": "You do not have permission to perform this action.",
+            })
+
         return user_groups_permissions
+    
+
+# class IsClientAdmin(BasePermission):
+#     """
+#     Custom permission to allow only Client_Admin group members to upload photos.
+#     """
+#     def has_permission(self, request, view):
+#         if not request.user.is_authenticated:
+#             return False
+#         return request.user.groups.filter(name="Client_Admin").exists()
+

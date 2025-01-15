@@ -144,7 +144,7 @@ class GroupMemberSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GroupMember
-        fields = ['id', 'group', 'user', 'role', 'joined_at', 'user_verified']
+        fields = ['id', 'group', 'user', 'role','roles', 'joined_at', 'user_verified']
         read_only_fields = ['joined_at']
     
     
@@ -194,11 +194,6 @@ class GroupMemberSerializer(serializers.ModelSerializer):
                 "created_by": instance.group.created_by.email if instance.group.created_by else None,
                 # "joined_at": instance.joined_at.strftime('%Y-%m-%d %H:%M:%S') if instance.joined_at else None,
                 "created at": instance.joined_at.strftime('%Y-%m-%d %H:%M:%S') if instance.joined_at else None,
-                # "user": {
-                #     "id": instance.user.id,
-                #     "email": instance.user.email,
-                #     "name": f"{instance.user.first_name} {instance.user.last_name}",
-                # },
                 
             }
             return group_data
@@ -225,6 +220,15 @@ class GroupMemberSerializer(serializers.ModelSerializer):
                 "thumbnail": instance.group.thumbnail.url if instance.group.thumbnail else None,
                 "created_by": instance.group.created_by.email if instance.group.created_by else None,
                 "created at": instance.joined_at.strftime('%Y-%m-%d %H:%M:%S') if instance.joined_at else None,
+            }
+            return group_data
+        elif from_method == 'member_list':
+            group_data = {
+                "group_name": instance.group.name,
+                "user_id": instance.user.id,
+                "user_email": instance.user.email,
+                "role":instance.role if instance.role else None
+                
             }
             return group_data
         else:
