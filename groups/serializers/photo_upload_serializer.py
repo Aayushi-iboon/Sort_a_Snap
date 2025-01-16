@@ -6,6 +6,7 @@ from rest_framework import serializers
 from groups.model.group import photo_group,PhotoGroupImage,sub_group
 from PIL import Image
 from io import BytesIO
+from threading import Thread
 from django.core.files.uploadedfile import InMemoryUploadedFile
 User = get_user_model()
 
@@ -38,13 +39,51 @@ class PhotoGroupSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'group','sub_group','photo_name','images_data']
 
     
-    def create(self, validated_data):
-        # Extract images and additional data
-        images_data = self.context['request'].data.getlist('images')
-        subgroup = validated_data.get('sub_group', None)
-        group = validated_data.get('group', None)
+    # def create(self, validated_data):
+    #     # Extract images and additional data
+    #     images_data = self.context['request'].data.getlist('images')
+    #     subgroup = validated_data.get('sub_group', None)
+    #     group = validated_data.get('group', None)
         
-        sub_group_instance = None  # Initialize the variable to avoid UnboundLocalError
+    #     sub_group_instance = None  # Initialize the variable to avoid UnboundLocalError
+
+    #     # If sub_group is provided, validate and associate it
+    #     if subgroup:
+    #         try:
+    #             sub_group_instance = sub_group.objects.get(id=subgroup.id)
+    #             validated_data['group'] = sub_group_instance.main_group  # Set the parent group
+    #         except sub_group.DoesNotExist:
+    #             raise serializers.ValidationError("Invalid sub_group ID.")
+
+    #     # Create the photo group
+    #     photogroup = photo_group.objects.create(**validated_data)
+
+    #     # Process images and save them without compression
+    #     for image_file in images_data:
+    #         if isinstance(image_file, (str, bytes)):
+    #             raise ValueError("Invalid file data received.")
+    #         else:
+    #             PhotoGroupImage.objects.create(
+    #                 photo_group=photogroup,
+    #                 sub_group=sub_group_instance,  # Will be None if not provided
+    #                 image2=image_file,  # Directly save the image without compression
+    #                 fev=False
+    #             )
+    #     return photogroup
+
+    def create(self, validated_data):
+        images_data = self.context['request'].data.getlist('images')
+        user = self.context['request'].user 
+        user_group = user.groups.values_list('name', flat=True)
+
+
+        # Enforce the 500 image limit for users in the "User" group
+        if "User" in user_group:
+            if len(images_data) > 500:
+                raise serializers.ValidationError("Users in the 'User' group can upload a maximum of 500 images at a time.")
+
+        subgroup = validated_data.get('sub_group', None)
+        sub_group_instance = None
 
         # If sub_group is provided, validate and associate it
         if subgroup:
@@ -57,20 +96,32 @@ class PhotoGroupSerializer(serializers.ModelSerializer):
         # Create the photo group
         photogroup = photo_group.objects.create(**validated_data)
 
-        # Process images and save them without compression
-        for image_file in images_data:
-            if isinstance(image_file, (str, bytes)):
-                raise ValueError("Invalid file data received.")
-            else:
+        # Function to process each image
+        def process_image(image_file, photogroup, sub_group_instance):
+            try:
+                if isinstance(image_file, (str, bytes)):
+                    raise ValueError("Invalid file data received.")
                 PhotoGroupImage.objects.create(
                     photo_group=photogroup,
                     sub_group=sub_group_instance,  # Will be None if not provided
                     image2=image_file,  # Directly save the image without compression
                     fev=False
                 )
-        return photogroup
+            except Exception as e:
+                print(f"Error processing image: {e}")
 
-    
+        # Process images in threads
+        threads = []
+        for image_file in images_data:
+            thread = Thread(target=process_image, args=(image_file, photogroup, sub_group_instance))
+            threads.append(thread)
+            thread.start()
+
+        # Wait for all threads to complete
+        for thread in threads:
+            thread.join()
+
+        return photogroup
     def update(self, instance, validated_data):
         # Update the photo_name field if provided
         instance.photo_name = validated_data.get('photo_name', instance.photo_name)
