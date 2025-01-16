@@ -78,9 +78,8 @@ class PhotoGroupSerializer(serializers.ModelSerializer):
 
 
         # Enforce the 500 image limit for users in the "User" group
-        if "User" in user_group:
-            if len(images_data) > 500:
-                raise serializers.ValidationError("Users in the 'User' group can upload a maximum of 500 images at a time.")
+        # if "User" in user_group and len(images_data) > 500:
+        #     raise serializers.ValidationError("Users in the 'User' group can upload a maximum of 500 images.")
 
         subgroup = validated_data.get('sub_group', None)
         sub_group_instance = None
@@ -96,32 +95,21 @@ class PhotoGroupSerializer(serializers.ModelSerializer):
         # Create the photo group
         photogroup = photo_group.objects.create(**validated_data)
 
-        # Function to process each image
-        def process_image(image_file, photogroup, sub_group_instance):
-            try:
-                if isinstance(image_file, (str, bytes)):
-                    raise ValueError("Invalid file data received.")
-                PhotoGroupImage.objects.create(
-                    photo_group=photogroup,
-                    sub_group=sub_group_instance,  # Will be None if not provided
-                    image2=image_file,  # Directly save the image without compression
-                    fev=False
-                )
-            except Exception as e:
-                print(f"Error processing image: {e}")
-
-        # Process images in threads
-        threads = []
+        # Process images one by one (sequentially)
         for image_file in images_data:
-            thread = Thread(target=process_image, args=(image_file, photogroup, sub_group_instance))
-            threads.append(thread)
-            thread.start()
-
-        # Wait for all threads to complete
-        for thread in threads:
-            thread.join()
+            if isinstance(image_file, (str, bytes)):
+                raise serializers.ValidationError("Invalid file data received.")
+            
+            # Create image record in the database
+            PhotoGroupImage.objects.create(
+                photo_group=photogroup,
+                sub_group=sub_group_instance,  # Will be None if not provided
+                image2=image_file,  # Save the image
+                fev=False
+            )
 
         return photogroup
+    
     def update(self, instance, validated_data):
         # Update the photo_name field if provided
         instance.photo_name = validated_data.get('photo_name', instance.photo_name)
