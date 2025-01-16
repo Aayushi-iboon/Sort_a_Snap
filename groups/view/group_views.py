@@ -429,7 +429,7 @@ class JoinGroupView(viewsets.ModelViewSet):
                 )
                 user.is_active = True
                 user.save()
-
+            
             group = CustomGroup.objects.first() 
 
         else:
@@ -440,7 +440,6 @@ class JoinGroupView(viewsets.ModelViewSet):
         #     return Response({"status":True,"message": "User is already a member of this group."}, status=status.HTTP_400_BAD_REQUEST)
 
         role = "User" if user.is_authenticated else "Guest"
-        group_role = Group.objects.get(id=4) 
         # Create the group member entry
         group_member = GroupMember.objects.create(group=group, user=user,role=role)
         # Serialize and return response
@@ -523,9 +522,7 @@ class JoinGroupView(viewsets.ModelViewSet):
 
 
     def promote_to_admin(self, request):
-        """
-        Promote a group member to Group_Admin. Only the group creator (Client_Admin) can perform this action.
-        """
+
         group_id = request.data.get('group_id')
         user_id = request.data.get('user_id')
 
@@ -556,3 +553,35 @@ class JoinGroupView(viewsets.ModelViewSet):
 
         return Response({"status": True, "message": f"User {group_member.user.email} has been promoted to Group_Admin."}, status=status.HTTP_200_OK)
    
+   #
+   
+    # def demote_to_user(self, request):
+
+    #     group_id = request.data.get('group_id')
+    #     user_id = request.data.get('user_id')
+
+    #     try:
+    #         group = CustomGroup.objects.get(id=group_id)
+    #     except CustomGroup.DoesNotExist:
+    #         return Response({"status": False, "message": "Group does not exist."}, status=status.HTTP_404_NOT_FOUND)
+
+    #     # Check if the request user is the group creator
+    #     if group.created_by != request.user:
+    #         return Response({"status": False, "message": "You do not have permission to demote members."}, status=status.HTTP_403_FORBIDDEN)
+
+    #     # Check if the user is a member of the group
+    #     try:
+    #         group_member = GroupMember.objects.get(group=group, user_id=user_id)
+    #     except GroupMember.DoesNotExist:
+    #         return Response({"status": False, "message": "User is not a member of the group."}, status=status.HTTP_404_NOT_FOUND)
+
+    #     group_member.role = "Group_Admin"
+    #     group_member.save()
+    #     user = group_member.user
+    #     group_admin, created = Group.objects.get_or_create(name="Group_Admin")
+    #     user.groups.add(group_admin)
+    #     group_user, created = Group.objects.get_or_create(name="User")
+    #     user.groups.remove(group_user)
+    #     user.save()
+
+    #     return Response({"status": True, "message": f"User {group_member.user.email} has been demote to Group_Admin."}, status=status.HTTP_200_OK)
