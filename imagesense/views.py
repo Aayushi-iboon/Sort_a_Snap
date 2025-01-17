@@ -23,6 +23,7 @@ import os
 from rest_framework.exceptions import ValidationError
 from face.function_call import check_required_fields,validate_email,flatten_errors
 from groups.model.group import CustomGroup,sub_group
+import random
 from .tasks import assign_user_to_group
 User = get_user_model()
 
@@ -158,7 +159,7 @@ class VerifyOTP(APIView):
                             'phone_otp_status': user.otp_status,
                             'user_id':user.id,
                             "edit_profile":user.edit_profile,
-                            'group': ', '.join([group.name for group in user.groups.all()]),
+                            'role': ', '.join([group.name for group in user.groups.all()]),
 
                         }
                     }, status=status.HTTP_200_OK)
@@ -167,8 +168,11 @@ class VerifyOTP(APIView):
         # Check phone OTP
         if phone:
             cached_otp = cache.get(f"otp_{phone}")
+            random_suffix = random.randint(1000, 9999)  # Random suffix for the email
+            random_suffix_phone = random.randint(1000000000, 9999999999)
+            email = f"guest{random_suffix}@example.com"
             if cached_otp == int(otp):
-                user, _ = User.objects.get_or_create(phone_no=phone)
+                user, _ = User.objects.get_or_create(phone_no=phone,email=email)
                 user.otp_status = True
                 user.save()
                 
@@ -187,7 +191,7 @@ class VerifyOTP(APIView):
                             'phone_otp_status': user.otp_status,
                             "edit_profile":user.edit_profile,
                             'user_id':user.id,
-                            'group': ', '.join([group.name for group in user.groups.all()]),
+                            'role': ', '.join([group.name for group in user.groups.all()]),
 
                         }
                     }, status=status.HTTP_200_OK)

@@ -40,7 +40,7 @@ def get_timestamped_filename(instance, image):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True,null=True, blank=True)
     first_name = models.CharField(max_length=50,null=True,blank=True)
     last_name = models.CharField(max_length=50,null=True,blank=True)
     edit_profile = models.BooleanField(default=False)

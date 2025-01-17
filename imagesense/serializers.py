@@ -9,6 +9,7 @@ from imagesense.models import BlackListToken
 from django.contrib.auth.password_validation import validate_password
 import jwt
 from rest_framework.exceptions import ValidationError
+import re
 
 
 logger = logging.getLogger(__name__)
@@ -26,8 +27,18 @@ class OTPSerializer(serializers.Serializer):
         # Ensure that either email or phone_no is provided, but not both
         if (email and phone_no) or (not email and not phone_no):
             raise serializers.ValidationError("Provide either email or phone number, but not both.")
-
-        return data
+        
+        if phone_no:
+            # Check if the phone number starts with +91 and is followed by 10 digits
+            if not re.match(r'^\+91\d{10}$', phone_no):
+                raise serializers.ValidationError("Phone number must be in the format +91 followed by 10 digits.")
+        
+        if email:
+            # Check if the email is a valid email address
+            if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
+                raise serializers.ValidationError("Invalid email format.")
+            
+        return data 
 
 class UserProfileSerializer(serializers.ModelSerializer):
     profile_image = serializers.ImageField(required=False)
