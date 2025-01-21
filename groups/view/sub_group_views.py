@@ -37,7 +37,7 @@ class SubGroupViewSet(viewsets.ModelViewSet):
             serializer = self.serializer_class(queryset, many=True)
             return Response({
                 "status": True,
-                "message": "Sub Group retrieved successfully.",
+                "message": "Folder retrieved successfully.",
                 'data': {"user_data":serializer.data} 
             }, status=status.HTTP_200_OK)
         except Exception as e:
@@ -54,14 +54,14 @@ class SubGroupViewSet(viewsets.ModelViewSet):
             if not queryset.exists():
                 return Response({
                     "status": False,
-                    "message": "No sub groups found!",
+                    "message": "No Folder found!",
                     'data': []
                 }, status=status.HTTP_204_NO_CONTENT)
                 
             serializer = self.serializer_class(queryset, many=True)
             return Response({
                 "status": True,
-                "message": "Sub Group retrieved successfully.",
+                "message": "Folder retrieved successfully.",
                 'data': {"user_data":serializer.data} 
             }, status=status.HTTP_200_OK)
         except Exception as e:
@@ -83,7 +83,7 @@ class SubGroupViewSet(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response({
             "status": True,
-            "message": "Sub group created successfully.",
+            "message": "Folder created successfully.",
             "data": serializer.data
         }, status=status.HTTP_201_CREATED, headers=headers)
         
@@ -110,7 +110,7 @@ class SubGroupViewSet(viewsets.ModelViewSet):
             serializer = self.serializer_class(instance)
             return Response({
                 'status': True,
-                'message': 'Sub Group data retrieved successfully.',
+                'message': 'Folder data retrieved successfully.',
                 'data': serializer.data
             }, status=status.HTTP_200_OK)
         except Exception as e:
@@ -126,7 +126,7 @@ class SubGroupViewSet(viewsets.ModelViewSet):
             instance.delete()
             return Response({
                 'status': True,
-                'message': 'Sub Group deleted successfully.'
+                'message': 'Folder deleted successfully.'
             }, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({

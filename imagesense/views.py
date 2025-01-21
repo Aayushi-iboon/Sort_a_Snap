@@ -168,12 +168,13 @@ class VerifyOTP(APIView):
         # Check phone OTP
         if phone:
             cached_otp = cache.get(f"otp_{phone}")
-            random_suffix = random.randint(1000, 9999)  # Random suffix for the email
             random_suffix_phone = random.randint(1000000000, 9999999999)
-            email = f"guest{random_suffix}@example.com"
+            email = f"guest{random_suffix_phone}@example.com"
+            import ipdb;ipdb.set_trace()
             if cached_otp == int(otp):
-                user, _ = User.objects.get_or_create(phone_no=phone,email=email)
+                user, _ = User.objects.get_or_create(phone_no=phone)
                 user.otp_status = True
+                user.email = email
                 user.save()
                 
                 if user.otp_status:  # Check if both email and phone are verified

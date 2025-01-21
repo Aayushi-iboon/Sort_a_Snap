@@ -9,7 +9,9 @@ from io import BytesIO
 from django.core.files.base import ContentFile
 from PIL import Image
 from django.contrib.auth.models import Group
-
+from django.db.models.signals import pre_delete, pre_save
+from django.dispatch import receiver
+import boto3
 
 
 class CustomGroup(models.Model):
@@ -64,9 +66,8 @@ class CustomGroup(models.Model):
         ]
 
 def user_image_upload_path(instance, filename):
-    user_email = instance.photo_group.user.email  # Assuming `photo_group` has a `user` field
+    user_email = instance.photo_group.user.email  
     if instance.photo_group.sub_group:
-        # Use sub-group's name for the directory structure
         sub_group_name = instance.photo_group.sub_group.name  # Assuming `sub_group` has a `name` field
         group_name = instance.photo_group.group.name
         return os.path.join(f'photos/{user_email}/{group_name}/{sub_group_name}', filename)
@@ -77,6 +78,7 @@ def user_image_upload_path(instance, filename):
     else:
         # Default directory structure
         return os.path.join(f'photos/{user_email}', filename)
+
 
 
 
@@ -147,5 +149,31 @@ class PhotoGroupImage(models.Model):
         ]
     
             
+# remove current deleting file
+@receiver(pre_delete, sender=PhotoGroupImage)
+def delete_s3_file(sender, instance, **kwargs):
+    if instance.image2:
+        import ipdb;ipdb.set_trace()
+        s3_client = boto3.client("s3")
+        s3_bucket = os.getenv("AWS_STORAGE_BUCKET_NAME")
+        s3_file_key = instance.image2.name  # Get S3 file key (path)
 
-        
+        try:
+            s3_client.delete_object(Bucket=s3_bucket, Key=s3_file_key)
+            print(f"Deleted from S3: {s3_file_key}")
+        except Exception as e:
+            print(f"Error deleting from S3: {e}")
+            
+@receiver(pre_save, sender=PhotoGroupImage)
+def delete_old_s3_file(sender, instance, **kwargs):
+    """Delete old file from S3 when updating a new image"""
+    if instance.pk:
+        try:
+            old_instance = sender.objects.get(pk=instance.pk)
+            if old_instance.image2 and old_instance.image2 != instance.image2:
+                s3_client = boto3.client("s3")
+                s3_bucket = os.getenv("AWS_STORAGE_BUCKET_NAME")
+                s3_client.delete_object(Bucket=s3_bucket, Key=old_instance.image2.name)
+                print(f"Old image deleted from S3: {old_instance.image2.name}")
+        except sender.DoesNotExist:
+            pass

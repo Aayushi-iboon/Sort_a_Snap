@@ -4,6 +4,8 @@ import hashlib
 from django.core.cache import cache
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import PermissionDenied
+from groups.model.group import GroupMember
+from django.contrib.auth.models import Permission
 User = get_user_model()
 
 
@@ -31,29 +33,42 @@ class IsAdminUser(permissions.BasePermission):
         return bool(user and user.is_authenticated and user.is_admin and user.is_active)
 
 
-class GroupPermission(permissions.BasePermission):
-    def has_permission(self, request, view):
-        required_permission = getattr(view, 'required_permission', None)
-        if required_permission is None:
-            return True
-        user_groups_permissions = request.user.groups.filter(
-            permissions__codename__in=required_permission
-        ).exists()
-        if not user_groups_permissions:
-            raise PermissionDenied(detail={
-                "status" : False,
-                "message": "You do not have permission to perform this action.",
-            })
-
-        return user_groups_permissions
     
+    def has_permission(self, request, view):
+        user = request.user
+        required_permission = getattr(view, 'required_permission', [])  
+        
+        if not required_permission:
+            return True
 
-# class IsClientAdmin(BasePermission):
-#     """
-#     Custom permission to allow only Client_Admin group members to upload photos.
-#     """
-#     def has_permission(self, request, view):
-#         if not request.user.is_authenticated:
-#             return False
-#         return request.user.groups.filter(name="Client_Admin").exists()
+        
+        is_client_admin = not GroupMember.objects.filter(user=user).exists()
+        
+        if is_client_admin:
+            return True  
 
+        
+        user_groups = GroupMember.objects.filter(user=user).select_related("group")
+                
+        if is_client_admin == False:    
+            has_group_admin = user_groups.filter(role="Group_Admin").exists() 
+            group_admin_has_permissions = has_group_admin and request.user.groups.filter(
+                name="Group_Admin", permissions__codename__in=required_permission
+                ).exists()
+            
+            if group_admin_has_permissions:
+                return True 
+            
+            has_group_user = user_groups.filter(role="User").exists()
+            group_user_has_permissions = has_group_user and request.user.groups.filter(
+                name="User", permissions__codename__in=required_permission
+                ).exists()
+            
+            if group_user_has_permissions:
+                return True
+            
+            
+        raise PermissionDenied({
+            "status": False,
+            "message": "You do not have the permission."
+        })

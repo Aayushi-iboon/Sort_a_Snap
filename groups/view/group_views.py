@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from groups.model.group import CustomGroup,GroupMember
 from groups.serializers.group_serializers import CustomGroupSerializer, GroupMemberSerializer
+from imagesense.serializers import UserProfileSerializer
 from rest_framework.permissions import IsAuthenticated ,AllowAny
 from rest_framework.response import Response
 from rest_framework import status
@@ -195,8 +196,8 @@ class CustomGroupViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
-            if instance.image:
-                instance.image.delete(save=False) 
+            # if instance.image:
+            #     instance.image.delete(save=False) 
             instance.delete()
             return Response({
                 'status': True,
@@ -490,28 +491,63 @@ class JoinGroupView(viewsets.ModelViewSet):
 
     def member_list(self,request):
         try:
+            # import ipdb;ipdb.set_trace()
             group_id = request.data.get('group_id')
+            group_info=CustomGroup.objects.get(id=group_id)
+            creator = group_info.created_by 
+            # "default_role" : instance.group.created_by.groups.name if instance.group.created_by else None,
             if not group_id:
                 return Response({
                     'status': False,
                     'message': "Group ID is required.",
                 }, status=status.HTTP_400_BAD_REQUEST)
-
             group_members = GroupMember.objects.filter(group_id=group_id).select_related('user')
-
-            if not group_members.exists():
-                return Response({
-                    "status": True,
-                    "message": "No members found for this group.",
-                }, status=status.HTTP_204_NO_CONTENT)
+            
+            # if not group_members.exists():
+            #     return Response({
+            #         "status": True,
+            #         "message": "No members found for this group.",
+            #         "data" : None,
+            #     }, status=status.HTTP_204_NO_CONTENT)
 
             # Serialize the data
-            serializer = self.serializer_class(group_members, many=True, context={'request': request,'from_method':'member_list'})
+            members_list = []
+            for member in group_members:
+                members_list.append({
+                    "group_name": group_info.name,  
+                    "user_id": member.user.id,
+                    "user_email": member.user.email,
+                    "user_profile": member.user.profile_image.url if member.user.profile_image else None,
+                    "user_phone": member.user.phone_no,
+                    "role": member.role,  
+                    "user_name": member.user.first_name  
+                })
+
+            creator_data = {
+                "group_name": group_info.name,
+                "user_id": creator.id,
+                "user_email": creator.email,
+                "user_profile": creator.profile_image.url if creator.profile_image else None,
+                "user_phone": creator.phone_no,
+                "role": "Client_Admin" if creator.groups.filter(name="Client_Admin").exists() else (creator.groups.first().name if creator.groups.exists() else None), 
+                "user_name": creator.first_name
+            }
+        
+            members_list.append(creator_data)  
+
             return Response({
                 "status": True,
                 "message": "Group members retrieved successfully.",
-                "data": serializer.data
+                "data": {
+                    "member_list": members_list
+                }
             }, status=status.HTTP_200_OK)
+
+        except CustomGroup.DoesNotExist:
+            return Response({
+                "status": False,
+                "message": "Group not found.",
+            }, status=status.HTTP_404_NOT_FOUND)
 
         except Exception as e:
             return Response({
@@ -519,7 +555,6 @@ class JoinGroupView(viewsets.ModelViewSet):
                 "message": "Something went wrong.",
                 "error": str(e),
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
     def promote_to_admin(self, request):
 

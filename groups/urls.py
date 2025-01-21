@@ -73,6 +73,7 @@ urlpatterns = [
     path("user-joined-group/", JoinGroupView.as_view({'get':'access_user_joined_group'}), name="user_joined_group"),
     path("member_list/", JoinGroupView.as_view({'post':'member_list'}), name="group_member_list"),
     path("promote_to_admin/", JoinGroupView.as_view({'post':'promote_to_admin'}), name="promote_t_admin"),
+    path("demote_to_user/", JoinGroupView.as_view({'post':'demote_to_user'}), name="demote_t_user"),
 
 
     

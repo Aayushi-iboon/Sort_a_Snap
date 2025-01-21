@@ -224,10 +224,18 @@ class GroupMemberSerializer(serializers.ModelSerializer):
             return group_data
         elif from_method == 'member_list':
             group_data = {
-                "group_name": instance.group.name,
-                "user_id": instance.user.id,
-                "user_email": instance.user.email,
-                "role":instance.role if instance.role else None
+                "group_name": instance.group.name if instance.group else None,
+                "user_id": instance.user.id if instance.user else None,
+                "default_Admin": instance.group.created_by.id if instance.group.created_by else None,
+                "default_Admin_email": instance.group.created_by.email if instance.group.created_by else None,
+                "default_Admin_name": instance.group.created_by.first_name if instance.group.created_by else None,
+                # "default_role" : instance.group.created_by.groups.name if instance.group.created_by else None,
+                "default_role": instance.group.created_by.groups.last().name if instance.group and instance.group.created_by and instance.group.created_by.groups.exists() else None,
+                "user_email": instance.user.email if instance.user else None,
+                "user_profile":instance.user.profile_image.url if instance.user and instance.user.profile_image else None,
+                "user_phone":instance.user.phone_no if instance.user else None,
+                "role":instance.role if instance.role else None,
+                "user_name":instance.user.first_name  if instance.user else instance.group.created_by.first_name
                 
             }
             return group_data
@@ -288,6 +296,15 @@ class CustomGroupSerializer(serializers.ModelSerializer):
                 "access": instance.access,
                 "Created By": instance.created_by.id if instance.created_by else None,
                 **common_fields,
+            }
+            return group_data
+        elif from_method == 'group_info':
+            group_data = {
+                "default_Admin_name": instance.name,
+                "default_Admin_email":instance.email
+                # "access": instance.access,
+                # "Created By": instance.created_by.id if instance.created_by else None,
+                # **common_fields,
             }
             return group_data
         
@@ -407,8 +424,9 @@ class photo_serializer(serializers.ModelSerializer):
         # image_url
         if from_method == 'photo_image_list':
             self.context.setdefault('all_images', [])
+            
             valid_images = [
-                {
+                {   
                     "id": img.get("id"),
                     "image_url": img.get("image_url"),
                     "fev": bool(img.get("fev")),
@@ -462,24 +480,3 @@ class photo_serializer(serializers.ModelSerializer):
                 "images": representation.get("images", [])
             }
             return group_data
-    
-    # def update(self, instance, validated_data):
-    #     request = self.context.get('request')
-    #     image = request.FILES.get('image')
-    #     # import ipdb;ipdb.set_trace()
-    #     # Handle image file update
-    #     if image:
-    #         try:
-    #             binary_data = image.read()
-    #             instance.image = binary_data
-    #         except Exception as e:
-    #             raise serializers.ValidationError({"image": f"Error reading uploaded file: {str(e)}"})
-
-
-    #     # Update other fields
-    #     for attr, value in validated_data.items():
-    #         setattr(instance, attr, value)
-
-    #     # Save the updated instance
-    #     instance.save()
-    #     return instance

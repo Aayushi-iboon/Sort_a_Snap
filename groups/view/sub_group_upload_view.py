@@ -35,7 +35,7 @@ class PhotoSubGroupViewSet(viewsets.ModelViewSet):
             serializer = self.serializer_class(queryset, many=True, context={'request': request,'from_method':'photo_image'})
             return Response({
                 "status": True,
-                "message": "Sub Groups retrieved successfully.",
+                "message": "Folder retrieved successfully.",
                  'data': {"user_data":serializer.data}
             }, status=status.HTTP_200_OK)
         except Exception as e:

@@ -6,7 +6,9 @@ from rest_framework import serializers
 from groups.model.group import photo_group,PhotoGroupImage,sub_group
 from PIL import Image
 from io import BytesIO
+from rest_framework.response import Response
 from threading import Thread
+from rest_framework import status
 from django.core.files.uploadedfile import InMemoryUploadedFile
 User = get_user_model()
 
@@ -74,17 +76,19 @@ class PhotoGroupSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         images_data = self.context['request'].data.getlist('images')
         user = self.context['request'].user 
-        user_group = user.groups.values_list('name', flat=True)
+        user_groups = user.groups.values_list('name', flat=True)
 
-
-        # Enforce the 500 image limit for users in the "User" group
-        # if "User" in user_group and len(images_data) > 500:
-        #     raise serializers.ValidationError("Users in the 'User' group can upload a maximum of 500 images.")
+        if "Group_Admin" in user_groups:
+            total_uploaded_images = PhotoGroupImage.objects.filter(photo_group__user=user).count()
+            if total_uploaded_images + len(images_data) > 500:
+                return Response(
+                    {"status": False, "message": "You have exceeded the maximum limit of 500 images."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
         subgroup = validated_data.get('sub_group', None)
         sub_group_instance = None
 
-        # If sub_group is provided, validate and associate it
         if subgroup:
             try:
                 sub_group_instance = sub_group.objects.get(id=subgroup.id)
@@ -92,15 +96,12 @@ class PhotoGroupSerializer(serializers.ModelSerializer):
             except sub_group.DoesNotExist:
                 raise serializers.ValidationError("Invalid sub_group ID.")
 
-        # Create the photo group
+        
         photogroup = photo_group.objects.create(**validated_data)
 
-        # Process images one by one (sequentially)
         for image_file in images_data:
             if isinstance(image_file, (str, bytes)):
                 raise serializers.ValidationError("Invalid file data received.")
-            
-            # Create image record in the database
             PhotoGroupImage.objects.create(
                 photo_group=photogroup,
                 sub_group=sub_group_instance,  # Will be None if not provided
@@ -111,7 +112,6 @@ class PhotoGroupSerializer(serializers.ModelSerializer):
         return photogroup
     
     def update(self, instance, validated_data):
-        # Update the photo_name field if provided
         instance.photo_name = validated_data.get('photo_name', instance.photo_name)
         instance.save()
 
@@ -161,8 +161,8 @@ class PhotoGroupSerializer(serializers.ModelSerializer):
             {
                 "id": image.id,
                 "image_url": image.image2.url if image.image2 else None,  # Check if image2 exists
-                "fev": image.fev # Include fav_images if it exists
-
+                "fev": image.fev, # Include fav_images if it exists,
+                "sub_group": representation['sub_group']
             }
             for image in images
         ]

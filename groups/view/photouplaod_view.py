@@ -111,49 +111,6 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
             )
 
         
-    # def get_group_wise_user(self, request, *args, **kwargs):
-    #     user_id = request.data.get('user')
-    #     group_id = request.data.get('group')  # Retrieve group_id from request data
-
-    #     if not user_id:
-    #         return Response(
-    #             {"status": False, "message": "user_id is required"},
-    #             status=status.HTTP_400_BAD_REQUEST
-    #         )
-    #     try:
-    #         # Get group IDs the user is a member of
-    #         member_group_ids = GroupMember.objects.filter(user_id=user_id).values_list('group_id', flat=True)
-
-    #         # Get all photos meeting the criteria
-    #         all_photos = photo_group.objects.filter(
-    #             Q(user_id=user_id) |  # Photos uploaded by the user
-    #             Q(group_id__in=member_group_ids) |  # Photos in groups the user is a member of
-    #             Q(group_id=group_id)  # Photos in a specific group passed in the request
-    #         ).distinct()
-
-    #         # Check if photos exist
-    #         if not all_photos.exists():
-    #             return Response(
-    #                 {"status": False, "message": "No photos found for the user or their groups."},
-    #                 status=status.HTTP_404_NOT_FOUND
-    #             )
-
-    #         # Serialize the photo data
-    #         serializer = self.get_serializer(
-    #             all_photos, many=True, context={'request': request, 'from_method': 'photo_image_list'}
-    #         )
-
-    #         return Response({
-    #             "status": True,
-    #             "message": "Photos retrieved successfully for user and their groups.",
-    #             "data": {"user_data": serializer.data}
-    #         }, status=status.HTTP_200_OK)
-
-    #     except Exception as e:
-    #         return Response(
-    #             {"status": False, "message": "Something went wrong", "error": str(e)},
-    #             status=status.HTTP_500_INTERNAL_SERVER_ERROR
-    #         )
     def get_group_wise_user(self, request, *args, **kwargs):
         user_id = request.data.get('user')
         group_id = request.data.get('group')  # Retrieve group_id from request data
@@ -332,3 +289,48 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
             return Response({'status': False, 'message': 'Photo group list not found.'},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'status': False, 'message': Global_error_message, 'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+    # def get_group_wise_user(self, request, *args, **kwargs):
+    #     user_id = request.data.get('user')
+    #     group_id = request.data.get('group')  # Retrieve group_id from request data
+
+    #     if not user_id:
+    #         return Response(
+    #             {"status": False, "message": "user_id is required"},
+    #             status=status.HTTP_400_BAD_REQUEST
+    #         )
+    #     try:
+    #         # Get group IDs the user is a member of
+    #         member_group_ids = GroupMember.objects.filter(user_id=user_id).values_list('group_id', flat=True)
+
+    #         # Get all photos meeting the criteria
+    #         all_photos = photo_group.objects.filter(
+    #             Q(user_id=user_id) |  # Photos uploaded by the user
+    #             Q(group_id__in=member_group_ids) |  # Photos in groups the user is a member of
+    #             Q(group_id=group_id)  # Photos in a specific group passed in the request
+    #         ).distinct()
+
+    #         # Check if photos exist
+    #         if not all_photos.exists():
+    #             return Response(
+    #                 {"status": False, "message": "No photos found for the user or their groups."},
+    #                 status=status.HTTP_404_NOT_FOUND
+    #             )
+
+    #         # Serialize the photo data
+    #         serializer = self.get_serializer(
+    #             all_photos, many=True, context={'request': request, 'from_method': 'photo_image_list'}
+    #         )
+
+    #         return Response({
+    #             "status": True,
+    #             "message": "Photos retrieved successfully for user and their groups.",
+    #             "data": {"user_data": serializer.data}
+    #         }, status=status.HTTP_200_OK)
+
+    #     except Exception as e:
+    #         return Response(
+    #             {"status": False, "message": "Something went wrong", "error": str(e)},
+    #             status=status.HTTP_500_INTERNAL_SERVER_ERROR
+    #         )

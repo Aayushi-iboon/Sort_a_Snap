@@ -41,12 +41,16 @@ class PhotoGroupView(viewsets.ModelViewSet):
     
     def get_permissions(self):
         if self.action in ['create']:
+            
             self.required_permission = ['add_photo_group']
         elif self.action in ['retrieve','list','access_group_images']:
+            
             self.required_permission = ['view_photo_group']
         elif self.action in ['update']:
+            
             self.required_permission = ['change_photo_group']
         elif self.action in ['destroy']:
+            
             self.required_permission = ['delete_photo_group']
         
         return [IsAuthenticated(), GroupPermission()]
@@ -230,23 +234,47 @@ class PhotoGroupImageView(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ['create']:
             self.required_permission = ['add_photogroupimage']
+            self.required_groups = ["Group_Admin"]
         elif self.action in ['retrieve','list','list_page']:
             self.required_permission = ['view_photogroupimage']
+            self.required_groups = ["Group_Admin", "User"]
         elif self.action in ['update']:
             self.required_permission = ['change_photogroupimage']
+            self.required_groups = ["Group_Admin"]
         elif self.action in ['destroy']:
             self.required_permission = ['delete_photogroupimage']
-        elif self.action in ['download_image']:
+            self.required_groups = ["Group_Admin"]
+        elif self.action in ['download_image','serve_single_image']:
             self.required_permission = ['download_image']
+            self.required_groups = ["Group_Admin", "User"]
         elif self.action in ['fav_list']:
+            self.required_groups = ["Group_Admin"]
             self.required_permission = ['fav_list']
         
         return [IsAuthenticated(), GroupPermission()]
     
     
+    # def get_queryset(self):
+    #     return super().get_queryset().filter(photo_group__user=self.request.user)
+    
     def get_queryset(self):
-        return super().get_queryset().filter(photo_group__user=self.request.user)
+        return super().get_queryset()
+    
+    #     user = self.request.user
 
+    #     # If user is Client_Admin, allow all images
+    #     if not GroupMember.objects.filter(user=user).exists():
+    #         return PhotoGroupImage.objects.all()
+
+    #     # If user is User_Admin, allow only viewing and downloading images
+    #     if GroupMember.objects.filter(user=user, role="User").exists() and not GroupMember.objects.filter(user=user, role="Group_Admin").exists():
+    #         return PhotoGroupImage.objects.all()  # Assuming User_Admin can see all images
+
+    #     # If user is Group_Admin, restrict access to only their groups
+    #     user_groups = GroupMember.objects.filter(user=user, role="Group_Admin").values_list('group', flat=True)
+    #     return PhotoGroupImage.objects.filter(group__in=user_groups)
+    
+        
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         try:
@@ -413,10 +441,7 @@ class PhotoGroupImageView(viewsets.ModelViewSet):
             )
             
             
-    # def get_permissions(self):
-    #     if self.action == 'download_image':
-    #         return [IsGroup_Admin()]
-    #     return super().get_permissions()
+
 
     def download_image(self, request, pk):
         try:
@@ -453,10 +478,10 @@ class PhotoGroupImageView(viewsets.ModelViewSet):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
     
-    # def get_permissions(self):
-    #     if self.action == 'serve_single_image':
-    #         return [AllowAny()]  # Skip authentication for this action
-    #     return super().get_permissions()  
+    def get_permissions(self):
+        if self.action == 'serve_single_image':
+            return [AllowAny()]
+        return super().get_permissions()  
     
     @action(detail=True, methods=['get'], url_path='serve-single-image')
     def serve_single_image(self, request, pk=None):
