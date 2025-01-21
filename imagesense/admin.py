@@ -15,7 +15,7 @@ class UserAdmin(BaseUserAdmin):
     readonly_fields = ('created_at', 'updated_at')
 
     fieldsets = (
-        (None, {'fields': ('email', 'slug', 'password')}),
+        (None, {'fields': ('email', 'password')}),
         ('Personal Info', {'fields': ('phone_no', 'profile_image','first_name','last_name')}),
         ('Permissions', {
             'fields': ('is_active', 'is_staff', 'is_superuser', 'groups','user_permissions', 'otp_status', 'otp_status_email', 'edit_profile'),
@@ -25,7 +25,7 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'slug', 'phone_no', 'profile_image', 'password1', 'password2'),
+            'fields': ('email', 'phone_no', 'profile_image', 'password1', 'password2'),
         }),
     )
 
@@ -36,7 +36,7 @@ class UserAdmin(BaseUserAdmin):
 
     # Update list_display to include custom group method
     list_display = (
-        'id', 'email', 'slug', 'phone_no', 'is_staff', 'display_groups',
+        'id', 'email',  'phone_no', 'is_staff', 'display_groups',
         'profile_image_tag', 'otp_status', 'first_name', 'last_name', 'otp_status_email'
     )
     list_display_links = ('id', 'email')
@@ -44,7 +44,7 @@ class UserAdmin(BaseUserAdmin):
 
     list_filter = ('is_active', 'is_staff', 'groups', 'otp_status', 'otp_status_email')
 
-    search_fields = ('email', 'slug', 'phone_no', 'otp_status_email')
+    search_fields = ('email','phone_no', 'otp_status_email')
 
     ordering = ('id',)
 
