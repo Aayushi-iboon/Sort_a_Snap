@@ -415,7 +415,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         try:
-            partial = kwargs.pop('partial', False)
+            partial = kwargs.pop('partial', True)
             instance = self.get_object()
             if not instance.is_active:
                 return Response({'status': False, 'message': "User is inactive", 'code': "user_inactive"},status=status.HTTP_400_BAD_REQUEST)
@@ -439,7 +439,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             #         return Response({'status': False, 'message': "phone number already exists!"},status=status.HTTP_400_BAD_REQUEST)
 
             
-            serializer = self.get_serializer(instance, data=request.data, partial=partial) 
+            serializer = self.get_serializer(instance, data=request.data, partial=True) 
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
                 return Response({'status': True, 'message': 'User updated successfully', 'data': {'user':serializer.data}}, status=status.HTTP_200_OK)
