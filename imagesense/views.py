@@ -171,12 +171,14 @@ class VerifyOTP(APIView):
             random_suffix_phone = random.randint(1000000000, 9999999999)
             email = f"guest{random_suffix_phone}@example.com"
             if cached_otp == int(otp):
-                user, _ = User.objects.get_or_create(phone_no=phone)
+                if not User.objects.filter(phone_no=phone).exists():
+                    user = User.objects.create(phone_no=phone)
+                else:
+                    user = User.objects.get(phone_no=phone)
                 user.otp_status = True
                 user.email = email
                 user.save()
-                
-                if user.otp_status:  # Check if both email and phone are verified
+                if user.otp_status:
                     refresh = RefreshToken.for_user(user)
                     assign_user_to_group(user, "Client_Admin")
                     return Response({
