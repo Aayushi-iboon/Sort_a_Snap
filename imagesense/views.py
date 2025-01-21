@@ -170,7 +170,6 @@ class VerifyOTP(APIView):
             cached_otp = cache.get(f"otp_{phone}")
             random_suffix_phone = random.randint(1000000000, 9999999999)
             email = f"guest{random_suffix_phone}@example.com"
-            import ipdb;ipdb.set_trace()
             if cached_otp == int(otp):
                 user, _ = User.objects.get_or_create(phone_no=phone)
                 user.otp_status = True
