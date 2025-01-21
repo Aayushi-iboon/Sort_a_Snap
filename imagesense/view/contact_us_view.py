@@ -7,25 +7,13 @@ from django.http import Http404
 from ..serializer.contact_us_serializer import Contactus_Serializer
 from imagesense.model.contact_us import ContactUs
 from rest_framework.permissions import IsAuthenticated
-from face.permissions import IsAuthenticat,GroupPermission
+from face.permissions import IsAuthenticat
 
 class ContactusDataView(viewsets.ModelViewSet):
     queryset = ContactUs.objects.all()
     serializer_class = Contactus_Serializer
     pagination_class = StandardResultsSetPagination
     permission_classes = [IsAuthenticat]
-    
-    def get_permissions(self):
-        if self.action in ['create']:
-            self.required_permission = ['add_contactus']
-        elif self.action in ['retrieve','list']:
-            self.required_permission = ['view_contactus']
-        elif self.action in ['update']:
-            self.required_permission = ['change_contactus']
-        elif self.action in ['destroy']:
-            self.required_permission = ['delete_contactus']
-        
-        return [IsAuthenticated(), GroupPermission()]
 
     
     def get_queryset(self):
