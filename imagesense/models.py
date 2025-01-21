@@ -4,6 +4,7 @@ from django.contrib.auth.models import Permission
 # Create your models here.
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
 from django.db import models
+from django.utils.text import slugify
 from django.db.models.signals import pre_save
 import time
 import os
@@ -46,7 +47,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     profile_image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
     otp_status = models.BooleanField(default=False)  # phone verify
     otp_status_email = models.BooleanField(default=False)  # email verify
-    # slug = models.SlugField(unique=True, blank=True)  
+    slug = models.SlugField(unique=True, blank=True,null=True)  
     phone_no = models.CharField(max_length=15,null=True, blank=True,unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -95,14 +96,14 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     
         
-# def set_user_slug(sender, instance, *args, **kwargs):
-#     if not instance.slug:
-#         timestamp = int(time.time())  # Current Unix timestamp
-#         email_prefix = instance.email.split('@')[0]
-#         instance.slug = slugify(f"{email_prefix}-family-{timestamp}")
+def set_user_slug(sender, instance, *args, **kwargs):
+    if not instance.slug:
+        timestamp = int(time.time())  # Current Unix timestamp
+        # email_prefix = instance.email.split('@')[0]
+        instance.slug = slugify(f"-family-{timestamp}")
 
 
-# pre_save.connect(set_user_slug, sender=User)
+pre_save.connect(set_user_slug, sender=User)
 
 
 class BlackListToken(models.Model):
