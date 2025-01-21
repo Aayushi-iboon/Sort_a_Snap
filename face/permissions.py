@@ -33,7 +33,8 @@ class IsAdminUser(permissions.BasePermission):
         return bool(user and user.is_authenticated and user.is_admin and user.is_active)
 
 
-    
+
+class GroupPermission(permissions.BasePermission):    
     def has_permission(self, request, view):
         user = request.user
         required_permission = getattr(view, 'required_permission', [])  
