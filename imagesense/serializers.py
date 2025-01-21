@@ -46,7 +46,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ['email', 'profile_image','first_name','last_name','slug','date_joined','phone_no','edit_profile']
+        fields = ['email', 'profile_image','first_name','last_name','date_joined','phone_no','edit_profile']
         # fields = "__all__"
 
 

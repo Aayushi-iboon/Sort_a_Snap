@@ -4,7 +4,6 @@ from django.contrib.auth.models import Permission
 # Create your models here.
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager,PermissionsMixin
 from django.db import models
-from django.utils.text import slugify
 from django.db.models.signals import pre_save
 import time
 import os
