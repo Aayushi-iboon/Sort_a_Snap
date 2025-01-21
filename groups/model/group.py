@@ -153,7 +153,6 @@ class PhotoGroupImage(models.Model):
 @receiver(pre_delete, sender=PhotoGroupImage)
 def delete_s3_file(sender, instance, **kwargs):
     if instance.image2:
-        import ipdb;ipdb.set_trace()
         s3_client = boto3.client("s3")
         s3_bucket = os.getenv("AWS_STORAGE_BUCKET_NAME")
         s3_file_key = instance.image2.name  # Get S3 file key (path)
