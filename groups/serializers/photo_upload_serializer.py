@@ -23,8 +23,8 @@ class PhotoGroupImageSerializer(serializers.ModelSerializer):
     def get_original_url(self, obj):
         return obj.image2.url if obj.image2 else None
     
-    def get_compressed_url(self, obj):
-        return obj.compressed_image.url if obj.compressed_image else None
+    # def get_compressed_url(self, obj):
+    #     return obj.compressed_image.url if obj.compressed_image else None
     
     def to_representation(self, instance):
         # Default representation from the parent class
@@ -35,7 +35,7 @@ class PhotoGroupImageSerializer(serializers.ModelSerializer):
         return {
             "id": instance.id,
             "image_url": instance.image2.url if instance.image2 else None,  
-           "compressed_image": instance.compressed_image.url if instance.compressed_image else None,  
+        #    "compressed_image": instance.compressed_image.url if instance.compressed_image else None,  
             "photo_user_name": instance.photo_group.user.email if instance.photo_group else None, 
             # "fav_images":instance.fav_images.favorite if instance.fav_images else None,  
             'fev':instance.fev,
