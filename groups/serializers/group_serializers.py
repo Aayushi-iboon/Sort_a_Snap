@@ -347,7 +347,7 @@ class PhotoGroupImage_serializer(serializers.ModelSerializer):
             "id": instance.id, 
             "fev":instance.fev, 
             "image_url": getattr(instance.image2, 'url', None) if instance.image2 else None,
-            # "compress_url": getattr(instance.compressed_image, 'url', None) if instance.compressed_image else None,
+            "compress_url": getattr(instance.compressed_image, 'url', None) if instance.compressed_image else None,
             "photo_user_name": getattr(instance.photo_group.user, 'email', None) if instance.photo_group and instance.photo_group.user else None,
         }    
            
