@@ -168,15 +168,15 @@ class VerifyOTP(APIView):
         # Check phone OTP
         if phone:
             cached_otp = cache.get(f"otp_{phone}")
-            random_suffix_phone = random.randint(1000000000, 9999999999)
-            email = f"guest{random_suffix_phone}@example.com"
+            # random_suffix_phone = random.randint(1000000000, 9999999999)
+            # email = f"guest{random_suffix_phone}@example.com"
             if cached_otp == int(otp):
                 if not User.objects.filter(phone_no=phone).exists():
                     user = User.objects.create(phone_no=phone)
                 else:
                     user = User.objects.get(phone_no=phone)
                 user.otp_status = True
-                user.email = email
+                # user.email = email
                 user.save()
                 if user.otp_status:
                     refresh = RefreshToken.for_user(user)
@@ -282,8 +282,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             if not reference_faces:
                 return Response({"status": False, "message": "No faces detected in the reference image."}, status=status.HTTP_400_BAD_REQUEST)
 
-            # import ipdb;ipdb.set_trace()
-            # Get subgroup or group or default to user's folder
             sub_group_id = request.data.get('sub_group', None)
             group_id = request.data.get('group', None)
 
@@ -310,7 +308,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             response = self.s3_client.list_objects_v2(Bucket=s3_bucket_name, Prefix=folder_prefix)
             event_image_keys = [
                 obj['Key'] for obj in response.get('Contents', [])
-                if obj['Key'].lower().endswith(('png', 'jpg', 'jpeg'))
+                if obj['Key'].lower().endswith(('png', 'jpg', 'jpeg')) and not obj['Key'].lower().endswith(('_compressed.jpeg', '_compressed.jpg', '_compressed.png'))
             ]
 
             if not event_image_keys:
