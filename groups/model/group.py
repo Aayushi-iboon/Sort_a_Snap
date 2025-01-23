@@ -12,6 +12,8 @@ from django.contrib.auth.models import Group
 from django.db.models.signals import pre_delete, pre_save
 from django.dispatch import receiver
 import boto3
+import io
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
 class CustomGroup(models.Model):
@@ -136,6 +138,7 @@ class PhotoGroupImage(models.Model):
     # fav_images = models.ForeignKey(favorite_images,related_name='fev_images', on_delete=models.CASCADE,null=True,blank=True)
     fev = models.BooleanField(default=False)
     image2 = models.ImageField(upload_to=user_image_upload_path,blank=True,null=True)
+    compressed_image = models.ImageField(upload_to=user_image_upload_path, blank=True, null=True)  # Compressed version
     created_at = models.DateTimeField(auto_now_add=True,null=True,blank=True)
     updated_at = models.DateTimeField(auto_now=True,null=True,blank=True)
     
@@ -147,7 +150,60 @@ class PhotoGroupImage(models.Model):
             ('download_image', 'Can download image'),  # New permission  
             ('fav_list','Can make favourite image')
         ]
+        
+    # def save(self, *args, **kwargs):
+    #     """Save original image and generate compressed image."""
+    #     if self.image2:
+    #         img = Image.open(self.image2)
+
+    #         # Reduce size while maintaining quality
+    #         img_io = io.BytesIO()
+    #         img.save(img_io, format="JPEG", quality=20)  # Adjust quality level
+    #         img_io.seek(0)
+
+    #         # Save the compressed image
+    #         self.compressed_image = InMemoryUploadedFile(
+    #             img_io, "ImageField", f"{self.image2.name.split('.')[0]}_compressed.jpg",
+    #             "image/jpeg", img_io.tell(), None
+    #         )
+
+    #     super().save(*args, **kwargs)
     
+    def save(self, *args, **kwargs):
+        """Save original image and generate a compressed version only if `image2` is updated."""
+        if self.pk:
+            existing_instance = PhotoGroupImage.objects.filter(pk=self.pk).first()
+            if existing_instance and existing_instance.image2 == self.image2:
+                super().save(*args, **kwargs)
+                return
+
+        if self.image2:
+            img = Image.open(self.image2)
+            img_format = img.format  # Get the image format (JPEG, PNG, etc.)
+            img_io = io.BytesIO()
+
+            if img_format == "JPEG":
+                img.save(img_io, format="JPEG", quality=20)  # Lossy compression
+            elif img_format == "PNG":
+                img = img.convert("RGBA")  # Preserve transparency
+                img.save(img_io, format="PNG", optimize=True)  # Lossless compression
+            else:
+                raise ValueError("Unsupported image format. Only JPEG and PNG are allowed.")
+
+            img_io.seek(0)
+
+            # Generate compressed filename
+            ext = os.path.splitext(self.image2.name)[-1]  # Get file extension
+            compressed_filename = f"{self.image2.name.split('.')[0]}_compressed{ext}"
+
+            # Save the compressed image
+            self.compressed_image = InMemoryUploadedFile(
+                img_io, "ImageField", compressed_filename,
+                f"image/{img_format.lower()}", img_io.tell(), None
+            )
+
+        super().save(*args, **kwargs)
+
             
 # remove current deleting file
 @receiver(pre_delete, sender=PhotoGroupImage)

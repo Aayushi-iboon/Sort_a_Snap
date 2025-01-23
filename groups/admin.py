@@ -52,8 +52,8 @@ class PhotoGroupImageAdmin(admin.ModelAdmin):
     """
     Admin configuration for the PhotoGroupImage model.
     """
-    list_display = ('id', 'photo_group', 'image2','fev')  # Display related photo group and image
-    list_filter = ('photo_group',)  # Filter by photo group
+    list_display = ('id', 'image2','fev','compressed_image')  # Display related photo group and image
+    list_filter = ('fev',)  # Filter by photo group
      # Enable search
     
   

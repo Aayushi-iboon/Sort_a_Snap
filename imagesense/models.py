@@ -76,7 +76,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
-
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}".strip() or "Unnamed User"
+    
     def save_image(self, image_file):
         """Save image data as binary in the database."""
         self.profile_image = image_file

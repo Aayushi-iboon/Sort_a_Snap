@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from groups.model.group import photo_group,CustomGroup,GroupMember
-from groups.serializers.group_serializers import photo_serializer,CustomGroupSerializer
+from groups.model.group import photo_group,CustomGroup,GroupMember,PhotoGroupImage
+from groups.serializers.group_serializers import photo_serializer,CustomGroupSerializer,PhotoGroupImage_serializer
 from rest_framework.permissions import IsAuthenticated  
 from rest_framework.response import Response
 from rest_framework import status
@@ -56,6 +56,7 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
     serializer_class = photo_serializer
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter,DjangoFilterBackend]
+    pagination_class = StandardResultsSetPagination
     filterset_fields = ['photo_name']
     search_fields = ['photo_name']
     
@@ -113,47 +114,54 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
         
     def get_group_wise_user(self, request, *args, **kwargs):
         user_id = request.data.get('user')
-        group_id = request.data.get('group')  # Retrieve group_id from request data
-        sub_group_id = request.data.get('sub_group')  # Retrieve sub_group_id from request data
+        group_id = request.data.get('group')
+        sub_group_id = request.data.get('sub_group')
 
         if not user_id:
             return Response(
                 {"status": False, "message": "user_id is required"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
-        try:
-            photo_query = Q()
-            if sub_group_id:
-                photo_query = Q(sub_group_id=sub_group_id)
-            elif group_id:
-                photo_query = Q(group_id=group_id)
-            else:
-                member_group_ids = GroupMember.objects.filter(user_id=user_id).values_list('group_id', flat=True)
-                photo_query = Q(user_id=user_id) | Q(group_id__in=member_group_ids)
-                
-            all_photos = photo_group.objects.filter(photo_query).distinct()
 
-            # Check if any photos exist
-            if not all_photos.exists():
+        try:
+            # Retrieve photo groups based on filters
+            if sub_group_id:
+                photo_groups = photo_group.objects.filter(sub_group_id=sub_group_id)
+            elif group_id:
+                photo_groups = photo_group.objects.filter(group_id=group_id)
+            else:
+                # Fetch group IDs where the user is a member
+                member_group_ids = GroupMember.objects.filter(user_id=user_id).values_list('group_id', flat=True)
+                photo_groups = photo_group.objects.filter(user_id=user_id) | photo_group.objects.filter(group_id__in=member_group_ids)
+
+            # Ensure distinct photo groups
+            photo_groups = photo_groups.distinct()
+
+            if not photo_groups.exists():
                 return Response(
-                    {
-                        "status": False,
-                        "message": "No photos found for the specified criteria."
-                    },
+                    {"status": False, "message": "No photos found for the specified criteria."},
                     status=status.HTTP_404_NOT_FOUND
                 )
 
-            # Serialize the photo data
-            serializer = self.get_serializer(
-                all_photos, many=True, context={'request': request, 'from_method': 'photo_image_list'}
-            )
+            # Fetch distinct images from the filtered photo groups
+            unique_images = PhotoGroupImage.objects.filter(photo_group__in=photo_groups).order_by('id').distinct()
+
+            # Apply pagination
+            paginator = self.pagination_class()
+            paginated_images = paginator.paginate_queryset(unique_images, request, view=self)
+
+            # Serialize the paginated images
+            image_serializer = PhotoGroupImage_serializer(paginated_images, many=True, context={'request': request})
 
             return Response(
                 {
                     "status": True,
                     "message": "Photos retrieved successfully.",
-                    "data": {"user_data": serializer.data}
+                    "data": {
+                    "total_page": paginator.page.paginator.num_pages,
+                    "count": paginator.page.paginator.count,
+                    "current_page": paginator.page.number,
+                    "user_data": [{"images": image_serializer.data}]}
                 },
                 status=status.HTTP_200_OK
             )
@@ -167,6 +175,7 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
                     
     def create(self, request, *args, **kwargs):
         try:
