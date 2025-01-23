@@ -138,7 +138,7 @@ class PhotoGroupImage(models.Model):
     # fav_images = models.ForeignKey(favorite_images,related_name='fev_images', on_delete=models.CASCADE,null=True,blank=True)
     fev = models.BooleanField(default=False)
     image2 = models.ImageField(upload_to=user_image_upload_path,blank=True,null=True)
-    compressed_image = models.ImageField(upload_to=user_image_upload_path, blank=True, null=True)  # Compressed version
+    compressed_image = models.ImageField(upload_to=user_image_upload_path, blank=True, null=True,default='default_image.jpg')  # Compressed version
     created_at = models.DateTimeField(auto_now_add=True,null=True,blank=True)
     updated_at = models.DateTimeField(auto_now=True,null=True,blank=True)
     
