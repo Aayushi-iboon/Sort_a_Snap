@@ -324,8 +324,8 @@ class PhotoGroupImageView(viewsets.ModelViewSet):
                     {"status": True, "message": "No images found!"},status=status.HTTP_204_NO_CONTENT)
                 
             count = serializer.data['count']
-            limit = int(request.GET.get('page_size', 10))
-            current_page = int(request.GET.get('page', 1))
+            limit = int(request.GET.get('page_size', 0))
+            current_page = int(request.GET.get('page', 0))
             return Response(
                 {"status": True, "message": "fev Images retrieved successfully.", 
                  'data': {
