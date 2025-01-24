@@ -294,20 +294,45 @@ class PhotoGroupImageView(viewsets.ModelViewSet):
             )
 
     def fav_list(self, request, *args, **kwargs):
+        group_id = request.data.get("group_id") 
+        if not group_id:
+            return Response(
+                {"status": False, "message": "group_id is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         try:
-            queryset = self.filter_queryset(self.get_queryset().filter(fev=True))
+            queryset = self.filter_queryset(self.get_queryset().filter(photo_group__group__id=group_id, fev=True))
+            ordering = request.query_params.get('ordering', None)
+            if ordering:
+                queryset = queryset.order_by(ordering)
+            else:
+                queryset =  queryset.annotate(last_modified=Coalesce('updated_at', 'created_at')).order_by('-last_modified') 
+                
         except Exception as e:
             return Response(
                     {"status": True, "message": "No images found!"},status=status.HTTP_204_NO_CONTENT)
         try:
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer = self.serializer_class(page, many=True, context={'request': request})
+                serializer = self.get_paginated_response(serializer.data)
+            else:
+                serializer = self.serializer_class(queryset, many=True, context={'request': request})
+            
             if not queryset.exists():
                 return Response(
                     {"status": True, "message": "No images found!"},status=status.HTTP_204_NO_CONTENT)
                 
-                
-            serializer = self.serializer_class(queryset, many=True, context={'request': request})
+            count = serializer.data['count']
+            limit = int(request.GET.get('page_size', 10))
+            current_page = int(request.GET.get('page', 1))
             return Response(
-                {"status": True, "message": "fev Images retrieved successfully.", 'data': {"images": serializer.data}},
+                {"status": True, "message": "fev Images retrieved successfully.", 
+                 'data': {
+                     'total_page': (count + limit - 1),
+                     'count': count,
+                     'current_page':current_page,
+                     "user_data":[{"images": serializer.data['results']}]}},
                 status=status.HTTP_200_OK
             )
         except Exception as e:
