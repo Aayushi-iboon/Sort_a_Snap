@@ -336,7 +336,7 @@ class CustomGroupSerializer(serializers.ModelSerializer):
 class PhotoGroupImage_serializer(serializers.ModelSerializer):
     class Meta:
         model = PhotoGroupImage
-        fields = ['id','image2','photo_group','fev']
+        fields = ['id','image2','photo_group','fev','compressed_image']
     
     def to_representation(self, instance):
          # Default representation from the parent class
@@ -360,7 +360,6 @@ class photo_serializer(serializers.ModelSerializer):
     def create(self, validated_data):
         request = self.context.get('request')
         image = request.FILES.get('image')
-        # import ipdb;ipdb.set_trace()
         if image is None:
             raise serializers.ValidationError({"image": "An image file is required."})
         validated_data.pop('image', None)
@@ -396,7 +395,8 @@ class photo_serializer(serializers.ModelSerializer):
             'id': img.get('id'),
             'image_url': img.get('image_url'),
             'fev': img.get('fev', False),
-            'sub_group':img.get('sub_group')
+            'sub_group':img.get('sub_group'),
+            'compress_url':img.get('compress_url')
         }
         for img in images
         ]
@@ -431,7 +431,8 @@ class photo_serializer(serializers.ModelSerializer):
                     "id": img.get("id"),
                     "image_url": img.get("image_url"),
                     "fev": bool(img.get("fev")),
-                    'sub_group':img.get('sub_group')
+                    'sub_group':img.get('sub_group'),
+                    'compress_url':img.get('compress_url')
                     
                 }
                 for img in image_details

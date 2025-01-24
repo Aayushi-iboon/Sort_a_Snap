@@ -303,7 +303,9 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             response = self.s3_client.list_objects_v2(Bucket=s3_bucket_name, Prefix=folder_prefix)
             event_image_keys = [
                 obj['Key'] for obj in response.get('Contents', [])
-                if obj['Key'].lower().endswith(('png', 'jpg', 'jpeg')) and '_compressed' not in obj['Key'].lower()
+                if obj['Key'].lower().endswith(('png', 'jpg', 'jpeg')) and '_compressed' in obj['Key'].lower()
+                # if obj['Key'].lower().endswith(('png', 'jpg', 'jpeg')) 
+
             ]
 
             if not event_image_keys:
@@ -317,17 +319,16 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                 ))
 
             matching_images = [img for img in matching_images if img is not None]
-
             images_with_ids = []
-            import ipdb;ipdb.set_trace()
             for img in matching_images:
-                image_filename = os.path.basename(img)  # Extract filename2
-                photo_obj = PhotoGroupImage.objects.filter(image2__icontains=img).first()
+                original_img = img.replace("_compressed", "")
+                photo_obj = PhotoGroupImage.objects.filter(image2__icontains=original_img).first()
                 image_id = photo_obj.id if photo_obj else f"{hash(img)}"
                 if photo_obj:
                     images_with_ids.append({
                         "id":image_id,  # Use database ID
-                        "image_url": f'{s3_bucket_url}/{img}'
+                        "compress_url": f'{s3_bucket_url}/{img}',
+                        "image_url": original_img 
                     })
 
             return Response({

@@ -88,8 +88,7 @@ class PhotoGroupView(viewsets.ModelViewSet):
                 'count': count,
                 'current_page':current_page,
                 "group":serializer.data['results']
-                }
-            }, status=status.HTTP_200_OK)
+                }}, status=status.HTTP_200_OK)
         
         except Exception as e:
             return Response({

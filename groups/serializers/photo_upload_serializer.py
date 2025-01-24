@@ -85,8 +85,7 @@ class PhotoGroupSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         images_data = self.context['request'].data.getlist('images')
         user = self.context['request'].user 
-        user_groups = user.groups.values_list('name', flat=True)
-
+        user_groups = user.groups.values_list('name', flat=True)        
         if "Group_Admin" in user_groups:
             total_uploaded_images = PhotoGroupImage.objects.filter(photo_group__user=user).count()
             if total_uploaded_images + len(images_data) > 500:
@@ -163,15 +162,16 @@ class PhotoGroupSerializer(serializers.ModelSerializer):
     
     
     def to_representation(self, instance):
-        
         representation = super().to_representation(instance)
         images = instance.images.all()  
         images_data = [
             {
                 "id": image.id,
                 "image_url": image.image2.url if image.image2 else None,  # Check if image2 exists
-                "fev": image.fev, # Include fav_images if it exists,
-                "sub_group": representation['sub_group']
+                "compress_url": image.compressed_image.url if image.compressed_image else None,  # Check if image2 exists
+                "fev": image.fev,
+                "sub_group": representation['sub_group'],
+                
             }
             for image in images
         ]
