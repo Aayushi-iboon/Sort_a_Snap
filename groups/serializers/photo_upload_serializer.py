@@ -88,7 +88,7 @@ class PhotoGroupSerializer(serializers.ModelSerializer):
         user_groups = user.groups.values_list('name', flat=True)        
         if "Group_Admin" in user_groups:
             total_uploaded_images = PhotoGroupImage.objects.filter(photo_group__user=user).count()
-            if total_uploaded_images + len(images_data) > 500:
+            if total_uploaded_images + len(images_data) > 100:
                 return Response(
                     {"status": False, "message": "You have exceeded the maximum limit of 500 images."},
                     status=status.HTTP_400_BAD_REQUEST

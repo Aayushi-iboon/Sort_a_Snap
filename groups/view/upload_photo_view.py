@@ -294,8 +294,14 @@ class PhotoGroupImageView(viewsets.ModelViewSet):
             )
 
     def fav_list(self, request, *args, **kwargs):
+        group_id = request.data.get("group_id") 
+        if not group_id:
+            return Response(
+                {"status": False, "message": "group_id is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         try:
-            queryset = self.filter_queryset(self.get_queryset().filter(fev=True))
+            queryset = self.filter_queryset(self.get_queryset().filter(photo_group__group__id=group_id, fev=True))
         except Exception as e:
             return Response(
                     {"status": True, "message": "No images found!"},status=status.HTTP_204_NO_CONTENT)

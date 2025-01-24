@@ -21,9 +21,8 @@ import concurrent.futures
 import multiprocessing
 import os
 from rest_framework.exceptions import ValidationError
-from face.function_call import check_required_fields,validate_email,flatten_errors
+from face.function_call import check_required_fields,StandardResultsSetPagination,flatten_errors
 from groups.model.group import CustomGroup,sub_group,PhotoGroupImage
-import random
 from .tasks import assign_user_to_group
 User = get_user_model()
 
@@ -235,6 +234,7 @@ class UserLogoutView(APIView):
 class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserProfileSerializer
+    pagination_class = StandardResultsSetPagination
     permission_classes = [IsAuthenticated]
     
     # Initialize AWS Rekognition client
@@ -330,11 +330,12 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                         "compress_url": f'{s3_bucket_url}/{img}',
                         "image_url": original_img 
                     })
-
+            
             return Response({
                 "status": True,
                 "message": "Matching images retrieved successfully.",
-                "data": {"user_data": [{"images": images_with_ids}]}
+                "data": {
+                    "user_data": [{"images": images_with_ids}]}
             }, status=status.HTTP_200_OK) if images_with_ids else Response({
                 "status": False,
                 "message": "No matching images found."
