@@ -327,7 +327,7 @@ class PhotoGroupImageView(viewsets.ModelViewSet):
             limit = int(request.GET.get('page_size', 0))
             current_page = int(request.GET.get('page', 0))
             return Response(
-                {"status": True, "message": "fev Images retrieved successfully.", 
+                {"status": True, "message": "fav Images retrieved successfully.", 
                  'data': {
                      'total_page': (count + limit - 1),
                      'count': count,
