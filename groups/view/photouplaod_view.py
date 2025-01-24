@@ -96,16 +96,17 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
                 )
             user = get_user_model().objects.get(id=user) 
             photos = photo_group.objects.filter(user=user)
-            page = self.paginate_queryset(photos)
-            if page is not None:
-                serializer = self.serializer_class(page, many=True, context={'request': request})
-                serializer = self.get_paginated_response(serializer.data)
-            else:
-                serializer = self.serializer_class(photos, many=True,context={'request': request,'from_method':'photo_image_list'})
+            # page = self.paginate_queryset(photos)
+            # if page is not None:
+            #     serializer = self.serializer_class(page, many=True, context={'request': request})
+            #     serializer = self.get_paginated_response(serializer.data)
+            # else:
             
-            count = serializer.data['count']
-            limit = int(request.GET.get('page_size', 10))
-            current_page = int(request.GET.get('page', 1))
+            serializer = self.serializer_class(photos, many=True,context={'request': request,'from_method':'photo_image_list'})
+            
+            # count = serializer.data['count']
+            # limit = int(request.GET.get('page_size', 10))
+            # current_page = int(request.GET.get('page', 1))
             
             combined_images = []
             for data in serializer.data:
@@ -116,10 +117,10 @@ class PhotoGroupViewSet(viewsets.ModelViewSet):
             return Response({ "status": True,  
                             "message": "get list Data retrieved successfully.",
                             "data":{
-                                'total_page': (count + limit - 1),
-                                'count': count,
-                                'current_page':current_page,
-                                "user_data": serializer.data['results']}}, status=status.HTTP_200_OK)
+                                # 'total_page': (count + limit - 1),
+                                # 'count': count,
+                                # 'current_page':current_page,
+                                "user_data": serializer.data}}, status=status.HTTP_200_OK)
         
         except ObjectDoesNotExist:
             return Response(
