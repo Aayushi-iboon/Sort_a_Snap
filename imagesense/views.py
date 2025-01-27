@@ -22,7 +22,7 @@ import multiprocessing
 import os
 from rest_framework.exceptions import ValidationError
 from face.function_call import check_required_fields,StandardResultsSetPagination,flatten_errors
-from groups.model.group import CustomGroup,sub_group,PhotoGroupImage
+from groups.model.group import CustomGroup,sub_group,PhotoGroupImage,GroupMember
 from .tasks import assign_user_to_group
 User = get_user_model()
 
@@ -284,29 +284,93 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
             sub_group_id = request.data.get('sub_group', None)
             group_id = request.data.get('group', None)
-
+            # import ipdb;ipdb.set_trace()
+            folder_prefixes = [] 
+            user = request.user
+            user_email = user.email
+            
             if sub_group_id:
+                # Fetch sub-group
                 subgroup = sub_group.objects.filter(id=sub_group_id).first()
                 if not subgroup:
                     return Response({"status": False, "message": "Invalid sub-group ID provided."}, status=status.HTTP_404_NOT_FOUND)
-                folder_prefix = f'photos/{request.user.email}/{subgroup.main_group.name}/{subgroup.name}/'
+
+                # Check if user is a member of the main group
+                # is_member = GroupMember.objects.filter(group=subgroup.main_group, user=user).exists()
+                # if not is_member:
+                #     return Response({"status": False, "message": "Access denied. You are not a member of this sub-group's main group."}, status=status.HTTP_403_FORBIDDEN)
+
+                # Fetch images from the specific sub-group
+                folder_prefixes.append(f'photos/{user_email}/{subgroup.main_group.name}/{subgroup.name}/')
+
+                # Include the joined members' images from this sub-group
+                group_members = GroupMember.objects.filter(group=subgroup.main_group)
+                for member in group_members:
+                    folder_prefixes.append(f'photos/{member.group.created_by.email}/{subgroup.main_group.name}/{subgroup.name}/')
 
             elif group_id:
+                # Fetch group
                 group = CustomGroup.objects.filter(id=group_id).first()
                 if not group:
                     return Response({"status": False, "message": "Invalid group ID provided."}, status=status.HTTP_404_NOT_FOUND)
-                folder_prefix = f'photos/{request.user.email}/{group.name}/'
+
+                # Check if user is a member of the group
+                # is_member = GroupMember.objects.filter(group=group, user=user).exists()
+                # if not is_member:
+                #     return Response({"status": False, "message": "Access denied. You are not a member of this group."}, status=status.HTTP_403_FORBIDDEN)
+
+                # Fetch images from the group
+                folder_prefixes.append(f'photos/{user_email}/{group.name}/')
+
+                # Include the joined members' images from this group
+                group_members = GroupMember.objects.filter(group=group)
+                for member in group_members:
+                    folder_prefixes.append(f'photos/{member.group.created_by.email}/{group.name}/')
+
+                # Also fetch images from all sub-groups of this group
+                sub_groups = sub_group.objects.filter(main_group=group)
+                for subgroup in sub_groups:
+                    folder_prefixes.append(f'photos/{user_email}/{subgroup.main_group.name}/{subgroup.name}/')
+
+                    # Include the joined members' images from these sub-groups
+                    subgroup_members = GroupMember.objects.filter(group=subgroup.main_group)
+                    for member in subgroup_members:
+                        folder_prefixes.append(f'photos/{member.group.created_by.email}/{subgroup.main_group.name}/{subgroup.name}/')
 
             else:
-                folder_prefix = f'photos/{request.user.email}/'
+                # Fetch images from all groups user created or joined
+                created_groups = CustomGroup.objects.filter(created_by=user)
+                joined_groups = CustomGroup.objects.filter(groupmember__user=user)
 
-            response = self.s3_client.list_objects_v2(Bucket=s3_bucket_name, Prefix=folder_prefix)
-            event_image_keys = [
-                obj['Key'] for obj in response.get('Contents', [])
-                if obj['Key'].lower().endswith(('png', 'jpg', 'jpeg')) and '_compressed' in obj['Key'].lower()
-                # if obj['Key'].lower().endswith(('png', 'jpg', 'jpeg')) 
+                all_groups = created_groups | joined_groups  # Combine both
 
-            ]
+                for group in all_groups:
+                    folder_prefixes.append(f'photos/{user_email}/{group.name}/')
+
+                    # Include the joined members' images from this group
+                    group_members = GroupMember.objects.filter(group=group)
+                    for member in group_members:
+                        folder_prefixes.append(f'photos/{member.group.created_by.email}/{group.name}/')
+
+                    # Fetch sub-groups of each group
+                    sub_groups = sub_group.objects.filter(main_group=group)
+                    for subgroup in sub_groups:
+                        folder_prefixes.append(f'photos/{user_email}/{subgroup.main_group.name}/{subgroup.name}/')
+
+                        # Include the joined members' images from these sub-groups
+                        subgroup_members = GroupMember.objects.filter(group=subgroup.main_group)
+                        for member in subgroup_members:
+                            folder_prefixes.append(f'photos/{member.group.created_by.email}/{subgroup.main_group.name}/{subgroup.name}/')
+
+            # Step 2: Fetch event image keys from S3 for all the gathered folder prefixes
+            event_image_keys = []
+            for prefix in folder_prefixes:
+                response = self.s3_client.list_objects_v2(Bucket=s3_bucket_name, Prefix=prefix)
+                if 'Contents' in response:
+                    event_image_keys.extend([
+                        obj['Key'] for obj in response['Contents']
+                        if obj['Key'].lower().endswith(('png', 'jpg', 'jpeg')) and '_compressed' in obj['Key'].lower()
+                    ])
 
             if not event_image_keys:
                 return Response({"status": False, "message": "No event images found for the specified criteria."}, status=status.HTTP_404_NOT_FOUND)
