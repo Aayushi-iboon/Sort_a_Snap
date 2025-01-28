@@ -126,7 +126,7 @@ class CustomGroupViewSet(viewsets.ModelViewSet):
             serializer = self.serializer_class(data=request.data)
             if serializer.is_valid():
                 group_name = serializer.validated_data.get('name')
-                existing_group = CustomGroup.objects.filter(name=group_name, created_by=request.user).first()
+                existing_group = CustomGroup.objects.filter(name=group_name).first()
                 if existing_group:
                     return Response({
                         'status': False,
@@ -434,11 +434,11 @@ class JoinGroupView(viewsets.ModelViewSet):
             group = CustomGroup.objects.first() 
 
         else:
-            return Response({"detail": "No code or phone number provided."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"status":False,"message": "No code or phone number provided."}, status=status.HTTP_400_BAD_REQUEST)
 
         
-        # if GroupMember.objects.filter(group=group, user=user).exists():
-        #     return Response({"status":True,"message": "User is already a member of this group."}, status=status.HTTP_400_BAD_REQUEST)
+        if GroupMember.objects.filter(group=group, user=user).exists():
+            return Response({"status":True,"message": "User is already a member of this group."}, status=status.HTTP_400_BAD_REQUEST)
 
         role = "User" if user.is_authenticated else "Guest"
         # Create the group member entry

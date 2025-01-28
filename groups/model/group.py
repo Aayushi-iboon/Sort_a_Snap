@@ -7,7 +7,7 @@ import os
 import qrcode
 from io import BytesIO
 from django.core.files.base import ContentFile
-from PIL import Image
+from PIL import Image,ExifTags
 from django.contrib.auth.models import Group
 from django.db.models.signals import pre_delete, pre_save
 from django.dispatch import receiver
@@ -72,11 +72,11 @@ def user_image_upload_path(instance, filename):
     if instance.photo_group.sub_group:
         sub_group_name = instance.photo_group.sub_group.name  # Assuming `sub_group` has a `name` field
         group_name = instance.photo_group.group.name
-        return os.path.join(f'photos/{user_email}/{group_name}/{sub_group_name}', filename)
+        return os.path.join(f'photos/{group_name}/{sub_group_name}', filename)
     elif instance.photo_group.group:
         # Use group's name for the directory structure
         group_name = instance.photo_group.group.name  # Assuming `group` has a `name` field
-        return os.path.join(f'photos/{user_email}/{group_name}', filename)
+        return os.path.join(f'photos/{group_name}', filename)
     else:
         # Default directory structure
         return os.path.join(f'photos/{user_email}', filename)
@@ -186,6 +186,64 @@ class PhotoGroupImage(models.Model):
             )
 
         super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     """Save original image and generate a compressed version only if `image2` is updated."""
+    #     if self.pk:
+    #         existing_instance = PhotoGroupImage.objects.filter(pk=self.pk).first()
+    #         if existing_instance and existing_instance.image2 == self.image2:
+    #             super().save(*args, **kwargs)
+    #             return
+
+    #     if self.image2:
+    #         img = Image.open(self.image2)
+    #         img_format = img.format  # Get the image format (JPEG, PNG, etc.)
+            
+    #         # Preserve EXIF metadata (to prevent image shifting issues)
+    #         exif_data = img.info.get("exif", None)
+
+    #         # Normalize orientation
+    #         try:
+    #             for orientation in ExifTags.TAGS.keys():
+    #                 if ExifTags.TAGS[orientation] == "Orientation":
+    #                     break
+    #             if img._getexif() is not None:
+    #                 exif = dict(img._getexif().items())
+    #                 if orientation in exif:
+    #                     if exif[orientation] == 3:
+    #                         img = img.rotate(180, expand=True)
+    #                     elif exif[orientation] == 6:
+    #                         img = img.rotate(270, expand=True)
+    #                     elif exif[orientation] == 8:
+    #                         img = img.rotate(90, expand=True)
+    #         except (AttributeError, KeyError, IndexError):
+    #             pass  # No EXIF orientation data found
+
+    #         # Ensure the image has a consistent size (prevent shifting)
+    #         img = img.convert("RGB") if img_format == "JPEG" else img.convert("RGBA")
+    #         width, height = img.size  # Keep original dimensions
+            
+    #         img_io = io.BytesIO()
+
+    #         if img_format == "JPEG":
+    #             img.save(img_io, format="JPEG", quality=20, exif=exif_data)  # Preserve EXIF
+    #         elif img_format == "PNG":
+    #             img.save(img_io, format="PNG", optimize=True)  # Lossless compression
+    #         else:
+    #             raise ValueError("Unsupported image format. Only JPEG and PNG are allowed.")
+
+    #         img_io.seek(0)
+
+    #         # Generate compressed filename
+    #         ext = os.path.splitext(self.image2.name)[-1]  # Get file extension
+    #         compressed_filename = f"{self.image2.name.split('.')[0]}_compressed{ext}"
+
+    #         # Save the compressed image
+    #         self.compressed_image = InMemoryUploadedFile(
+    #             img_io, "ImageField", compressed_filename,
+    #             f"image/{img_format.lower()}", img_io.tell(), None
+    #         )
+
+    #     super().save(*args, **kwargs)
 
             
 # remove current deleting file
